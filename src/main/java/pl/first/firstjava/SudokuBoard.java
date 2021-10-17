@@ -1,10 +1,11 @@
 package pl.first.firstjava;
 
-import java.lang.*;
+import java.lang.Math;
+import java.lang.System;
 import java.util.Random;
 
 public class SudokuBoard {
-    private final int board[][];
+    private final int[][] board;
     private final int boardSize;
     private final int boxSize; // square root of N
     private final Random random;
@@ -13,17 +14,25 @@ public class SudokuBoard {
     SudokuBoard() {
         this.boardSize = 9;
         this.boxSize = 3;
-        this.board = new int[boardSize][boardSize];
         this.random = new Random();
+        this.board = new int[boardSize][boardSize];
+    }
+
+    SudokuBoard(int[][] sudokuBoard) {
+        this.boardSize = 9;
+        this.boxSize = 3;
+        this.random = new Random();
+        this.board = sudokuBoard;
+        for (int row = 0; row < boardSize; row++) {
+            System.arraycopy(sudokuBoard[row], 0, this.board[row], 0, boardSize);
+        }
     }
 
     public int[][] getBoard() {
         int[][] boardCopy;
         boardCopy = new int[boardSize][boardSize];
         for (int row = 0; row < boardSize; row++) {
-            for (int column = 0; column < boardSize; column++) {
-                boardCopy[row][column] = this.board[row][column];
-            }
+            System.arraycopy(this.board[row], 0, boardCopy[row], 0, boardSize);
         }
         return boardCopy;
     }
@@ -52,9 +61,7 @@ public class SudokuBoard {
             for (int j = 0; j < boxSize; j++) {
                 do {
                     num = getRandomInt();
-                }
-                // Generate random number [0-9] until you find the unique one.
-                while (!unUsedInBox(row, column, num));
+                } while (!unUsedInBox(row, column, num));
 
                 board[row + i][column + j] = num;
             }
@@ -68,32 +75,28 @@ public class SudokuBoard {
 
         // When we reach the end of the row
         // go to the next row and start from the beginning.
-        if (column >= boardSize && row < boardSize - 1) {
+        if (column >= boardSize) {
             row += 1;
             column = 0;
         }
 
-        // all done
-        if (row >= boardSize && column >= boardSize)
-            return true;
-
         // When we are in the first row of matrices in column
-        // and j-index belongs to first matrice
-        // go to the next matrice in a row
+        // and j-index belongs to first matrix
+        // go to the next matrix in a row
         if (row < boxSize) {
             if (column < boxSize) {
                 column = boxSize;
             }
         // When we are between first and last row of matrices in column
         } else if (row < boardSize - boxSize) {
-            // Check if we are in diagonal matrice
+            // Check if we are in diagonal matrix
             // if so go to the next
             if (column == boxSize) {
                 column += boxSize;
             }
         // When we are in the last row of matrices in column
         } else {
-            // When we are in the last matrice in last row.
+            // When we are in the last matrix in last row.
             // go to next row and start over
             if (column == boardSize - boxSize) {
                 row += 1;
@@ -109,8 +112,9 @@ public class SudokuBoard {
             if (isValid(row, column, num)) {
                 board[row][column] = num;
                 // Go to the next cell in a row
-                if (fillRemaining(row, column + 1))
+                if (fillRemaining(row, column + 1)) {
                     return true;
+                }
 
                 board[row][column] = 0;
             }
@@ -132,7 +136,7 @@ public class SudokuBoard {
     }
 
     // Check if safe to put in cell
-    private boolean isValid(int i, int j, int num) {
+    public boolean isValid(int i, int j, int num) {
         return (unUsedInRow(i, num)
                 && unUsedInColumn(j, num)
                 && unUsedInBox(i - i % boxSize, j - j % boxSize, num));
@@ -176,7 +180,7 @@ public class SudokuBoard {
     public void printBoard() {
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
-                System.out.print(board[i][j] + " ");
+                System.out.print(board[i][j] + "\t");
             }
             System.out.println();
         }
