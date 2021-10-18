@@ -9,6 +9,9 @@ public class SudokuBoard {
     private final int boardSize;
     private final int boxSize; // square root of N
     private final Random random;
+    // We make private field for class objects
+    // implementing Interface Sudoku Solver.
+    private SudokuSolver sudokuSolver;
 
     // Constructor
     SudokuBoard() {
@@ -16,6 +19,8 @@ public class SudokuBoard {
         this.boxSize = 3;
         this.random = new Random();
         this.board = new int[boardSize][boardSize];
+        // We assign a proper class instance to sudokuSolver
+        sudokuSolver = new BacktrackingSudokuSolver();
     }
 
     SudokuBoard(int[][] sudokuBoard) {
@@ -27,6 +32,12 @@ public class SudokuBoard {
             System.arraycopy(sudokuBoard[row], 0, this.board[row], 0, boardSize);
         }
     }
+
+    private void solveGame() {
+        // We call a method solve
+        sudokuSolver.solve(this);
+    }
+
 
     public int[][] getBoard() {
         int[][] boardCopy;
@@ -56,9 +67,9 @@ public class SudokuBoard {
 
     // Fill indicated matrix.
     private void fillBox(int row, int column) {
-        int num;
         for (int i = 0; i < boxSize; i++) {
             for (int j = 0; j < boxSize; j++) {
+                int num;
                 do {
                     num = getRandomInt();
                 } while (!unUsedInBox(row, column, num));
@@ -115,7 +126,6 @@ public class SudokuBoard {
                 if (fillRemaining(row, column + 1)) {
                     return true;
                 }
-
                 board[row][column] = 0;
             }
         }
