@@ -133,6 +133,31 @@ public class SudokuBoard {
         return false; // triggers backtracking
     }
 
+    private void findEmptyCell() {
+        int row;
+        int col;
+        boolean isEmpty = true;
+        for (int i = 0; i < boardSize; i++)
+        {
+            for (int j = 0; j < boardSize; j++)
+            {
+                if (board[i][j] == 0)
+                {
+                    row = i;
+                    col = j;
+
+                    // We still have some remaining
+                    // missing values in Sudoku
+                    isEmpty = false;
+                    break;
+                }
+            }
+            if (!isEmpty) {
+                break;
+            }
+        }
+    }
+
     // Random generator
     private int getRandomInt() {
         return getRandomInt(boardSize);
