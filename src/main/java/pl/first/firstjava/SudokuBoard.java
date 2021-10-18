@@ -11,7 +11,7 @@ public class SudokuBoard {
     private final Random random;
     // We make private field for class objects
     // implementing Interface Sudoku Solver.
-    private SudokuSolver sudokuSolver;
+    private final SudokuSolver sudokuSolver;
 
     // Constructor
     SudokuBoard() {
@@ -31,6 +31,7 @@ public class SudokuBoard {
         for (int row = 0; row < boardSize; row++) {
             System.arraycopy(sudokuBoard[row], 0, this.board[row], 0, boardSize);
         }
+        sudokuSolver = new BacktrackingSudokuSolver();
     }
 
     private void solveGame() {
@@ -79,7 +80,7 @@ public class SudokuBoard {
         }
     }
 
-    // A recursive function to fill remaining marix
+    // A recursive function to fill remaining matrix
     private boolean fillRemaining(int row, int column) {
 
         // Keep in mind that diagonal matrices are filled!
