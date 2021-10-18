@@ -55,7 +55,7 @@ public class SudokuBoard {
         fillDiagonal();
 
         // Fill remaining blocks.
-        fillRemaining();
+        fillRemaining(0, boxSize);
     }
 
     // Fill the diagonal SRN number of SRN x SRN matrices.
@@ -81,38 +81,50 @@ public class SudokuBoard {
     }
 
     // A recursive function to fill remaining matrix
-    private boolean fillRemaining() {
+    private boolean fillRemaining(int row, int column) {
 
-        int row = 0;
-        int column = 0;
-        boolean isEmpty = false;
-        for (int i = 0; i < boardSize; i++) {
-            for (int j = 0; j < boardSize; j++) {
-                if (board[i][j] == 0) {
-                    row = i;
-                    column = j;
+        // Keep in mind that diagonal matrices are filled!
 
-                    // We still have some remaining
-                    // missing values in Sudoku
-                    isEmpty = true;
-                    break;
-                }
-            }
-            if (isEmpty) {
-                break;
-            }
+        // When we reach the end of the row
+        // go to the next row and start from the beginning.
+        if (column >= boardSize) {
+            row += 1;
+            column = 0;
         }
 
-        // Could be a chance that there is no empty cells ¯\_(ツ)_/¯
-        if (!isEmpty) {
-            return true;
+        // When we are in the first row of matrices in column
+        // and j-index belongs to first matrix
+        // go to the next matrix in a row
+        if (row < boxSize) {
+            if (column < boxSize) {
+                column = boxSize;
+            }
+        // When we are between first and last row of matrices in column
+        } else if (row < boardSize - boxSize) {
+            // Check if we are in diagonal matrix
+            // if so go to the next
+            if (column == boxSize) {
+                column += boxSize;
+            }
+        // When we are in the last row of matrices in column
+        } else {
+            // When we are in the last matrix in last row.
+            // go to next row and start over
+            if (column == boardSize - boxSize) {
+                row += 1;
+                column = 0;
+                // beyond the board
+                if (row >= boardSize) {
+                    return true;
+                }
+            }
         }
 
         for (int num = 1; num <= boardSize; num++) {
             if (isValid(row, column, num)) {
                 board[row][column] = num;
                 // Go to the next cell in a row
-                if (fillRemaining()) {
+                if (fillRemaining(row, column + 1)) {
                     return true;
                 }
                 board[row][column] = 0;
