@@ -83,40 +83,25 @@ public class SudokuBoard {
     // A recursive function to fill remaining matrix
     private boolean fillRemaining(int row, int column) {
 
-        // Keep in mind that diagonal matrices are filled!
-
-        // When we reach the end of the row
-        // go to the next row and start from the beginning.
+        // Look out for index out of bounds! (╯ ͠° ͟ʖ ͡°)╯
         if (column >= boardSize) {
             row += 1;
             column = 0;
         }
 
-        // When we are in the first row of matrices in column
-        // and j-index belongs to first matrix
-        // go to the next matrix in a row
-        if (row < boxSize) {
-            if (column < boxSize) {
-                column = boxSize;
-            }
-        // When we are between first and last row of matrices in column
-        } else if (row < boardSize - boxSize) {
-            // Check if we are in diagonal matrix
-            // if so go to the next
-            if (column == boxSize) {
-                column += boxSize;
-            }
-        // When we are in the last row of matrices in column
-        } else {
-            // When we are in the last matrix in last row.
-            // go to next row and start over
-            if (column == boardSize - boxSize) {
+        if (row >= boardSize) {
+            return true;
+        }
+
+        // Search for en empty cell
+        while (board[row][column] != 0) {
+            column++;
+            if (column >= boardSize) {
                 row += 1;
                 column = 0;
-                // beyond the board
-                if (row >= boardSize) {
-                    return true;
-                }
+            }
+            if (row >= boardSize) {
+                return true;
             }
         }
 
