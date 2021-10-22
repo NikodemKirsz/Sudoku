@@ -5,12 +5,32 @@ import org.junit.jupiter.api.Test;
 
 public class SudokuBoardTest {
 
-    public SudokuBoardTest() {
+    @Test
+    void solveSudokuTest() {
+        final var sudokuBoards = new SudokuBoard[4];
+
+        boolean areAllValid = true;
+        for(var sb : sudokuBoards) {
+            int[][] validBoard = new SudokuBoard().getBoard();
+            sb = new SudokuBoard(validBoard);
+            sb.fillBoard();
+            boolean isSudokuValid = true;
+            for (int row = 0; row < 9; row++) {
+                for (int column = 0; column < 9; column++) {
+                    int validNumber = validBoard[row][column];
+                    validBoard[row][column] = 0;
+                    isSudokuValid &= sb.isValid(row, column, validNumber);
+                    validBoard[row][column] = validNumber;
+                }
+            }
+            areAllValid &= isSudokuValid;
+        }
+        assertTrue(areAllValid);
     }
 
     @Test
-    public void printBoardOut() {
-        SudokuBoard sudoku = new SudokuBoard();
+    void printBoardOut() {
+        var sudoku = new SudokuBoard();
         sudoku.fillBoard();
         sudoku.getBoard()[0][0] = 0;
         sudoku.getBoard()[1][1] = 0;
@@ -19,11 +39,11 @@ public class SudokuBoardTest {
     }
 
     @Test
-    public void differentBoardsTest() {
+    void differentBoardsTest() {
         int N = 9;
-        SudokuBoard board1 = new SudokuBoard();
+        var board1 = new SudokuBoard();
         board1.fillBoard();
-        SudokuBoard board2 = new SudokuBoard();
+        var board2 = new SudokuBoard();
         board2.fillBoard();
 
         boolean different_boards = false;
@@ -42,15 +62,15 @@ public class SudokuBoardTest {
     }
 
     @Test
-    public void getBoardTest() {
-        SudokuBoard sudoku = new SudokuBoard();
+    void getBoardTest() {
+        var sudoku = new SudokuBoard();
         sudoku.fillBoard();
         sudoku.getBoard()[0][0] = 0;
         assertNotEquals(sudoku.getBoard()[0][0],0);
     }
 
     @Test
-    public void isValidTest() {
+    void isValidTest() {
         final int N = 9;
 
         int[][] validBoard;
@@ -66,7 +86,7 @@ public class SudokuBoardTest {
                     {4, 9, 5, 6, 1, 2, 7, 8, 3},
                     {7, 1, 2, 8, 4, 3, 5, 6, 9}
                 };
-        SudokuBoard validSudoku = new SudokuBoard(validBoard);
+        var validSudoku = new SudokuBoard(validBoard);
         boolean isSudokuValid = true;
         for (int row = 0; row < N; row++) {
             for (int column = 0; column < N; column++) {
@@ -91,7 +111,7 @@ public class SudokuBoardTest {
                         {4, 9, 5, 6, 1, 2, 7, 8, 3},
                         {7, 1, 2, 8, 4, 3, 5, 6, 9}
                 };
-        SudokuBoard invalidSudoku = new SudokuBoard(invalidBoard);
+        var invalidSudoku = new SudokuBoard(invalidBoard);
         for (int row = 0; row < N; row++) {
             for (int column = 0; column < N; column++) {
                 int validNumber = invalidBoard[row][column];

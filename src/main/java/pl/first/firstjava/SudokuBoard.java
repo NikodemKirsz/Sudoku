@@ -9,17 +9,13 @@ public class SudokuBoard {
     private final int boardSize;
     private final int boxSize; // square root of N
     private final Random random;
-    // We make private field for class objects
-    // implementing Interface Sudoku Solver.
     private final SudokuSolver sudokuSolver;
 
-    // Constructor
     SudokuBoard() {
         this.boardSize = 9;
         this.boxSize = 3;
         this.random = new Random();
         this.board = new int[boardSize][boardSize];
-        // We assign a proper class instance to sudokuSolver
         sudokuSolver = new BacktrackingSudokuSolver();
     }
 
@@ -34,11 +30,17 @@ public class SudokuBoard {
         sudokuSolver = new BacktrackingSudokuSolver();
     }
 
-    private void solveGame() {
-        // We call a method solve
+    public void solveGame() {
         sudokuSolver.solve(this);
     }
 
+    public int getBoardSize() {
+        return this.boardSize;
+    }
+
+    public int getBoxSize() {
+        return this.boxSize;
+    }
 
     public int[][] getBoard() {
         int[][] boardCopy;
@@ -89,13 +91,9 @@ public class SudokuBoard {
             column = 0;
         }
 
-        if (row >= boardSize) {
-            return true;
-        }
-
         // Search for en empty cell
         while (board[row][column] != 0) {
-            column++;
+            column += 1;
             if (column >= boardSize) {
                 row += 1;
                 column = 0;
@@ -116,28 +114,6 @@ public class SudokuBoard {
             }
         }
         return false; // triggers backtracking
-    }
-
-    private void findEmptyCell() {
-        int row;
-        int col;
-        boolean isEmpty = true;
-        for (int i = 0; i < boardSize; i++) {
-            for (int j = 0; j < boardSize; j++) {
-                if (board[i][j] == 0) {
-                    row = i;
-                    col = j;
-
-                    // We still have some remaining
-                    // missing values in Sudoku
-                    isEmpty = false;
-                    break;
-                }
-            }
-            if (!isEmpty) {
-                break;
-            }
-        }
     }
 
     // Random generator
