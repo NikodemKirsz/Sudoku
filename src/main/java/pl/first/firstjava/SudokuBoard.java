@@ -19,11 +19,17 @@ public class SudokuBoard {
         sudokuSolver = new BacktrackingSudokuSolver();
     }
 
-    SudokuBoard(int[][] sudokuBoard) {
+    SudokuBoard(int[][] givenBoard) {
         this.boardSize = 9;
         this.boxSize = 3;
         this.random = new Random();
-        this.board = sudokuBoard;
+        this.board = new int[boardSize][boardSize];
+        for (int row = 0; row < boardSize; row++) {
+            for (int column = 0; column < boardSize; column++)
+            {
+                this.board[row][column] = givenBoard[row][column];
+            }
+        }
         sudokuSolver = new BacktrackingSudokuSolver();
     }
 
@@ -128,9 +134,13 @@ public class SudokuBoard {
 
     // Check if safe to put in cell
     public boolean isValid(int i, int j, int num) {
-        return (unUsedInRow(i, num)
+        int temp = board[i][j];
+        board[i][j] = -1;
+        boolean isUnused = (unUsedInRow(i, num)
                 && unUsedInColumn(j, num)
                 && unUsedInBox(i - i % boxSize, j - j % boxSize, num));
+        board[i][j] = temp;
+        return isUnused;
     }
 
     // by doing [i - i % SRN][j - j % SRN] we are always getting first cell of matrix

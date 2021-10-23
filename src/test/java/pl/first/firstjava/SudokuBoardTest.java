@@ -7,20 +7,21 @@ public class SudokuBoardTest {
 
     @Test
     void solveSudokuTest() {
-        final var sudokuBoards = new SudokuBoard[4];
+        final var sudokuBoards = new SudokuBoard[5];
 
         boolean areAllValid = true;
         for(var sb : sudokuBoards) {
-            int[][] validBoard = new SudokuBoard().getBoard();
+            var validSudokuBoard = new SudokuBoard();
+            validSudokuBoard.fillBoard();
+            int[][] validBoard = validSudokuBoard.getBoard();
+
             sb = new SudokuBoard(validBoard);
-            sb.fillBoard();
+
             boolean isSudokuValid = true;
             for (int row = 0; row < 9; row++) {
                 for (int column = 0; column < 9; column++) {
                     int validNumber = validBoard[row][column];
-                    validBoard[row][column] = 0;
                     isSudokuValid &= sb.isValid(row, column, validNumber);
-                    validBoard[row][column] = validNumber;
                 }
             }
             areAllValid &= isSudokuValid;
@@ -91,9 +92,7 @@ public class SudokuBoardTest {
         for (int row = 0; row < N; row++) {
             for (int column = 0; column < N; column++) {
                 int validNumber = validBoard[row][column];
-                validBoard[row][column] = 0;
                 isSudokuValid &= validSudoku.isValid(row, column, validNumber);
-                validBoard[row][column] = validNumber;
             }
         }
         assertTrue(isSudokuValid);
@@ -115,9 +114,7 @@ public class SudokuBoardTest {
         for (int row = 0; row < N; row++) {
             for (int column = 0; column < N; column++) {
                 int validNumber = invalidBoard[row][column];
-                invalidBoard[row][column] = 0;
                 isSudokuValid &= invalidSudoku.isValid(row, column, validNumber);
-                invalidBoard[row][column] = validNumber;
             }
         }
         assertFalse(isSudokuValid);
