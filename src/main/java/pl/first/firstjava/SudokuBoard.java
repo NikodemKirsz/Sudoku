@@ -24,9 +24,6 @@ public class SudokuBoard {
         this.boxSize = 3;
         this.random = new Random();
         this.board = sudokuBoard;
-        for (int row = 0; row < boardSize; row++) {
-            System.arraycopy(sudokuBoard[row], 0, this.board[row], 0, boardSize);
-        }
         sudokuSolver = new BacktrackingSudokuSolver();
     }
 
