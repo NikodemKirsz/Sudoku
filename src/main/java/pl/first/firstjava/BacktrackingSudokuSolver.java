@@ -4,7 +4,7 @@ import java.util.Random;
 
 public class BacktrackingSudokuSolver implements SudokuSolver {
     private final Random random;
-    private int[][] board;
+    private SudokuBoard board;
     private int boardSize;
     private int boxSize;
 
@@ -12,42 +12,12 @@ public class BacktrackingSudokuSolver implements SudokuSolver {
         random = new Random();
     }
 
-    public void solve(SudokuBoard sudokuBoard) {
-        board = sudokuBoard.getBoard();
-        boardSize = sudokuBoard.getBoardSize();
-        boxSize = sudokuBoard.getBoxSize();
+    public void solve(SudokuBoard givenBoard) {
+        board = givenBoard;
+        boardSize = givenBoard.getBoardSize();
+        boxSize = givenBoard.getBoxSize();
 
-        fillBoard();
-    }
-
-    // Board Generator
-    public void fillBoard() {
-        // Fill the diagonal of 3 x 3 matrices
-        fillDiagonal();
-
-        // Fill remaining blocks.
         fillRemaining(0, boxSize);
-    }
-
-    // Fill the diagonal SRN number of SRN x SRN matrices.
-    private void fillDiagonal() {
-        for (int i = 0; i < boardSize; i += boxSize) {
-            fillBox(i, i);
-        }
-    }
-
-    // Fill indicated matrix.
-    private void fillBox(int row, int column) {
-        for (int i = 0; i < boxSize; i++) {
-            for (int j = 0; j < boxSize; j++) {
-                int num;
-                do {
-                    num = getRandomInt();
-                } while (!unUsedInBox(row, column, num));
-
-                board[row + i][column + j] = num;
-            }
-        }
     }
 
     // A recursive function to fill remaining matrix
@@ -60,7 +30,7 @@ public class BacktrackingSudokuSolver implements SudokuSolver {
         }
 
         // Search for en empty cell
-        while (board[row][column] != 0) {
+        while (board.get(row, column) != 0) {
             column += 1;
             if (column >= boardSize) {
                 row += 1;
@@ -73,12 +43,12 @@ public class BacktrackingSudokuSolver implements SudokuSolver {
 
         for (int num = 1; num <= boardSize; num++) {
             if (isValid(row, column, num)) {
-                board[row][column] = num;
+                board.set(row, column, num);
                 // Go to the next cell in a row
                 if (fillRemaining(row, column + 1)) {
                     return true;
                 }
-                board[row][column] = 0;
+                board.set(row, column, 0);
             }
         }
         return false; // triggers backtracking
@@ -96,7 +66,7 @@ public class BacktrackingSudokuSolver implements SudokuSolver {
     // check in the row for existence
     private boolean unUsedInRow(int row, int num) {
         for (int column = 0; column < boardSize; column++) {
-            if (board[row][column] == num) {
+            if (board.get(row, column) == num) {
                 return false;
             }
         }
@@ -106,7 +76,7 @@ public class BacktrackingSudokuSolver implements SudokuSolver {
     // check in the row for existence
     private boolean unUsedInColumn(int column, int num) {
         for (int row = 0; row < boardSize; row++) {
-            if (board[row][column] == num) {
+            if (board.get(row, column) == num) {
                 return false;
             }
         }
@@ -117,7 +87,7 @@ public class BacktrackingSudokuSolver implements SudokuSolver {
     private boolean unUsedInBox(int rowStart, int columnStart, int num) {
         for (int row = 0; row < boxSize; row++) {
             for (int column = 0; column < boxSize; column++) {
-                if (board[rowStart + row][columnStart + column] == num) {
+                if (board.get(rowStart + row, columnStart + column) == num) {
                     return false;
                 }
             }

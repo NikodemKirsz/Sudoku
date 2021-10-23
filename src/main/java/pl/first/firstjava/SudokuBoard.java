@@ -25,8 +25,7 @@ public class SudokuBoard {
         this.random = new Random();
         this.board = new int[boardSize][boardSize];
         for (int row = 0; row < boardSize; row++) {
-            for (int column = 0; column < boardSize; column++)
-            {
+            for (int column = 0; column < boardSize; column++) {
                 this.board[row][column] = givenBoard[row][column];
             }
         }
@@ -35,6 +34,14 @@ public class SudokuBoard {
 
     public void solveGame() {
         sudokuSolver.solve(this);
+    }
+
+    public int get(int x, int y) {
+        return board[x][y];
+    }
+
+    public void set(int x, int y, int value) {
+        board[x][y] = value;
     }
 
     public int getBoardSize() {
@@ -60,7 +67,7 @@ public class SudokuBoard {
         fillDiagonal();
 
         // Fill remaining blocks.
-        fillRemaining(0, boxSize);
+        this.solveGame();
     }
 
     // Fill the diagonal SRN number of SRN x SRN matrices.
@@ -83,40 +90,6 @@ public class SudokuBoard {
                 board[row + i][column + j] = num;
             }
         }
-    }
-
-    // A recursive function to fill remaining matrix
-    private boolean fillRemaining(int row, int column) {
-
-        // Look out for index out of bounds! (╯ ͠° ͟ʖ ͡°)╯
-        if (column >= boardSize) {
-            row += 1;
-            column = 0;
-        }
-
-        // Search for en empty cell
-        while (board[row][column] != 0) {
-            column += 1;
-            if (column >= boardSize) {
-                row += 1;
-                column = 0;
-            }
-            if (row >= boardSize) {
-                return true;
-            }
-        }
-
-        for (int num = 1; num <= boardSize; num++) {
-            if (isValid(row, column, num)) {
-                board[row][column] = num;
-                // Go to the next cell in a row
-                if (fillRemaining(row, column + 1)) {
-                    return true;
-                }
-                board[row][column] = 0;
-            }
-        }
-        return false; // triggers backtracking
     }
 
     // Random generator

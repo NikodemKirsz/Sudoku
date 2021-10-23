@@ -10,9 +10,34 @@
     <name>00_${project.artifactId}-${project.version}</name>
 
     <url>http://maven.apache.org</url>
+
+    <developers>
+        <developer>
+            <id>236559</id>
+            <name>Nikodem Kirsz</name>
+            <email>236559@edu.p.lodz.pl</email>
+        </developer>
+        <developer>
+            <id>236677</id>
+            <name>Oskar Trela</name>
+            <email>236677@edu.p.lodz.pl</email>
+        </developer>
+    </developers>
+
+    <description>RCM</description>
     
     <reporting>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jxr-plugin</artifactId>
+                <version>3.1.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>3.15.0</version>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
