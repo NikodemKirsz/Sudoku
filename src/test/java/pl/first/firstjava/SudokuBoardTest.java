@@ -6,33 +6,9 @@ import org.junit.jupiter.api.Test;
 public class SudokuBoardTest {
 
     @Test
-    void solveSudokuTest() {
-        final var sudokuBoards = new SudokuBoard[5];
-
-        boolean areAllValid = true;
-        for(var sb : sudokuBoards) {
-            var validSudokuBoard = new SudokuBoard();
-            validSudokuBoard.fillBoard();
-            int[][] validBoard = validSudokuBoard.getBoard();
-
-            sb = new SudokuBoard(validBoard);
-
-            boolean isSudokuValid = true;
-            for (int row = 0; row < 9; row++) {
-                for (int column = 0; column < 9; column++) {
-                    int validNumber = validBoard[row][column];
-                    isSudokuValid &= sb.isValid(row, column, validNumber);
-                }
-            }
-            areAllValid &= isSudokuValid;
-        }
-        assertTrue(areAllValid);
-    }
-
-    @Test
     void printBoardOut() {
         var sudoku = new SudokuBoard();
-        sudoku.fillBoard();
+        sudoku.solveGame();
         sudoku.getBoard()[0][0] = 0;
         sudoku.getBoard()[1][1] = 0;
         sudoku.printBoard();
@@ -43,9 +19,9 @@ public class SudokuBoardTest {
     void differentBoardsTest() {
         int N = 9;
         var board1 = new SudokuBoard();
-        board1.fillBoard();
+        board1.solveGame();
         var board2 = new SudokuBoard();
-        board2.fillBoard();
+        board2.solveGame();
 
         boolean different_boards = false;
         for (int i = 0; i < N; i++) {
@@ -65,16 +41,15 @@ public class SudokuBoardTest {
     @Test
     void getBoardTest() {
         var sudoku = new SudokuBoard();
-        sudoku.fillBoard();
         sudoku.getBoard()[0][0] = 0;
         assertNotEquals(sudoku.getBoard()[0][0],0);
     }
 
     @Test
     void isValidTest() {
-        final int N = 9;
-
         int[][] validBoard;
+
+        // valid board test
         validBoard = new int[][]
                 {
                     {5, 6, 1, 2, 3, 8, 4, 9, 7},
@@ -88,17 +63,11 @@ public class SudokuBoardTest {
                     {7, 1, 2, 8, 4, 3, 5, 6, 9}
                 };
         var validSudoku = new SudokuBoard(validBoard);
-        boolean isSudokuValid = true;
-        for (int row = 0; row < N; row++) {
-            for (int column = 0; column < N; column++) {
-                int validNumber = validBoard[row][column];
-                isSudokuValid &= validSudoku.isValid(row, column, validNumber);
-            }
-        }
+        boolean isSudokuValid = validSudoku.isBoardValid();
         assertTrue(isSudokuValid);
 
-        int[][] invalidBoard;
-        invalidBoard = new int[][]
+        // invalid arrays test
+        int[][] invalidBoardRow = new int[][]
                 {
                         {5, 6, 1, 2, 3, 8, 4, 9, 7},
                         {8, 7, 4, 5, 6, 9, 2, 3, 1},
@@ -110,13 +79,41 @@ public class SudokuBoardTest {
                         {4, 9, 5, 6, 1, 2, 7, 8, 3},
                         {7, 1, 2, 8, 4, 3, 5, 6, 9}
                 };
-        var invalidSudoku = new SudokuBoard(invalidBoard);
-        for (int row = 0; row < N; row++) {
-            for (int column = 0; column < N; column++) {
-                int validNumber = invalidBoard[row][column];
-                isSudokuValid &= invalidSudoku.isValid(row, column, validNumber);
-            }
+        int[][] invalidBoardColumn = new int[][]
+                {
+                        {5, 1, 1, 2, 3, 8, 4, 9, 7},
+                        {8, 7, 4, 5, 6, 9, 2, 3, 1},
+                        {2, 3, 9, 4, 7, 1, 6, 5, 8},
+                        {1, 5, 8, 3, 2, 7, 9, 4, 6},
+                        {3, 4, 7, 9, 7, 6, 8, 1, 2},
+                        {9, 2, 6, 1, 8, 4, 3, 7, 5},
+                        {6, 8, 3, 7, 9, 5, 1, 2, 4},
+                        {4, 9, 5, 6, 1, 2, 7, 8, 3},
+                        {7, 1, 2, 8, 4, 3, 5, 6, 9}
+                };
+        int[][] invalidBoardBox = new int[][]
+                {
+                        {1, 1, 1, 2, 3, 8, 4, 9, 7},
+                        {8, 7, 4, 5, 6, 9, 2, 3, 1},
+                        {2, 3, 9, 4, 7, 1, 6, 5, 8},
+                        {1, 5, 8, 3, 2, 7, 9, 4, 6},
+                        {3, 4, 7, 9, 7, 6, 8, 1, 2},
+                        {9, 2, 6, 1, 8, 4, 3, 7, 5},
+                        {6, 8, 3, 7, 9, 5, 1, 2, 4},
+                        {4, 9, 5, 6, 1, 2, 7, 8, 3},
+                        {7, 1, 2, 8, 4, 3, 5, 6, 9}
+                };
+
+        int[][][] invalidBoards = {
+                invalidBoardRow,
+                invalidBoardColumn,
+                invalidBoardBox
+        };
+
+        for (int[][] invalidBoard: invalidBoards) {
+            var invalidSudoku = new SudokuBoard(invalidBoard);
+            isSudokuValid &= invalidSudoku.isBoardValid();
+            assertFalse(isSudokuValid);
         }
-        assertFalse(isSudokuValid);
     }
 }

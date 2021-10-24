@@ -3,13 +3,11 @@ package pl.first.firstjava;
 import java.util.Random;
 
 public class BacktrackingSudokuSolver implements SudokuSolver {
-    private final Random random;
     private SudokuBoard board;
     private int boardSize;
     private int boxSize;
 
     public BacktrackingSudokuSolver() {
-        random = new Random();
     }
 
     public void solve(SudokuBoard givenBoard) {
@@ -56,9 +54,13 @@ public class BacktrackingSudokuSolver implements SudokuSolver {
 
     // Check if safe to put in cell
     public boolean isValid(int i, int j, int num) {
-        return (unUsedInRow(i, num)
+        int temp = board.get(i, j);
+        board.set(i, j, -1);
+        boolean isUnused = (unUsedInRow(i, num)
                 && unUsedInColumn(j, num)
                 && unUsedInBox(i - i % boxSize, j - j % boxSize, num));
+        board.set(i, j, temp);
+        return isUnused;
     }
 
     // by doing [i - i % SRN][j - j % SRN] we are always getting first cell of matrix
@@ -93,18 +95,5 @@ public class BacktrackingSudokuSolver implements SudokuSolver {
             }
         }
         return true;
-    }
-
-    // Random generator
-    private int getRandomInt() {
-        return getRandomInt(boardSize);
-    }
-
-    private int getRandomInt(int max) {
-        return getRandomInt(max, 1);
-    }
-
-    private int getRandomInt(int max, int min) {
-        return Math.abs(random.nextInt() % max + min);
     }
 }

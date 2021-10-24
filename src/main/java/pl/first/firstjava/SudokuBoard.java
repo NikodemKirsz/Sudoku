@@ -17,6 +17,7 @@ public class SudokuBoard {
         this.random = new Random();
         this.board = new int[boardSize][boardSize];
         sudokuSolver = new BacktrackingSudokuSolver();
+        this.fillDiagonal();
     }
 
     SudokuBoard(int[][] givenBoard) {
@@ -62,15 +63,7 @@ public class SudokuBoard {
     }
 
     // Board Generator
-    public void fillBoard() {
-        // Fill the diagonal of 3 x 3 matrices
-        fillDiagonal();
-
-        // Fill remaining blocks.
-        this.solveGame();
-    }
-
-    // Fill the diagonal SRN number of SRN x SRN matrices.
+    // Fill the diagonal boxSize number of boxSize x boxSize matrices.
     private void fillDiagonal() {
         for (int i = 0; i < boardSize; i += boxSize) {
             // Fill only diagonals (row==column).
@@ -105,8 +98,20 @@ public class SudokuBoard {
         return Math.abs(random.nextInt() % max + min);
     }
 
+    // Checking whole board
+    public boolean isBoardValid() {
+        for (int row = 0; row < boardSize; row++) {
+            for (int column = 0; column < boardSize; column++) {
+                if (!(isValid(row, column, board[row][column]))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     // Check if safe to put in cell
-    public boolean isValid(int i, int j, int num) {
+    private boolean isValid(int i, int j, int num) {
         int temp = board[i][j];
         board[i][j] = -1;
         boolean isUnused = (unUsedInRow(i, num)
