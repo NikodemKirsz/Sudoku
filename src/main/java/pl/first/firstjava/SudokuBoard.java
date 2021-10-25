@@ -12,11 +12,15 @@ public class SudokuBoard {
     private final SudokuSolver sudokuSolver;
 
     SudokuBoard() {
+        this(new BacktrackingSudokuSolver());
+    }
+
+    SudokuBoard(SudokuSolver sudokuSolver) {
         this.boardSize = 9;
         this.boxSize = 3;
         this.random = new Random();
         this.board = new int[boardSize][boardSize];
-        sudokuSolver = new BacktrackingSudokuSolver();
+        this.sudokuSolver = sudokuSolver;
         this.fillDiagonal();
     }
 
