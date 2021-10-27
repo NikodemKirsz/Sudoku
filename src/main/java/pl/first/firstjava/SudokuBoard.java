@@ -6,6 +6,7 @@ import java.util.Random;
 
 public class SudokuBoard {
     private final int[][] board;
+//    private final SudokuField[][] sudokuFields;
     private final int boardSize;
     private final int boxSize; // square root of N
     private final Random random;
@@ -20,6 +21,7 @@ public class SudokuBoard {
         this.boxSize = 3;
         this.random = new Random();
         this.board = new int[boardSize][boardSize];
+//        this.sudokuFields = new SudokuField[boardSize][boardSize];
         this.sudokuSolver = sudokuSolver;
         this.fillDiagonal();
     }
@@ -29,6 +31,7 @@ public class SudokuBoard {
         this.boxSize = 3;
         this.random = new Random();
         this.board = new int[boardSize][boardSize];
+//        this.sudokuFields = new SudokuField[boardSize][boardSize];
         for (int row = 0; row < boardSize; row++) {
             for (int column = 0; column < boardSize; column++) {
                 this.board[row][column] = givenBoard[row][column];
