@@ -67,7 +67,7 @@ public class SudokuBoard {
         int[][] boardCopy;
         boardCopy = new int[boardSize][boardSize];
         for (int row = 0; row < boardSize; row++) {
-            // TODO
+            // TODO idk if this works
 //            System.arraycopy(this.board[row], 0, boardCopy[row], 0, boardSize);
             System.arraycopy(this.sudokuFields[row], 0, boardCopy[row], 0, boardSize);
         }
@@ -82,6 +82,16 @@ public class SudokuBoard {
         }
         sudokuRow.setSudokuFields(sudokuFields);
         return sudokuRow;
+    }
+
+    public SudokuColumn getColumn(int column) {
+        SudokuField[] sudokuFields = new SudokuField[boardSize];
+        SudokuColumn sudokuColumn = new SudokuColumn();
+        for (int i = 0; i < boardSize; i++) {
+            sudokuFields[i].setFieldValue(this.sudokuFields[i][column].getFieldValue());
+        }
+        sudokuColumn.setSudokuFields(sudokuFields);
+        return sudokuColumn;
     }
 
     // Board Generator
