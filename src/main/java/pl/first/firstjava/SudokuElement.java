@@ -18,4 +18,10 @@ public class SudokuElement {
         }
         return true;
     }
+
+    public void setSudokuFields(SudokuField[] sudokuFields) {
+        for (int i = 0; i < size; i++) {
+            this.sudokuFields[i].setFieldValue(sudokuFields[i].getFieldValue());
+        }
+    }
 }
