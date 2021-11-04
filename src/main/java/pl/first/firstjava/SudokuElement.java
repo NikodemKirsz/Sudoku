@@ -6,6 +6,9 @@ public class SudokuElement {
 
     public SudokuElement() {
         this.sudokuFields = new SudokuField[size];
+        for (int j = 0; j < size; j++) {
+            sudokuFields[j] = new SudokuField();
+        }
     }
 
     public boolean verify() {

@@ -70,6 +70,9 @@ public class SudokuBoard {
 
     public SudokuRow getRow(int row) {
         SudokuField[] sudokuFields = new SudokuField[boardSize];
+        for (int j = 0; j < boardSize; j++) {
+            sudokuFields[j] = new SudokuField();
+        }
         SudokuRow sudokuRow = new SudokuRow();
         for (int i = 0; i < boardSize; i++) {
             sudokuFields[i].setFieldValue(this.sudokuFields[row][i].getFieldValue());
@@ -80,6 +83,9 @@ public class SudokuBoard {
 
     public SudokuColumn getColumn(int column) {
         SudokuField[] sudokuFields = new SudokuField[boardSize];
+        for (int j = 0; j < boardSize; j++) {
+            sudokuFields[j] = new SudokuField();
+        }
         SudokuColumn sudokuColumn = new SudokuColumn();
         for (int i = 0; i < boardSize; i++) {
             sudokuFields[i].setFieldValue(this.sudokuFields[i][column].getFieldValue());
@@ -93,6 +99,9 @@ public class SudokuBoard {
         y = y - (y % 3);
         int i = 0;
         SudokuField[] sudokuFields = new SudokuField[boardSize];
+        for (int j = 0; j < boardSize; j++) {
+            sudokuFields[j] = new SudokuField();
+        }
         SudokuBox sudokuBox = new SudokuBox();
         for (int row = 0; row < boxSize; row++) {
             for (int column = 0; column < boxSize; column++) {
@@ -139,6 +148,18 @@ public class SudokuBoard {
 
     private int getRandomInt(int max, int min) {
         return Math.abs(random.nextInt() % max + min);
+    }
+
+    private boolean checkBoard() {
+        boolean isValid = true;
+        for (int i = 0; i < boardSize; i++) {
+            isValid &= getRow(i).verify();
+            isValid &= getColumn(i).verify();
+            for (int j = 0; j < boardSize; j++) {
+                isValid &= getBox(i, j).verify();
+            }
+        }
+        return isValid;
     }
 
     // Checking whole board
