@@ -1,6 +1,6 @@
 package pl.first.firstjava;
 
-public class SudokuBox extends SudokuElement{
+public class SudokuBox extends SudokuElement {
 
     @Override
     public boolean verify() {

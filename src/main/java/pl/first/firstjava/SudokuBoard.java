@@ -5,7 +5,6 @@ import java.lang.System;
 import java.util.Random;
 
 public class SudokuBoard {
-//    private final int[][] board;
     private final SudokuField[][] sudokuFields;
     private final int boardSize;
     private final int boxSize; // square root of N
@@ -20,25 +19,23 @@ public class SudokuBoard {
         this.boardSize = 9;
         this.boxSize = 3;
         this.random = new Random();
-//        this.board = new int[boardSize][boardSize];
         this.sudokuFields = new SudokuField[boardSize][boardSize];
+        for (int x = 0; x < boardSize; x++) {
+            for (int y = 0; y < boardSize; y++) {
+                this.sudokuFields[x][y] = new SudokuField();
+            }
+        }
         this.sudokuSolver = sudokuSolver;
         this.fillDiagonal();
     }
 
     SudokuBoard(int[][] givenBoard) {
-        this.boardSize = 9;
-        this.boxSize = 3;
-        this.random = new Random();
-//        this.board = new int[boardSize][boardSize];
-        this.sudokuFields = new SudokuField[boardSize][boardSize];
+        this();
         for (int row = 0; row < boardSize; row++) {
             for (int column = 0; column < boardSize; column++) {
-//                this.board[row][column] = givenBoard[row][column];
                 this.sudokuFields[row][column].setFieldValue(givenBoard[row][column]);
             }
         }
-        sudokuSolver = new BacktrackingSudokuSolver();
     }
 
     public void solveGame() {
@@ -46,12 +43,10 @@ public class SudokuBoard {
     }
 
     public int get(int x, int y) {
-//        return board[x][y];
         return this.sudokuFields[x][y].getFieldValue();
     }
 
     public void set(int x, int y, int value) {
-//        board[x][y] = value;
         this.sudokuFields[x][y].setFieldValue(value);
     }
 
@@ -63,12 +58,11 @@ public class SudokuBoard {
         return this.boxSize;
     }
 
-    public int[][] getBoard() {
-        int[][] boardCopy;
-        boardCopy = new int[boardSize][boardSize];
+    public SudokuField[][] getBoard() {
+        SudokuField[][] boardCopy;
+        boardCopy = new SudokuField[boardSize][boardSize];
         for (int row = 0; row < boardSize; row++) {
             // TODO idk if this works
-//            System.arraycopy(this.board[row], 0, boardCopy[row], 0, boardSize);
             System.arraycopy(this.sudokuFields[row], 0, boardCopy[row], 0, boardSize);
         }
         return boardCopy;
@@ -94,6 +88,24 @@ public class SudokuBoard {
         return sudokuColumn;
     }
 
+    public SudokuBox getBox(int x, int y) {
+        x = x - (x % 3);
+        y = y - (y % 3);
+        int i = 0;
+        SudokuField[] sudokuFields = new SudokuField[boardSize];
+        SudokuBox sudokuBox = new SudokuBox();
+        for (int row = 0; row < boxSize; row++) {
+            for (int column = 0; column < boxSize; column++) {
+                sudokuFields[i].setFieldValue(
+                        this.sudokuFields[x + row][y + column].getFieldValue());
+                i++;
+                // todo: implement safeguard for overflow
+            }
+        }
+        sudokuBox.setSudokuFields(sudokuFields);
+        return sudokuBox;
+    }
+
     // Board Generator
     // Fill the diagonal boxSize number of boxSize x boxSize matrices.
     private void fillDiagonal() {
@@ -111,9 +123,7 @@ public class SudokuBoard {
                 do {
                     num = getRandomInt();
                 } while (!unUsedInBox(row, column, num));
-
-//                board[row + i][column + j] = num;
-                this.sudokuFields[row + 1][column + j].setFieldValue(num);
+                this.sudokuFields[row + i][column + j].setFieldValue(num);
             }
         }
     }
@@ -135,7 +145,6 @@ public class SudokuBoard {
     public boolean isBoardValid() {
         for (int row = 0; row < boardSize; row++) {
             for (int column = 0; column < boardSize; column++) {
-//                if (!(isValid(row, column, board[row][column]))) {
                 if (!(isValid(row, column, this.sudokuFields[row][column].getFieldValue()))) {
                     return false;
                 }
@@ -146,14 +155,11 @@ public class SudokuBoard {
 
     // Check if safe to put in cell
     private boolean isValid(int i, int j, int num) {
-//        int temp = board[i][j];
-//        board[i][j] = -1;
         int temp = this.sudokuFields[i][j].getFieldValue();
         this.sudokuFields[i][j].setFieldValue(-1);
         boolean isUnused = (unUsedInRow(i, num)
                 && unUsedInColumn(j, num)
                 && unUsedInBox(i - i % boxSize, j - j % boxSize, num));
-//        board[i][j] = temp;
         this.sudokuFields[i][j].setFieldValue(temp);
         return isUnused;
     }
@@ -163,7 +169,6 @@ public class SudokuBoard {
     // check in the row for existence
     private boolean unUsedInRow(int row, int num) {
         for (int column = 0; column < boardSize; column++) {
-//            if (board[row][column] == num) {
             if (this.sudokuFields[row][column].getFieldValue() == num) {
                 return false;
             }
@@ -174,7 +179,6 @@ public class SudokuBoard {
     // check in the row for existence
     private boolean unUsedInColumn(int column, int num) {
         for (int row = 0; row < boardSize; row++) {
-//            if (board[row][column] == num) {
             if (this.sudokuFields[row][column].getFieldValue() == num) {
                 return false;
             }
@@ -186,8 +190,8 @@ public class SudokuBoard {
     private boolean unUsedInBox(int rowStart, int columnStart, int num) {
         for (int row = 0; row < boxSize; row++) {
             for (int column = 0; column < boxSize; column++) {
-//                if (board[rowStart + row][columnStart + column] == num) {
-                if (this.sudokuFields[rowStart + row][columnStart + column].getFieldValue() == num) {
+                if (this.sudokuFields[rowStart + row][columnStart + column]
+                        .getFieldValue() == num) {
                     return false;
                 }
             }
@@ -199,7 +203,6 @@ public class SudokuBoard {
     public void printBoard() {
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
-//                System.out.print(board[i][j] + "\t");
                 System.out.print(this.sudokuFields[i][j].getFieldValue() + "\t");
             }
             System.out.println();

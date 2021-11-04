@@ -13,11 +13,12 @@ class BacktrackingSudokuSolverTest {
 
         boolean areAllValid = true;
         for(var sb : sudokuBoards) {
-            var validSudokuBoard = new SudokuBoard();
-            sudokuSolver.solve(validSudokuBoard);
-            int[][] validBoard = validSudokuBoard.getBoard();
-
-            sb = new SudokuBoard(validBoard);
+            sb = new SudokuBoard();
+            sudokuSolver.solve(sb);
+            // todo: check if this is ok
+//            int[][] validBoard = validSudokuBoard.getBoard();
+//
+//            sb = new SudokuBoard(validBoard);
 
             boolean isSudokuValid = true;
             if (!(sb.isBoardValid())) {

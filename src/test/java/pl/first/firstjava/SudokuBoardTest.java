@@ -9,8 +9,8 @@ public class SudokuBoardTest {
     void printBoardOut() {
         var sudoku = new SudokuBoard();
         sudoku.solveGame();
-        sudoku.getBoard()[0][0] = 0;
-        sudoku.getBoard()[1][1] = 0;
+        sudoku.getBoard()[0][0].setFieldValue(0);
+        sudoku.getBoard()[1][1].setFieldValue(0);
         sudoku.printBoard();
         assertEquals(1,1);
     }
@@ -41,7 +41,7 @@ public class SudokuBoardTest {
     @Test
     void getBoardTest() {
         var sudoku = new SudokuBoard();
-        sudoku.getBoard()[0][0] = 0;
+        sudoku.getBoard()[0][0].setFieldValue(0);
         assertNotEquals(sudoku.getBoard()[0][0],0);
     }
 
