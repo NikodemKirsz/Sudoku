@@ -1,7 +1,7 @@
 package pl.first.firstjava;
 
 public class SudokuElement {
-    private SudokuField[] sudokuFields;
+    private final SudokuField[] sudokuFields;
     private final int size = 9;
 
     public SudokuElement() {

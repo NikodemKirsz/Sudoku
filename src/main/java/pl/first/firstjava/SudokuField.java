@@ -12,6 +12,8 @@ public class SudokuField {
     }
 
     public void setFieldValue(int value) {
-        this.value = value;
+        if (value >= 0 && value <= 9) {
+            this.value = value;
+        }
     }
 }

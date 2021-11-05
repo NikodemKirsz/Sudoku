@@ -59,8 +59,7 @@ public class SudokuBoard {
     }
 
     public SudokuField[][] getBoard() {
-        SudokuField[][] boardCopy;
-        boardCopy = new SudokuField[boardSize][boardSize];
+        SudokuField[][] boardCopy = new SudokuField[boardSize][boardSize];
         for (int row = 0; row < boardSize; row++) {
             // TODO idk if this works
             System.arraycopy(this.sudokuFields[row], 0, boardCopy[row], 0, boardSize);
@@ -106,7 +105,8 @@ public class SudokuBoard {
         for (int row = 0; row < boxSize; row++) {
             for (int column = 0; column < boxSize; column++) {
                 sudokuFields[i].setFieldValue(
-                        this.sudokuFields[x + row][y + column].getFieldValue());
+                        this.sudokuFields[x + row][y + column].getFieldValue()
+                );
                 i++;
                 // todo: implement safeguard for overflow
             }
