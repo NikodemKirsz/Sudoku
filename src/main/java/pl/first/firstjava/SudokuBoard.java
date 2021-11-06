@@ -177,7 +177,7 @@ public class SudokuBoard {
     // Check if safe to put in cell
     private boolean isValid(int i, int j, int num) {
         int temp = this.sudokuFields[i][j].getFieldValue();
-        this.sudokuFields[i][j].setFieldValue(-1);
+        this.sudokuFields[i][j].setFieldValue(0);
         boolean isUnused = (unUsedInRow(i, num)
                 && unUsedInColumn(j, num)
                 && unUsedInBox(i - i % boxSize, j - j % boxSize, num));
