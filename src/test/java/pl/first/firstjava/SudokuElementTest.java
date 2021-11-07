@@ -73,7 +73,7 @@ class SudokuElementTest {
         sudokuElement2.setSudokuFields(sudokuFields);
 
         assertTrue(SudokuElement.equals(sudokuElement1, sudokuElement2));
-        assertTrue(sudokuElement1.eqauls(sudokuElement2));
+        assertTrue(sudokuElement1.equals(sudokuElement2));
 
         var differentSudokuFields = new SudokuField[size];
         for (var i = 0; i < size; i++)
@@ -84,6 +84,6 @@ class SudokuElementTest {
         sudokuElement2.setSudokuFields(differentSudokuFields);
 
         assertFalse(SudokuElement.equals(sudokuElement1, sudokuElement2));
-        assertFalse(sudokuElement1.eqauls(sudokuElement2));
+        assertFalse(sudokuElement1.equals(sudokuElement2));
     }
 }

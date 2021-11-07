@@ -32,7 +32,7 @@ public class SudokuElement {
         return this.sudokuFields.clone();
     }
 
-    public boolean eqauls(SudokuElement rhs) {
+    public boolean equals(SudokuElement rhs) {
         return equals(this, rhs);
     }
 
