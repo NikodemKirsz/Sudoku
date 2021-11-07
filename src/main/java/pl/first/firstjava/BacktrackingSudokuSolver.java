@@ -55,7 +55,7 @@ public class BacktrackingSudokuSolver implements SudokuSolver {
     // Check if safe to put in cell
     public boolean isValid(int i, int j, int num) {
         int temp = board.get(i, j);
-        board.set(i, j, -1);
+        board.set(i, j, 0);
         boolean isUnused = (unUsedInRow(i, num)
                 && unUsedInColumn(j, num)
                 && unUsedInBox(i - i % boxSize, j - j % boxSize, num));
