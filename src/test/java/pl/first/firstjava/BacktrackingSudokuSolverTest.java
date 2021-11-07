@@ -20,11 +20,7 @@ class BacktrackingSudokuSolverTest {
 //
 //            sb = new SudokuBoard(validBoard);
 
-            boolean isSudokuValid = true;
-            if (!(sb.isBoardValid())) {
-                isSudokuValid = false;
-            }
-            areAllValid &= isSudokuValid;
+            areAllValid &=  sb.isBoardValid();
         }
         assertTrue(areAllValid);
     }
@@ -63,14 +59,14 @@ class BacktrackingSudokuSolverTest {
                     break;
                 }
             }
-            if (!(isSudokuValid)) {
+            if (!isSudokuValid) {
                 break;
             }
         }
         assertTrue(isSudokuValid);
 
         // invalid arrays test
-        int[][] invalidBoardRow = new int[][]
+        var invalidBoardRow = new int[][]
                 {
                         {5, 6, 1, 2, 3, 8, 4, 9, 7},
                         {8, 7, 4, 5, 6, 9, 2, 3, 1},
@@ -82,7 +78,7 @@ class BacktrackingSudokuSolverTest {
                         {4, 9, 5, 6, 1, 2, 7, 8, 3},
                         {7, 1, 2, 8, 4, 3, 5, 6, 9}
                 };
-        int[][] invalidBoardColumn = new int[][]
+        var invalidBoardColumn = new int[][]
                 {
                         {5, 1, 1, 2, 3, 8, 4, 9, 7},
                         {8, 7, 4, 5, 6, 9, 2, 3, 1},
@@ -94,7 +90,7 @@ class BacktrackingSudokuSolverTest {
                         {4, 9, 5, 6, 1, 2, 7, 8, 3},
                         {7, 1, 2, 8, 4, 3, 5, 6, 9}
                 };
-        int[][] invalidBoardBox = new int[][]
+        var invalidBoardBox = new int[][]
                 {
                         {5, 6, 1, 2, 3, 8, 4, 9, 7},
                         {8, 7, 4, 5, 6, 9, 2, 3, 1},
@@ -114,7 +110,7 @@ class BacktrackingSudokuSolverTest {
         };
 
 
-        for (int[][] invalidBoard: invalidBoards) {
+        for (var invalidBoard: invalidBoards) {
             var invalidSudoku = new SudokuBoard(invalidBoard);
             sudokuSolver.solve(invalidSudoku);
             isSudokuValid = true;
@@ -126,7 +122,7 @@ class BacktrackingSudokuSolverTest {
                         break;
                     }
                 }
-                if (!(isSudokuValid)) {
+                if (!isSudokuValid) {
                     break;
                 }
             }

@@ -67,7 +67,7 @@ public class SudokuBoardTest {
         assertTrue(isSudokuValid);
 
         // invalid arrays test
-        int[][] invalidBoardRow = new int[][]
+        var invalidBoardRow = new int[][]
                 {
                         {5, 6, 1, 2, 3, 8, 4, 9, 7},
                         {8, 7, 4, 5, 6, 9, 2, 3, 1},
@@ -79,7 +79,7 @@ public class SudokuBoardTest {
                         {4, 9, 5, 6, 1, 2, 7, 8, 3},
                         {7, 1, 2, 8, 4, 3, 5, 6, 9}
                 };
-        int[][] invalidBoardColumn = new int[][]
+        var invalidBoardColumn = new int[][]
                 {
                         {5, 1, 1, 2, 3, 8, 4, 9, 7},
                         {8, 7, 4, 5, 6, 9, 2, 3, 1},
@@ -91,7 +91,7 @@ public class SudokuBoardTest {
                         {4, 9, 5, 6, 1, 2, 7, 8, 3},
                         {7, 1, 2, 8, 4, 3, 5, 6, 9}
                 };
-        int[][] invalidBoardBox = new int[][]
+        var invalidBoardBox = new int[][]
                 {
                         {5, 6, 1, 2, 3, 8, 4, 9, 7},
                         {8, 7, 4, 5, 6, 9, 2, 3, 1},
@@ -110,7 +110,7 @@ public class SudokuBoardTest {
                 invalidBoardBox
         };
 
-        for (int[][] invalidBoard: invalidBoards) {
+        for (var invalidBoard : invalidBoards) {
             var invalidSudoku = new SudokuBoard(invalidBoard);
             isSudokuValid &= invalidSudoku.isBoardValid();
             assertFalse(isSudokuValid);
