@@ -4,18 +4,19 @@ import java.lang.Math;
 import java.lang.System;
 import java.util.Random;
 
-public class SudokuBoard {
+public class SudokuBoard implements IObservable {
     private final SudokuField[][] sudokuFields;
     private final int boardSize;
     private final int boxSize; // square root of N
     private final Random random;
     private final SudokuSolver sudokuSolver;
+    private final IObserver observer;
 
     SudokuBoard() {
-        this(new BacktrackingSudokuSolver());
+        this(new BacktrackingSudokuSolver(), new SudokuPlayer());
     }
 
-    SudokuBoard(SudokuSolver sudokuSolver) {
+    SudokuBoard(SudokuSolver sudokuSolver, IObserver observer) {
         this.boardSize = 9;
         this.boxSize = 3;
         this.random = new Random();
@@ -25,10 +26,12 @@ public class SudokuBoard {
                 this.sudokuFields[x][y] = new SudokuField();
             }
         }
+        this.observer = observer;
         this.sudokuSolver = sudokuSolver;
         this.fillDiagonal();
     }
 
+    //
     SudokuBoard(int[][] givenBoard) {
         this();
         for (int row = 0; row < boardSize; row++) {
@@ -42,12 +45,22 @@ public class SudokuBoard {
         sudokuSolver.solve(this);
     }
 
+    public void notifyObserver() {
+        if (observer != null) {
+            boolean isValid = isBoardValid();
+            observer.onValueChanged(isValid);
+        }
+    }
+
     public int get(int x, int y) {
         return this.sudokuFields[x][y].getFieldValue();
     }
 
     public void set(int x, int y, int value) {
-        this.sudokuFields[x][y].setFieldValue(value);
+        boolean wasChanged = this.sudokuFields[x][y].setFieldValue(value);
+        if (wasChanged) {
+            notifyObserver();
+        }
     }
 
     public int getBoardSize() {
@@ -158,7 +171,7 @@ public class SudokuBoard {
         return Math.abs(random.nextInt() % max + min);
     }
 
-    /*private boolean checkBoard() {
+    private boolean checkBoard() {
         boolean isValid = true;
         for (int i = 0; i < boardSize; i++) {
             isValid &= getRow(i).verify();
@@ -168,51 +181,18 @@ public class SudokuBoard {
             }
         }
         return isValid;
-    }*/
+    }
 
     // Checking whole board
     public boolean isBoardValid() {
-        for (int row = 0; row < boardSize; row++) {
+        /*for (int row = 0; row < boardSize; row++) {
             for (int column = 0; column < boardSize; column++) {
                 if (!(isValid(row, column, this.sudokuFields[row][column].getFieldValue()))) {
                     return false;
                 }
             }
-        }
-        return true;
-    }
-
-    // Check if safe to put in cell
-    private boolean isValid(int i, int j, int num) {
-        int temp = this.sudokuFields[i][j].getFieldValue();
-        this.sudokuFields[i][j].setFieldValue(0);
-        boolean isUnused = (unUsedInRow(i, num)
-                && unUsedInColumn(j, num)
-                && unUsedInBox(i - i % boxSize, j - j % boxSize, num));
-        this.sudokuFields[i][j].setFieldValue(temp);
-        return isUnused;
-    }
-
-    // by doing [i - i % SRN][j - j % SRN] we are always getting first cell of matrix
-
-    // check in the row for existence
-    private boolean unUsedInRow(int row, int num) {
-        for (int column = 0; column < boardSize; column++) {
-            if (this.sudokuFields[row][column].getFieldValue() == num) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    // check in the row for existence
-    private boolean unUsedInColumn(int column, int num) {
-        for (int row = 0; row < boardSize; row++) {
-            if (this.sudokuFields[row][column].getFieldValue() == num) {
-                return false;
-            }
-        }
-        return true;
+        }*/
+        return checkBoard();
     }
 
     // Returns false if given 3 x 3 block contains num.
