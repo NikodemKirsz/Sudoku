@@ -68,40 +68,46 @@ public class SudokuBoard {
     }
 
     public SudokuRow getRow(int row) {
-        SudokuField[] sudokuFields = new SudokuField[boardSize];
+        var sudokuFields = new SudokuField[boardSize];
         for (int j = 0; j < boardSize; j++) {
             sudokuFields[j] = new SudokuField();
         }
-        SudokuRow sudokuRow = new SudokuRow();
+
+        var sudokuRow = new SudokuRow();
         for (int i = 0; i < boardSize; i++) {
             sudokuFields[i].setFieldValue(this.sudokuFields[row][i].getFieldValue());
         }
         sudokuRow.setSudokuFields(sudokuFields);
+
         return sudokuRow;
     }
 
     public SudokuColumn getColumn(int column) {
-        SudokuField[] sudokuFields = new SudokuField[boardSize];
+        var sudokuFields = new SudokuField[boardSize];
         for (int j = 0; j < boardSize; j++) {
             sudokuFields[j] = new SudokuField();
         }
-        SudokuColumn sudokuColumn = new SudokuColumn();
+
+        var sudokuColumn = new SudokuColumn();
         for (int i = 0; i < boardSize; i++) {
             sudokuFields[i].setFieldValue(this.sudokuFields[i][column].getFieldValue());
         }
         sudokuColumn.setSudokuFields(sudokuFields);
+
         return sudokuColumn;
     }
 
     public SudokuBox getBox(int x, int y) {
-        x = x - (x % 3);
-        y = y - (y % 3);
-        int i = 0;
-        SudokuField[] sudokuFields = new SudokuField[boardSize];
+        x -= (x % 3);
+        y -= (y % 3);
+
+        var sudokuFields = new SudokuField[boardSize];
         for (int j = 0; j < boardSize; j++) {
             sudokuFields[j] = new SudokuField();
         }
-        SudokuBox sudokuBox = new SudokuBox();
+
+        var sudokuBox = new SudokuBox();
+        int i = 0;
         for (int row = 0; row < boxSize; row++) {
             for (int column = 0; column < boxSize; column++) {
                 sudokuFields[i].setFieldValue(
@@ -109,9 +115,11 @@ public class SudokuBoard {
                 );
                 i++;
                 // todo: implement safeguard for overflow
+                // Ale po co to komu.
             }
         }
         sudokuBox.setSudokuFields(sudokuFields);
+
         return sudokuBox;
     }
 
@@ -150,7 +158,7 @@ public class SudokuBoard {
         return Math.abs(random.nextInt() % max + min);
     }
 
-    private boolean checkBoard() {
+    /*private boolean checkBoard() {
         boolean isValid = true;
         for (int i = 0; i < boardSize; i++) {
             isValid &= getRow(i).verify();
@@ -160,7 +168,7 @@ public class SudokuBoard {
             }
         }
         return isValid;
-    }
+    }*/
 
     // Checking whole board
     public boolean isBoardValid() {

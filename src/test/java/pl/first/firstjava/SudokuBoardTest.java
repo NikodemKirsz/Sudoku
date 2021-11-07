@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 public class SudokuBoardTest {
+    private final int size = 9;
 
     @Test
     void printBoardOut() {
@@ -17,15 +18,14 @@ public class SudokuBoardTest {
 
     @Test
     void differentBoardsTest() {
-        int N = 9;
         var board1 = new SudokuBoard();
         board1.solveGame();
         var board2 = new SudokuBoard();
         board2.solveGame();
 
         boolean different_boards = false;
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
                 if(!(board1.getBoard()[i][j] == board2.getBoard()[i][j])) {
                     different_boards = true;
                     break;
@@ -47,10 +47,7 @@ public class SudokuBoardTest {
 
     @Test
     void isValidTest() {
-        int[][] validBoard;
-
-        // valid board test
-        validBoard = new int[][]
+        int[][] validBoard = validBoard = new int[][]
                 {
                     {5, 6, 1, 2, 3, 8, 4, 9, 7},
                     {8, 7, 4, 5, 6, 9, 2, 3, 1},
@@ -115,5 +112,98 @@ public class SudokuBoardTest {
             isSudokuValid &= invalidSudoku.isBoardValid();
             assertFalse(isSudokuValid);
         }
+    }
+
+    @Test
+    void getRowTest() {
+        var firstRow = new int[] {5, 6, 1, 2, 3, 8, 4, 9, 7};
+        var validBoard = new int[][]
+                {
+                        firstRow,
+                        {8, 7, 4, 5, 6, 9, 2, 3, 1},
+                        {2, 3, 5, 4, 7, 1, 6, 5, 8},
+                        {1, 5, 8, 3, 2, 7, 9, 4, 6},
+                        {3, 4, 7, 9, 7, 6, 8, 1, 2},
+                        {9, 2, 6, 1, 8, 4, 3, 7, 5},
+                        {6, 8, 3, 7, 9, 5, 1, 2, 4},
+                        {4, 9, 5, 6, 1, 2, 7, 8, 3},
+                        {7, 1, 2, 8, 4, 3, 5, 6, 9}
+                };
+        var sudokuBoard = new SudokuBoard(validBoard);
+
+        var sudokuFieldsRowFirst = new SudokuField[size];
+        for (int i = 0; i < size; i++) {
+            sudokuFieldsRowFirst[i] = new SudokuField();
+            sudokuFieldsRowFirst[i].setFieldValue(firstRow[i]);
+        }
+
+        var sudokuRowFirst = new SudokuRow();
+        sudokuRowFirst.setSudokuFields(sudokuFieldsRowFirst);
+
+        assertTrue(SudokuElement.equals(sudokuBoard.getRow(0), sudokuRowFirst));
+        assertFalse(SudokuElement.equals(sudokuBoard.getRow(1), sudokuRowFirst));
+    }
+
+    @Test
+    void getColumnTest() {
+        var firstColumn = new int[] {5, 8, 2, 1, 3, 9, 6, 4, 7};
+        var validBoard = new int[][]
+                {
+                        {firstColumn[0], 6, 1, 2, 3, 8, 4, 9, 7},
+                        {firstColumn[1], 7, 4, 5, 6, 9, 2, 3, 1},
+                        {firstColumn[2], 3, 9, 4, 7, 1, 6, 5, 8},
+                        {firstColumn[3], 5, 8, 3, 2, 7, 9, 4, 6},
+                        {firstColumn[4], 4, 7, 9, 5, 6, 8, 1, 2},
+                        {firstColumn[5], 2, 6, 1, 8, 4, 3, 7, 5},
+                        {firstColumn[6], 8, 3, 7, 9, 5, 1, 2, 4},
+                        {firstColumn[7], 9, 5, 6, 1, 2, 7, 8, 3},
+                        {firstColumn[8], 1, 2, 8, 4, 3, 5, 6, 9}
+                };
+        var sudokuBoard = new SudokuBoard(validBoard);
+
+        var sudokuFieldsColumnFirst = new SudokuField[size];
+        for (int i = 0; i < size; i++) {
+            sudokuFieldsColumnFirst[i] = new SudokuField();
+            sudokuFieldsColumnFirst[i].setFieldValue(firstColumn[i]);
+        }
+
+        var sudokuColumnFirst = new SudokuColumn();
+        sudokuColumnFirst.setSudokuFields(sudokuFieldsColumnFirst);
+
+        assertTrue(SudokuElement.equals(sudokuBoard.getColumn(0), sudokuColumnFirst));
+        assertFalse(SudokuElement.equals(sudokuBoard.getColumn(1), sudokuColumnFirst));
+    }
+
+    @Test
+    void getBoxTest() {
+        var firstBox = new int[] {5, 6, 1, 8, 7, 4, 2, 3, 5};
+        var validBoard = new int[][]
+                {
+                        {firstBox[0], firstBox[1], firstBox[2], 2, 3, 8, 4, 9, 7},
+                        {firstBox[3], firstBox[4], firstBox[5], 5, 6, 9, 2, 3, 1},
+                        {firstBox[6], firstBox[7], firstBox[8], 4, 7, 1, 6, 5, 8},
+                        {1, 5, 8, 3, 2, 7, 9, 4, 6},
+                        {3, 4, 7, 9, 7, 6, 8, 1, 2},
+                        {9, 2, 6, 1, 8, 4, 3, 7, 5},
+                        {6, 8, 3, 7, 9, 5, 1, 2, 4},
+                        {4, 9, 5, 6, 1, 2, 7, 8, 3},
+                        {7, 1, 2, 8, 4, 3, 5, 6, 9}
+                };
+        var sudokuBoard = new SudokuBoard(validBoard);
+
+        var sudokuFieldsBoxFirst = new SudokuField[size];
+        for (int i = 0; i < size; i++) {
+            sudokuFieldsBoxFirst[i] = new SudokuField();
+            sudokuFieldsBoxFirst[i].setFieldValue(firstBox[i]);
+        }
+
+        var sudokuBoxFirst = new SudokuBox();
+        sudokuBoxFirst.setSudokuFields(sudokuFieldsBoxFirst);
+
+        assertTrue(SudokuElement.equals(sudokuBoard.getBox(0, 0), sudokuBoxFirst));
+        assertTrue(SudokuElement.equals(sudokuBoard.getBox(2, 0), sudokuBoxFirst));
+        assertTrue(SudokuElement.equals(sudokuBoard.getBox(1, 2), sudokuBoxFirst));
+        assertFalse(SudokuElement.equals(sudokuBoard.getBox(5, 4), sudokuBoxFirst));
+        assertFalse(SudokuElement.equals(sudokuBoard.getBox(0, 8), sudokuBoxFirst));
     }
 }
