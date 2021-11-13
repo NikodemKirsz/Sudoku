@@ -46,14 +46,14 @@ class SudokuElementTest {
         boolean isValid = true;
         for (var i = 0; i < size; i++)
         {
-            isValid &= readSudokuFields[i].getFieldValue() == i;
+            isValid &= readSudokuFields.get(i).getFieldValue() == i;
         }
         assertTrue(isValid);
 
         isValid = true;
         for (var i = 0; i < size; i++)
         {
-            isValid &= readSudokuFields[i].getFieldValue() == (i < size - 1 ? i : 4);
+            isValid &= readSudokuFields.get(i).getFieldValue() == (i < size - 1 ? i : 4);
         }
         assertFalse(isValid);
     }

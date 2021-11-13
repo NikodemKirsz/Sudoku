@@ -15,7 +15,6 @@ class SudokuPlayerTest {
         sudokuBoard.set(0, 0, 4);
         sudokuBoard.set(0, 0, 11);
 
-
         var sudokuBoardWithObserver = new SudokuBoard();
         sudokuBoardWithObserver.solveGame();
 
