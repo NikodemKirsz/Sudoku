@@ -2,6 +2,8 @@ package pl.first.firstjava;
 
 import java.lang.Math;
 import java.lang.System;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 public class SudokuBoard implements IObservable {
@@ -139,20 +141,33 @@ public class SudokuBoard implements IObservable {
     // Board Generator
     // Fill the diagonal boxSize number of boxSize x boxSize matrices.
     private void fillDiagonal() {
-        for (int i = 0; i < boardSize; i += boxSize) {
+        List<SudokuField> sudokuFields;
+        for (int x = 0; x < boardSize; x += boxSize) {
             // Fill only diagonals (row==column).
-            fillBox(i, i);
+            fillBox(x, x);
+
+            sudokuFields = this.getBox(x, x).getSudokuFields();
+            Collections.shuffle(sudokuFields);
+            for (int i = x; i < boxSize + x; i++) {
+                for (int j = x; j < boxSize + x; j++) {
+                    this.sudokuFields[i][j].setFieldValue(
+                            sudokuFields.get((i % 3) * boxSize + (j % 3))
+                                    .getFieldValue()
+                    );
+                }
+            }
         }
     }
 
     // Fill indicated matrix.
     private void fillBox(int row, int column) {
+        int num = 0;
         for (int i = 0; i < boxSize; i++) {
             for (int j = 0; j < boxSize; j++) {
-                int num;
-                do {
-                    num = getRandomInt();
-                } while (!unUsedInBox(row, column, num));
+                num++;
+//                do {
+//                    num = getRandomInt();
+//                } while (!unUsedInBox(row, column, num));
                 this.sudokuFields[row + i][column + j].setFieldValue(num);
             }
         }
