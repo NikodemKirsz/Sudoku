@@ -2,6 +2,7 @@ package pl.first.firstjava;
 
 import java.lang.Math;
 import java.lang.System;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -76,7 +77,6 @@ public class SudokuBoard implements IObservable {
     public SudokuField[][] getBoard() {
         SudokuField[][] boardCopy = new SudokuField[boardSize][boardSize];
         for (int row = 0; row < boardSize; row++) {
-            // TODO idk if this works
             System.arraycopy(this.sudokuFields[row], 0, boardCopy[row], 0, boardSize);
         }
         return boardCopy;
@@ -129,8 +129,6 @@ public class SudokuBoard implements IObservable {
                         this.sudokuFields[x + row][y + column].getFieldValue()
                 );
                 i++;
-                // todo: implement safeguard for overflow
-                // Ale po co to komu.
             }
         }
         sudokuBox.setSudokuFields(sudokuFields);
@@ -145,45 +143,22 @@ public class SudokuBoard implements IObservable {
         for (int x = 0; x < boardSize; x += boxSize) {
             // Fill only diagonals (row==column).
             fillBox(x, x);
-
-            sudokuFields = this.getBox(x, x).getSudokuFields();
-            Collections.shuffle(sudokuFields);
-            for (int i = x; i < boxSize + x; i++) {
-                for (int j = x; j < boxSize + x; j++) {
-                    this.sudokuFields[i][j].setFieldValue(
-                            sudokuFields.get((i % 3) * boxSize + (j % 3))
-                                    .getFieldValue()
-                    );
-                }
-            }
         }
     }
 
     // Fill indicated matrix.
     private void fillBox(int row, int column) {
-        int num = 0;
+        List<Integer> boxFields = Arrays.asList(new Integer[boardSize]);
+        for (int j = 0; j < boardSize; j++) {
+            boxFields.set(j, j + 1);
+        }
+        Collections.shuffle(boxFields);
         for (int i = 0; i < boxSize; i++) {
             for (int j = 0; j < boxSize; j++) {
-                num++;
-//                do {
-//                    num = getRandomInt();
-//                } while (!unUsedInBox(row, column, num));
-                this.sudokuFields[row + i][column + j].setFieldValue(num);
+                this.sudokuFields[row + i][column + j]
+                        .setFieldValue(boxFields.get(i * boxSize + j));
             }
         }
-    }
-
-    // Random generator
-    private int getRandomInt() {
-        return getRandomInt(boardSize);
-    }
-
-    private int getRandomInt(int max) {
-        return getRandomInt(max, 1);
-    }
-
-    private int getRandomInt(int max, int min) {
-        return Math.abs(random.nextInt() % max + min);
     }
 
     private boolean checkBoard() {
@@ -208,19 +183,6 @@ public class SudokuBoard implements IObservable {
             }
         }*/
         return checkBoard();
-    }
-
-    // Returns false if given 3 x 3 block contains num.
-    private boolean unUsedInBox(int rowStart, int columnStart, int num) {
-        for (int row = 0; row < boxSize; row++) {
-            for (int column = 0; column < boxSize; column++) {
-                if (this.sudokuFields[rowStart + row][columnStart + column]
-                        .getFieldValue() == num) {
-                    return false;
-                }
-            }
-        }
-        return true;
     }
 
     // Print board
