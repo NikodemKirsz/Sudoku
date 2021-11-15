@@ -7,6 +7,10 @@
 
 package pl.first.firstjava;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -48,10 +52,6 @@ public class SudokuElement {
         return boardCopy;
     }
 
-    public boolean equals(SudokuElement rhs) {
-        return equals(this, rhs);
-    }
-
     public static boolean equals(SudokuElement lhs, SudokuElement rhs) {
         var lhsFields = lhs.getSudokuFields();
         var rhsFields = rhs.getSudokuFields();
@@ -61,5 +61,30 @@ public class SudokuElement {
             isEqual &= lhsFields.get(i).getFieldValue() == rhsFields.get(i).getFieldValue();
         }
         return isEqual;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (!(o instanceof SudokuElement)) return false;
+
+        SudokuElement that = (SudokuElement) o;
+
+        return new EqualsBuilder().append(getSudokuFields(),
+                that.getSudokuFields()).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(getSudokuFields()).toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("sudokuFields", sudokuFields)
+                .toString();
     }
 }
