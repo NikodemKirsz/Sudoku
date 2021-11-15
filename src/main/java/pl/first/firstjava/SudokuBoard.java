@@ -177,13 +177,6 @@ public class SudokuBoard implements IObservable {
 
     // Checking whole board
     public boolean isBoardValid() {
-        /*for (int row = 0; row < boardSize; row++) {
-            for (int column = 0; column < boardSize; column++) {
-                if (!(isValid(row, column, this.sudokuFields[row][column].getFieldValue()))) {
-                    return false;
-                }
-            }
-        }*/
         return checkBoard();
     }
 

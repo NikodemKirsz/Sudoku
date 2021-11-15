@@ -7,8 +7,6 @@
 
 package pl.first.firstjava;
 
-import java.util.Random;
-
 public class BacktrackingSudokuSolver implements SudokuSolver {
     private SudokuBoard board;
     private int boardSize;

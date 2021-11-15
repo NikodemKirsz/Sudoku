@@ -17,8 +17,6 @@ public class SudokuBoardTest {
     void printBoardOut() {
         var sudoku = new SudokuBoard();
         sudoku.solveGame();
-//        sudoku.getBoard()[0][0].setFieldValue(0);
-//        sudoku.getBoard()[1][1].setFieldValue(0);
         sudoku.printBoard();
         assertEquals(1,1);
     }
@@ -49,12 +47,12 @@ public class SudokuBoardTest {
     void getBoardTest() {
         var sudoku = new SudokuBoard();
         sudoku.getBoard()[0][0].setFieldValue(0);
-        assertNotEquals(sudoku.getBoard()[0][0],0);
+        assertEquals(sudoku.getBoard()[0][0].getFieldValue(),0);
     }
 
     @Test
     void isValidTest() {
-        int[][] validBoard = validBoard = new int[][]
+        int[][] validBoard  = new int[][]
                 {
                         {5, 6, 1, 2, 3, 8, 4, 9, 7},
                         {8, 7, 4, 5, 6, 9, 2, 3, 1},

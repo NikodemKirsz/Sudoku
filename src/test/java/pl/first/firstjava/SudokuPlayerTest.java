@@ -15,7 +15,7 @@ class SudokuPlayerTest {
 
     @Test
     void onValueChanged() {
-        var sudokuBoard = new SudokuBoard(new BacktrackingSudokuSolver(), (IObserver)null);
+        var sudokuBoard = new SudokuBoard(new BacktrackingSudokuSolver(), null);
         sudokuBoard.solveGame();
 
         sudokuBoard.set(0, 0, 0);
