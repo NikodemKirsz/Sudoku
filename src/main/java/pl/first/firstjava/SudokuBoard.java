@@ -7,18 +7,15 @@
 
 package pl.first.firstjava;
 
-import java.lang.Math;
 import java.lang.System;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 public class SudokuBoard implements IObservable {
     private final SudokuField[][] sudokuFields;
     private final int boardSize;
     private final int boxSize; // square root of N
-    private final Random random;
     private final SudokuSolver sudokuSolver;
     private final IObserver observer;
 
@@ -29,7 +26,6 @@ public class SudokuBoard implements IObservable {
     SudokuBoard(SudokuSolver sudokuSolver, IObserver observer) {
         this.boardSize = 9;
         this.boxSize = 3;
-        this.random = new Random();
         this.sudokuFields = new SudokuField[boardSize][boardSize];
         for (int x = 0; x < boardSize; x++) {
             for (int y = 0; y < boardSize; y++) {
@@ -146,7 +142,6 @@ public class SudokuBoard implements IObservable {
     // Board Generator
     // Fill the diagonal boxSize number of boxSize x boxSize matrices.
     private void fillDiagonal() {
-        List<SudokuField> sudokuFields;
         for (int x = 0; x < boardSize; x += boxSize) {
             // Fill only diagonals (row==column).
             fillBox(x, x);
