@@ -67,9 +67,7 @@ public class SudokuElement {
     public boolean equals(Object o) {
         if (this == o) return true;
 
-        if (!(o instanceof SudokuElement)) return false;
-
-        SudokuElement that = (SudokuElement) o;
+        if (!(o instanceof SudokuElement that)) return false;
 
         return new EqualsBuilder().append(getSudokuFields(),
                 that.getSudokuFields()).isEquals();
@@ -78,7 +76,8 @@ public class SudokuElement {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
-                .append(getSudokuFields()).toHashCode();
+                .append(getSudokuFields())
+                .toHashCode();
     }
 
     @Override
