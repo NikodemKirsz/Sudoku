@@ -250,31 +250,13 @@ public class SudokuBoardTest {
                 };
 
         firstSudokuBoard = new SudokuBoard(backtrackingSudokuSolver, observer);
-        for (int i = 0; i < size; i++)
-        {
-            for (int j = 0; j < size; j++)
-            {
-                firstSudokuBoard.set(i, j, arr[i][j]);
-            }
-        }
+        fillSudokuBoard(arr, firstSudokuBoard);
 
         sameSudokuBoard = new SudokuBoard(backtrackingSudokuSolver, observer);
-        for (int i = 0; i < size; i++)
-        {
-            for (int j = 0; j < size; j++)
-            {
-                sameSudokuBoard.set(i, j, arr[i][j]);
-            }
-        }
+        fillSudokuBoard(arr, sameSudokuBoard);
 
         differentSudokuBoard = new SudokuBoard(backtrackingSudokuSolver, observer);
-        for (int i = 0; i < size; i++)
-        {
-            for (int j = 0; j < size; j++)
-            {
-                differentSudokuBoard.set(i, j, differentArr[i][j]);
-            }
-        }
+        fillSudokuBoard(differentArr, differentSudokuBoard);
     }
 
     @Test
@@ -313,6 +295,14 @@ public class SudokuBoardTest {
         firstSudokuBoard = null;
         sameSudokuBoard = null;
         differentSudokuBoard = null;
+    }
+
+    private void fillSudokuBoard(int[][] differentArr, SudokuBoard differentSudokuBoard) {
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                differentSudokuBoard.set(i, j, differentArr[i][j]);
+            }
+        }
     }
 }
 
