@@ -37,13 +37,15 @@ public class SudokuField {
         if (!(o instanceof SudokuField that)) return false;
 
         return new EqualsBuilder()
-                .append(value, that.value).isEquals();
+                .append(value, that.value)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
-                .append(value).toHashCode();
+                .append(value)
+                .toHashCode();
     }
 
     @Override

@@ -69,8 +69,9 @@ public class SudokuElement {
 
         if (!(o instanceof SudokuElement that)) return false;
 
-        return new EqualsBuilder().append(getSudokuFields(),
-                that.getSudokuFields()).isEquals();
+        return new EqualsBuilder()
+                .append(getSudokuFields(), that.getSudokuFields())
+                .isEquals();
     }
 
     @Override
