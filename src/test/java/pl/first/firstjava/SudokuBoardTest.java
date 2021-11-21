@@ -266,6 +266,9 @@ public class SudokuBoardTest {
         assertTrue(firstSudokuBoard.equals(sameSudokuBoard));
         assertFalse(firstSudokuBoard.equals(differentSudokuBoard));
         assertFalse(firstSudokuBoard.equals(new SudokuPlayer()));
+
+        // cohesion
+        assertEquals(firstSudokuBoard.equals(differentSudokuBoard), firstSudokuBoard.equals(differentSudokuBoard));
     }
 
     @Test
@@ -273,6 +276,10 @@ public class SudokuBoardTest {
     {
         assertEquals(firstSudokuBoard.hashCode(), sameSudokuBoard.hashCode());
         assertNotEquals(firstSudokuBoard.hashCode(), differentSudokuBoard.hashCode());
+
+        // cohesion
+        var hashCode = firstSudokuBoard.hashCode();
+        assertEquals(hashCode, firstSudokuBoard.hashCode());
     }
 
     @Test

@@ -67,12 +67,19 @@ class SudokuRowTest {
         assertFalse(sudokuRow1.equals(sudokuRow3));
         assertFalse(sudokuRow1.equals(new SudokuBoard()));
         assertTrue(sudokuRow1.equals(sudokuRow1));
+
+        // cohesion
+        assertEquals(sudokuRow1.equals(sudokuRow2), sudokuRow1.equals(sudokuRow2));
     }
 
     @Test
     void testHashCode() {
         assertEquals(sudokuRow1.hashCode(), sudokuRow2.hashCode());
         assertNotEquals(sudokuRow1.hashCode(), sudokuRow3.hashCode());
+
+        // cohesion
+        var hashCode = sudokuRow1.hashCode();
+        assertEquals(hashCode, sudokuRow1.hashCode());
     }
 
     @Test

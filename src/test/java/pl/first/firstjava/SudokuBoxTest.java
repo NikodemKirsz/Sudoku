@@ -67,12 +67,19 @@ class SudokuBoxTest {
         assertFalse(sudokuBox1.equals(sudokuBox3));
         assertFalse(sudokuBox1.equals(new SudokuBoard()));
         assertTrue(sudokuBox1.equals(sudokuBox1));
+
+        // cohesion
+        assertEquals(sudokuBox1.equals(sudokuBox2), sudokuBox1.equals(sudokuBox2));
     }
 
     @Test
     void testHashCode() {
         assertEquals(sudokuBox1.hashCode(), sudokuBox2.hashCode());
         assertNotEquals(sudokuBox1.hashCode(), sudokuBox3.hashCode());
+
+        // cohesion
+        var hashCode = sudokuBox1.hashCode();
+        assertEquals(hashCode, sudokuBox1.hashCode());
     }
 
     @Test
