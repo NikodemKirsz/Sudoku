@@ -7,13 +7,12 @@
 
 package pl.first.firstjava;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class SudokuElement {
     private final List<SudokuField> sudokuFields;
@@ -65,20 +64,24 @@ public class SudokuElement {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
+        if (this == o) {
+            return true;
+        }
 
-        if (!(o instanceof SudokuElement)) return false;
+        if (!(o instanceof SudokuElement that)) {
+            return false;
+        }
 
-        SudokuElement that = (SudokuElement) o;
-
-        return new EqualsBuilder().append(getSudokuFields(),
-                that.getSudokuFields()).isEquals();
+        return new EqualsBuilder()
+                .append(getSudokuFields(), that.getSudokuFields())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
-                .append(getSudokuFields()).toHashCode();
+                .append(getSudokuFields())
+                .toHashCode();
     }
 
     @Override

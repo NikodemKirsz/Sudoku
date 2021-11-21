@@ -11,6 +11,9 @@ import java.lang.System;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class SudokuBoard implements IObservable {
     private final SudokuField[][] sudokuFields;
@@ -37,7 +40,6 @@ public class SudokuBoard implements IObservable {
         this.fillDiagonal();
     }
 
-    //
     SudokuBoard(int[][] givenBoard) {
         this();
         for (int row = 0; row < boardSize; row++) {
@@ -189,6 +191,49 @@ public class SudokuBoard implements IObservable {
             System.out.println();
         }
         System.out.println();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (!(o instanceof SudokuBoard that)) {
+            return false;
+        }
+
+        return new EqualsBuilder()
+                .append(getBoardSize(), that.getBoardSize())
+                .append(getBoxSize(), that.getBoxSize())
+                .append(sudokuFields, that.sudokuFields)
+                .append(sudokuSolver, that.sudokuSolver)
+                .append(observer, that.observer)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(sudokuFields)
+                .append(getBoardSize())
+                .append(getBoxSize())
+                .append(sudokuSolver)
+                .append(observer)
+                .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("SudokuBoard{")
+                .append("sudokuFields=").append(Arrays.toString(sudokuFields))
+                .append(", boardSize=").append(boardSize)
+                .append(", boxSize=").append(boxSize)
+                .append(", sudokuSolver=").append(sudokuSolver)
+                .append(", observer=").append(observer)
+                .append('}')
+                .toString();
     }
 }
 
