@@ -7,9 +7,9 @@
 
 package pl.first.firstjava;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class SudokuField {
     private int value;
@@ -32,9 +32,13 @@ public class SudokuField {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
+        if (this == o) {
+            return true;
+        }
 
-        if (!(o instanceof SudokuField that)) return false;
+        if (!(o instanceof SudokuField that)) {
+            return false;
+        }
 
         return new EqualsBuilder()
                 .append(value, that.value)

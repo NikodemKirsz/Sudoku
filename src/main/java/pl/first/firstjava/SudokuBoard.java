@@ -11,9 +11,9 @@ import java.lang.System;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class SudokuBoard implements IObservable {
     private final SudokuField[][] sudokuFields;
@@ -195,9 +195,13 @@ public class SudokuBoard implements IObservable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
+        if (this == o) {
+            return true;
+        }
 
-        if (!(o instanceof SudokuBoard that)) return false;
+        if (!(o instanceof SudokuBoard that)) {
+            return false;
+        }
 
         return new EqualsBuilder()
                 .append(getBoardSize(), that.getBoardSize())

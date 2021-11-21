@@ -8,6 +8,9 @@
 package pl.first.firstjava;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class SudokuBoardTest {
@@ -211,4 +214,123 @@ public class SudokuBoardTest {
         assertFalse(SudokuElement.equals(sudokuBoard.getBox(5, 4), sudokuBoxFirst));
         assertFalse(SudokuElement.equals(sudokuBoard.getBox(0, 8), sudokuBoxFirst));
     }
+
+    private SudokuBoard firstSudokuBoard;
+    private SudokuBoard sameSudokuBoard;
+    private SudokuBoard differentSudokuBoard;
+
+    @BeforeEach
+    public void beforeEach()
+    {
+        var backtrackingSudokuSolver = new BacktrackingSudokuSolver();
+        var observer = new SudokuPlayer();
+        var arr = new int[][]
+                {
+                        {5, 6, 1, 2, 3, 8, 4, 9, 7},
+                        {8, 7, 4, 5, 6, 9, 2, 3, 1},
+                        {2, 3, 9, 4, 7, 1, 6, 5, 8},
+                        {1, 5, 8, 3, 2, 7, 9, 4, 6},
+                        {3, 4, 7, 9, 5, 6, 8, 1, 2},
+                        {9, 2, 6, 1, 8, 4, 3, 7, 5},
+                        {6, 8, 3, 7, 9, 5, 1, 2, 4},
+                        {4, 9, 5, 6, 1, 2, 7, 8, 3},
+                        {7, 1, 2, 8, 4, 3, 5, 6, 9}
+                };
+        var differentArr = new int[][]
+                {
+                        {6, 6, 1, 2, 3, 8, 4, 9, 7},
+                        {8, 7, 4, 5, 6, 9, 2, 3, 1},
+                        {2, 3, 9, 4, 7, 1, 6, 5, 8},
+                        {1, 5, 8, 3, 2, 7, 9, 4, 6},
+                        {3, 4, 7, 9, 5, 6, 8, 1, 2},
+                        {9, 2, 6, 1, 8, 4, 3, 7, 5},
+                        {6, 8, 3, 7, 9, 5, 1, 2, 4},
+                        {4, 9, 5, 6, 1, 2, 7, 8, 3},
+                        {7, 1, 2, 8, 4, 3, 5, 6, 9}
+                };
+
+        firstSudokuBoard = new SudokuBoard(backtrackingSudokuSolver, observer);
+        for (int i = 0; i < size; i++)
+        {
+            for (int j = 0; j < size; j++)
+            {
+                firstSudokuBoard.set(i, j, arr[i][j]);
+            }
+        }
+
+        sameSudokuBoard = new SudokuBoard(backtrackingSudokuSolver, observer);
+        for (int i = 0; i < size; i++)
+        {
+            for (int j = 0; j < size; j++)
+            {
+                sameSudokuBoard.set(i, j, arr[i][j]);
+            }
+        }
+
+        differentSudokuBoard = new SudokuBoard(backtrackingSudokuSolver, observer);
+        for (int i = 0; i < size; i++)
+        {
+            for (int j = 0; j < size; j++)
+            {
+                differentSudokuBoard.set(i, j, differentArr[i][j]);
+            }
+        }
+    }
+
+    @Test
+    public void equalsTest()
+    {
+        assertTrue(firstSudokuBoard.equals(firstSudokuBoard));
+        assertTrue(firstSudokuBoard.equals(sameSudokuBoard));
+        assertFalse(firstSudokuBoard.equals(differentSudokuBoard));
+        assertFalse(firstSudokuBoard.equals(new SudokuPlayer()));
+    }
+
+    @Test
+    public void hashCodeTest()
+    {
+        assertEquals(firstSudokuBoard.hashCode(), sameSudokuBoard.hashCode());
+        assertNotEquals(firstSudokuBoard.hashCode(), differentSudokuBoard.hashCode());
+    }
+
+    @Test
+    public void toStringTest()
+    {
+        String info = firstSudokuBoard.toString();
+
+        assertTrue(info.contains("SudokuBoard{"));
+        assertTrue(info.contains("sudokuFields="));
+        assertTrue(info.contains(", boardSize="));
+        assertTrue(info.contains(", boxSize="));
+        assertTrue(info.contains(", sudokuSolver="));
+        assertTrue(info.contains(", observer="));
+        assertTrue(info.contains("}"));
+    }
+
+    @AfterEach
+    public void afterEach()
+    {
+        firstSudokuBoard = null;
+        sameSudokuBoard = null;
+        differentSudokuBoard = null;
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
