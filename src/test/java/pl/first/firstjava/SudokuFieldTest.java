@@ -60,6 +60,9 @@ class SudokuFieldTest {
         assertFalse(sudokuField1.equals(sudokuField3));
         assertFalse(sudokuField1.equals(new SudokuBoard()));
         assertTrue(sudokuField1.equals(sudokuField1));
+
+        // cohesion
+        assertEquals(sudokuField1.equals(sudokuField2), sudokuField1.equals(sudokuField2));
     }
 
     @Test
@@ -73,6 +76,10 @@ class SudokuFieldTest {
 
         assertEquals(sudokuField1.hashCode(), sudokuField2.hashCode());
         assertNotEquals(sudokuField1.hashCode(), sudokuField3.hashCode());
+
+        // cohesion
+        var hashCode = sudokuField1.hashCode();
+        assertEquals(hashCode, sudokuField1.hashCode());
     }
 
     @Test
