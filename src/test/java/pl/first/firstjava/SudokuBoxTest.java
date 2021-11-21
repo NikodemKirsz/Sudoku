@@ -7,25 +7,43 @@
 
 package pl.first.firstjava;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class SudokuBoxTest {
     private final int size = 9;
+    private SudokuBox sudokuBox1;
+    private SudokuBox sudokuBox2;
+    private SudokuBox sudokuBox3;
+    private SudokuField sudokuFields[];
+
+    @BeforeEach
+    void init() {
+        sudokuBox1 = new SudokuBox();
+        sudokuBox2 = new SudokuBox();
+        sudokuBox3 = new SudokuBox();
+
+        sudokuFields = new SudokuField[size];
+        for (var i = 0; i < size; i++)
+        {
+            sudokuFields[i] = new SudokuField();
+            sudokuFields[i].setFieldValue(i);
+        }
+        sudokuBox1.setSudokuFields(sudokuFields);
+        sudokuBox2.setSudokuFields(sudokuFields);
+
+        for (var i = size; i > 0; i--) {
+            sudokuFields[size - i] = new SudokuField();
+            sudokuFields[size - i].setFieldValue(i);
+        }
+        sudokuBox3.setSudokuFields(sudokuFields);
+    }
 
     @Test
     void verify() {
-        var sudokuBox = new SudokuBox();
-
-        var validSudokuFields = new SudokuField[size];
-        for (var i = 0; i < size; i++)
-        {
-            validSudokuFields[i] = new SudokuField();
-            validSudokuFields[i].setFieldValue(i);
-        }
-        sudokuBox.setSudokuFields(validSudokuFields);
-        assertTrue(sudokuBox.verify());
+        assertTrue(sudokuBox1.verify());
 
         var invalidSudokuFields = new SudokuField[size];
         for (var i = 0; i < size; i++)
@@ -33,7 +51,32 @@ class SudokuBoxTest {
             invalidSudokuFields[i] = new SudokuField();
             invalidSudokuFields[i].setFieldValue(i % 8);
         }
-        sudokuBox.setSudokuFields(invalidSudokuFields);
-        assertFalse(sudokuBox.verify());
+        sudokuBox1.setSudokuFields(invalidSudokuFields);
+        assertFalse(sudokuBox1.verify());
+    }
+
+    @Test
+    void equalsTest() {
+        assertTrue(SudokuBox.equals(sudokuBox1, sudokuBox2));
+        assertFalse(SudokuBox.equals(sudokuBox1, sudokuBox3));
+    }
+
+    @Test
+    void testEquals() {
+        assertTrue(sudokuBox1.equals(sudokuBox2));
+        assertFalse(sudokuBox1.equals(sudokuBox3));
+        assertFalse(sudokuBox1.equals(new SudokuBoard()));
+        assertTrue(sudokuBox1.equals(sudokuBox1));
+    }
+
+    @Test
+    void testHashCode() {
+        assertEquals(sudokuBox1.hashCode(), sudokuBox2.hashCode());
+        assertNotEquals(sudokuBox1.hashCode(), sudokuBox3.hashCode());
+    }
+
+    @Test
+    void testToString() {
+        assertTrue(sudokuBox1.toString().contains("SudokuBox"));
     }
 }

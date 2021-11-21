@@ -46,4 +46,44 @@ class SudokuFieldTest {
         sudokuField.setFieldValue(valueOutOfBound);
         assertEquals(sudokuField.getFieldValue(), value);
     }
+
+    @Test
+    void testEquals() {
+        var sudokuField1 = new SudokuField();
+        var sudokuField2 = new SudokuField();
+        var sudokuField3 = new SudokuField();
+        sudokuField1.setFieldValue(1);
+        sudokuField2.setFieldValue(1);
+        sudokuField3.setFieldValue(2);
+
+        assertTrue(sudokuField1.equals(sudokuField2));
+        assertFalse(sudokuField1.equals(sudokuField3));
+        assertFalse(sudokuField1.equals(new SudokuBoard()));
+        assertTrue(sudokuField1.equals(sudokuField1));
+    }
+
+    @Test
+    void testHashCode() {
+        var sudokuField1 = new SudokuField();
+        var sudokuField2 = new SudokuField();
+        var sudokuField3 = new SudokuField();
+        sudokuField1.setFieldValue(1);
+        sudokuField2.setFieldValue(1);
+        sudokuField3.setFieldValue(2);
+
+        assertEquals(sudokuField1.hashCode(), sudokuField2.hashCode());
+        assertNotEquals(sudokuField1.hashCode(), sudokuField3.hashCode());
+    }
+
+    @Test
+    void testToString() {
+        var sudokuField1 = new SudokuField();
+        var sudokuField3 = new SudokuField();
+        sudokuField1.setFieldValue(1);
+        sudokuField3.setFieldValue(2);
+
+        assertTrue(sudokuField1.toString().contains("value=1"));
+        assertTrue(sudokuField3.toString().contains("value=2"));
+
+    }
 }
