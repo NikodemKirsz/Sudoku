@@ -7,7 +7,9 @@
 
 package pl.first.firstjava;
 
-public class SudokuPlayer implements IObserver {
+import java.io.Serializable;
+
+public class SudokuPlayer implements IObserver, Serializable {
 
     public String onValueChanged(boolean isValid) {
         String msg = "Wartość pola zmieniona!"

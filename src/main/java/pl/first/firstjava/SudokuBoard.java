@@ -7,6 +7,7 @@
 
 package pl.first.firstjava;
 
+import java.io.Serializable;
 import java.lang.System;
 import java.util.Arrays;
 import java.util.Collections;
@@ -15,7 +16,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-public class SudokuBoard implements IObservable {
+public class SudokuBoard implements IObservable, Serializable {
     private final SudokuField[][] sudokuFields;
     private final int boardSize;
     private final int boxSize; // square root of N
