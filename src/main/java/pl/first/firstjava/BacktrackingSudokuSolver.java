@@ -7,7 +7,9 @@
 
 package pl.first.firstjava;
 
-public class BacktrackingSudokuSolver implements SudokuSolver {
+import java.io.Serializable;
+
+public class BacktrackingSudokuSolver implements SudokuSolver, Serializable {
     private SudokuBoard board;
     private int boardSize;
     private int boxSize;
