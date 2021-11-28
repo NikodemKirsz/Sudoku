@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-public class FileSudokuBoardDao implements Dao<SudokuBoard> {
+public class FileSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
 
     private final String filename;
 
@@ -43,5 +43,10 @@ public class FileSudokuBoardDao implements Dao<SudokuBoard> {
             e.printStackTrace();
             System.out.print(e.toString());
         }
+    }
+
+    @Override
+    public void close() {
+        System.out.print("FileSudokuBordDao Closed!");
     }
 }
