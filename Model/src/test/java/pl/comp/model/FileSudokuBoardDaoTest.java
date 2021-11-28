@@ -10,6 +10,7 @@ package pl.comp.model;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,16 +28,21 @@ class FileSudokuBoardDaoTest {
                 success = unsuccessfulFile.createNewFile();
             }
             assertTrue(success);
+        } else {
+            boolean success = unsuccessfulFile.createNewFile();
+            assertTrue(success);
         }
         assertTrue(unsuccessfulFile.setWritable(false));
     }
 
     @Test
     void writeSuccessful() {
-        Dao<SudokuBoard> fileSudokuBoardDao = new FileSudokuBoardDao(PATH_TO_SUCCESSFUL_FILE);
-
-        SudokuBoard sudokuBoard = new SudokuBoard();
-        fileSudokuBoardDao.write(sudokuBoard);
+        try(var fileSudokuBoardDao = new FileSudokuBoardDao(PATH_TO_SUCCESSFUL_FILE)) {
+            SudokuBoard sudokuBoard = new SudokuBoard();
+            fileSudokuBoardDao.write(sudokuBoard);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         var f = new File(PATH_TO_SUCCESSFUL_FILE);
         assertTrue(f.exists());
@@ -44,26 +50,33 @@ class FileSudokuBoardDaoTest {
     }
 
     @Test
-    void writeUnsuccessful() {
-        Dao<SudokuBoard> fileSudokuBoardDao = new FileSudokuBoardDao(PATH_TO_UNSUCCESSFUL_FILE);
-
-        SudokuBoard sudokuBoard = new SudokuBoard();
-        fileSudokuBoardDao.write(null);
+    void writeUnsuccessful() throws FileNotFoundException {
+        try(var fileSudokuBoardDao = new FileSudokuBoardDao(PATH_TO_UNSUCCESSFUL_FILE)) {
+            fileSudokuBoardDao.write(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
     void readSuccessful() {
-        Dao<SudokuBoard> fileSudokuBoardDao = new FileSudokuBoardDao(PATH_TO_SUCCESSFUL_FILE);
-
-        var readSudokuBoard = fileSudokuBoardDao.read();
+        SudokuBoard readSudokuBoard = null;
+        try(var fileSudokuBoardDao = new FileSudokuBoardDao(PATH_TO_SUCCESSFUL_FILE)) {
+            readSudokuBoard = fileSudokuBoardDao.read();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         assertNotNull(readSudokuBoard);
     }
 
     @Test
     void readUnsuccessful() {
-        Dao<SudokuBoard> fileSudokuBoardDao = new FileSudokuBoardDao(PATH_TO_UNSUCCESSFUL_FILE);
-
-        var readSudokuBoard = fileSudokuBoardDao.read();
+        SudokuBoard readSudokuBoard = null;
+        try(var fileSudokuBoardDao = new FileSudokuBoardDao(PATH_TO_UNSUCCESSFUL_FILE)) {
+            readSudokuBoard = fileSudokuBoardDao.read();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         assertNull(readSudokuBoard);
     }
 }
