@@ -7,11 +7,10 @@
 
 package pl.first.firstjava;
 
+import java.io.Serializable;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
-import java.io.Serializable;
 
 public class SudokuField implements Serializable {
     private int value;
@@ -38,9 +37,11 @@ public class SudokuField implements Serializable {
             return true;
         }
 
-        if (!(o instanceof SudokuField that)) {
+        if (!(o instanceof SudokuField)) {
             return false;
         }
+
+        var that = (SudokuField) o;
 
         return new EqualsBuilder()
                 .append(value, that.value)

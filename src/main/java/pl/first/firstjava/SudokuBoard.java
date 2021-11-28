@@ -200,9 +200,11 @@ public class SudokuBoard implements IObservable, Serializable {
             return true;
         }
 
-        if (!(o instanceof SudokuBoard that)) {
+        if (!(o instanceof SudokuBoard)) {
             return false;
         }
+
+        var that = (SudokuBoard) o;
 
         return new EqualsBuilder()
                 .append(getBoardSize(), that.getBoardSize())

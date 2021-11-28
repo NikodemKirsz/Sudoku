@@ -220,7 +220,7 @@ public class SudokuBoardTest {
     private SudokuBoard differentSudokuBoard;
 
     @BeforeEach
-    public void beforeEach()
+    void beforeEach()
     {
         var backtrackingSudokuSolver = new BacktrackingSudokuSolver();
         var observer = new SudokuPlayer();
@@ -260,7 +260,7 @@ public class SudokuBoardTest {
     }
 
     @Test
-    public void equalsTest()
+    void equalsTest()
     {
         assertTrue(firstSudokuBoard.equals(firstSudokuBoard));
         assertTrue(firstSudokuBoard.equals(sameSudokuBoard));
@@ -272,7 +272,7 @@ public class SudokuBoardTest {
     }
 
     @Test
-    public void hashCodeTest()
+    void hashCodeTest()
     {
         assertEquals(firstSudokuBoard.hashCode(), sameSudokuBoard.hashCode());
         assertNotEquals(firstSudokuBoard.hashCode(), differentSudokuBoard.hashCode());
@@ -283,7 +283,7 @@ public class SudokuBoardTest {
     }
 
     @Test
-    public void toStringTest()
+    void toStringTest()
     {
         String info = firstSudokuBoard.toString();
 
@@ -297,7 +297,7 @@ public class SudokuBoardTest {
     }
 
     @AfterEach
-    public void afterEach()
+    void afterEach()
     {
         firstSudokuBoard = null;
         sameSudokuBoard = null;
