@@ -37,11 +37,9 @@ public class SudokuField implements Serializable {
             return true;
         }
 
-        if (!(o instanceof SudokuField)) {
+        if (!(o instanceof SudokuField that)) {
             return false;
         }
-
-        var that = (SudokuField) o;
 
         return new EqualsBuilder()
                 .append(value, that.value)

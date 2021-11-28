@@ -69,11 +69,9 @@ public class SudokuElement implements Serializable {
             return true;
         }
 
-        if (!(o instanceof SudokuElement)) {
+        if (!(o instanceof SudokuElement that)) {
             return false;
         }
-
-        var that = (SudokuElement) o;
 
         return new EqualsBuilder()
                 .append(getSudokuFields(), that.getSudokuFields())

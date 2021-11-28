@@ -7,13 +7,9 @@
 
 package pl.first.firstjava;
 
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,7 +17,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class FileSudokuBoardDaoTest {
     final static String PATH_TO_SUCCESSFUL_FILE = "./files/fileSuccessful";
     final static String PATH_TO_UNSUCCESSFUL_FILE = "./files/fileUnsuccessful";
-    static FileOutputStream fis;
 
     @BeforeAll
     static void BeforeAll() throws IOException {
@@ -33,13 +28,12 @@ class FileSudokuBoardDaoTest {
             }
             assertTrue(success);
         }
-        //assertTrue(unsuccessfulFile.setReadable(false));
         assertTrue(unsuccessfulFile.setWritable(false));
     }
 
     @Test
     void writeSuccessful() {
-        var fileSudokuBoardDao = new FileSudokuBoardDao(PATH_TO_SUCCESSFUL_FILE);
+        Dao<SudokuBoard> fileSudokuBoardDao = new FileSudokuBoardDao(PATH_TO_SUCCESSFUL_FILE);
 
         SudokuBoard sudokuBoard = new SudokuBoard();
         fileSudokuBoardDao.write(sudokuBoard);
@@ -51,7 +45,7 @@ class FileSudokuBoardDaoTest {
 
     @Test
     void writeUnsuccessful() {
-        var fileSudokuBoardDao = new FileSudokuBoardDao(PATH_TO_UNSUCCESSFUL_FILE);
+        Dao<SudokuBoard> fileSudokuBoardDao = new FileSudokuBoardDao(PATH_TO_UNSUCCESSFUL_FILE);
 
         SudokuBoard sudokuBoard = new SudokuBoard();
         fileSudokuBoardDao.write(null);
@@ -59,7 +53,7 @@ class FileSudokuBoardDaoTest {
 
     @Test
     void readSuccessful() {
-        var fileSudokuBoardDao = new FileSudokuBoardDao(PATH_TO_SUCCESSFUL_FILE);
+        Dao<SudokuBoard> fileSudokuBoardDao = new FileSudokuBoardDao(PATH_TO_SUCCESSFUL_FILE);
 
         var readSudokuBoard = fileSudokuBoardDao.read();
         assertNotNull(readSudokuBoard);
@@ -67,7 +61,7 @@ class FileSudokuBoardDaoTest {
 
     @Test
     void readUnsuccessful() {
-        var fileSudokuBoardDao = new FileSudokuBoardDao(PATH_TO_UNSUCCESSFUL_FILE);
+        Dao<SudokuBoard> fileSudokuBoardDao = new FileSudokuBoardDao(PATH_TO_UNSUCCESSFUL_FILE);
 
         var readSudokuBoard = fileSudokuBoardDao.read();
         assertNull(readSudokuBoard);
