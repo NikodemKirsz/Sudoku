@@ -5,8 +5,11 @@
  * with the terms of the license agreement you entered into with RCM.
  */
 
-package pl.first.firstjava;
+package pl.comp;
 
-public interface IObservable {
-    void notifyObserver();
+public interface Dao<T> {
+
+    T read();
+
+    void write(T obj);
 }

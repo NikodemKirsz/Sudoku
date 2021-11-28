@@ -5,25 +5,25 @@
  * with the terms of the license agreement you entered into with RCM.
  */
 
-package pl.first.firstjava;
+package pl.comp;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class SudokuRowTest {
+class SudokuBoxTest {
     private final int size = 9;
-    private SudokuRow sudokuRow1;
-    private SudokuRow sudokuRow2;
-    private SudokuRow sudokuRow3;
+    private SudokuBox sudokuBox1;
+    private SudokuBox sudokuBox2;
+    private SudokuBox sudokuBox3;
     private SudokuField sudokuFields[];
 
     @BeforeEach
     void init() {
-        sudokuRow1 = new SudokuRow();
-        sudokuRow2 = new SudokuRow();
-        sudokuRow3 = new SudokuRow();
+        sudokuBox1 = new SudokuBox();
+        sudokuBox2 = new SudokuBox();
+        sudokuBox3 = new SudokuBox();
 
         sudokuFields = new SudokuField[size];
         for (var i = 0; i < size; i++)
@@ -31,19 +31,19 @@ class SudokuRowTest {
             sudokuFields[i] = new SudokuField();
             sudokuFields[i].setFieldValue(i);
         }
-        sudokuRow1.setSudokuFields(sudokuFields);
-        sudokuRow2.setSudokuFields(sudokuFields);
+        sudokuBox1.setSudokuFields(sudokuFields);
+        sudokuBox2.setSudokuFields(sudokuFields);
 
         for (var i = size; i > 0; i--) {
             sudokuFields[size - i] = new SudokuField();
             sudokuFields[size - i].setFieldValue(i);
         }
-        sudokuRow3.setSudokuFields(sudokuFields);
+        sudokuBox3.setSudokuFields(sudokuFields);
     }
 
     @Test
     void verify() {
-        assertTrue(sudokuRow1.verify());
+        assertTrue(sudokuBox1.verify());
 
         var invalidSudokuFields = new SudokuField[size];
         for (var i = 0; i < size; i++)
@@ -51,39 +51,39 @@ class SudokuRowTest {
             invalidSudokuFields[i] = new SudokuField();
             invalidSudokuFields[i].setFieldValue(i % 8);
         }
-        sudokuRow1.setSudokuFields(invalidSudokuFields);
-        assertFalse(sudokuRow1.verify());
+        sudokuBox1.setSudokuFields(invalidSudokuFields);
+        assertFalse(sudokuBox1.verify());
     }
 
     @Test
     void equalsTest() {
-        assertTrue(SudokuRow.equals(sudokuRow1, sudokuRow2));
-        assertFalse(SudokuRow.equals(sudokuRow1, sudokuRow3));
+        assertTrue(SudokuBox.equals(sudokuBox1, sudokuBox2));
+        assertFalse(SudokuBox.equals(sudokuBox1, sudokuBox3));
     }
 
     @Test
     void testEquals() {
-        assertTrue(sudokuRow1.equals(sudokuRow2));
-        assertFalse(sudokuRow1.equals(sudokuRow3));
-        assertFalse(sudokuRow1.equals(new SudokuBoard()));
-        assertTrue(sudokuRow1.equals(sudokuRow1));
+        assertTrue(sudokuBox1.equals(sudokuBox2));
+        assertFalse(sudokuBox1.equals(sudokuBox3));
+        assertFalse(sudokuBox1.equals(new SudokuBoard()));
+        assertTrue(sudokuBox1.equals(sudokuBox1));
 
         // cohesion
-        assertEquals(sudokuRow1.equals(sudokuRow2), sudokuRow1.equals(sudokuRow2));
+        assertEquals(sudokuBox1.equals(sudokuBox2), sudokuBox1.equals(sudokuBox2));
     }
 
     @Test
     void testHashCode() {
-        assertEquals(sudokuRow1.hashCode(), sudokuRow2.hashCode());
-        assertNotEquals(sudokuRow1.hashCode(), sudokuRow3.hashCode());
+        assertEquals(sudokuBox1.hashCode(), sudokuBox2.hashCode());
+        assertNotEquals(sudokuBox1.hashCode(), sudokuBox3.hashCode());
 
         // cohesion
-        var hashCode = sudokuRow1.hashCode();
-        assertEquals(hashCode, sudokuRow1.hashCode());
+        var hashCode = sudokuBox1.hashCode();
+        assertEquals(hashCode, sudokuBox1.hashCode());
     }
 
     @Test
     void testToString() {
-        assertTrue(sudokuRow1.toString().contains("SudokuRow"));
+        assertTrue(sudokuBox1.toString().contains("SudokuBox"));
     }
 }

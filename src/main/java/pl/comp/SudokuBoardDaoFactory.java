@@ -5,8 +5,14 @@
  * with the terms of the license agreement you entered into with RCM.
  */
 
-package pl.first.firstjava;
+package pl.comp;
 
-public interface IObserver {
-    String onValueChanged(boolean isValid);
+public final class SudokuBoardDaoFactory {
+
+    private SudokuBoardDaoFactory() {
+    }
+
+    public static Dao<SudokuBoard> getFileDao(final String fileName) {
+        return new FileSudokuBoardDao(fileName);
+    }
 }

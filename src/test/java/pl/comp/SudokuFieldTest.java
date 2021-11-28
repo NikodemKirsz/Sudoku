@@ -5,7 +5,7 @@
  * with the terms of the license agreement you entered into with RCM.
  */
 
-package pl.first.firstjava;
+package pl.comp;
 
 import org.junit.jupiter.api.Test;
 
