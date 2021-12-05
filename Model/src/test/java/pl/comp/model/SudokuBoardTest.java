@@ -296,6 +296,20 @@ public class SudokuBoardTest {
         assertTrue(info.contains("}"));
     }
 
+    @Test
+    void cloneTest() throws CloneNotSupportedException {
+        SudokuBoard sudokuBoard = new SudokuBoard();
+        sudokuBoard.solveGame();
+        SudokuBoard sudokuBoardCloned = sudokuBoard.clone();
+        SudokuField[][] board = sudokuBoard.getBoard();
+        SudokuField[][] boardCloned = sudokuBoardCloned.getBoard();
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                assertEquals(board[i][j].getFieldValue(), boardCloned[i][j].getFieldValue());
+            }
+        }
+    }
+
     @AfterEach
     void afterEach()
     {

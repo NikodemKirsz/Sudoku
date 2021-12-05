@@ -93,4 +93,27 @@ class SudokuFieldTest {
         assertTrue(sudokuField3.toString().contains("value=2"));
 
     }
+
+    @Test
+    void cloneTest() throws CloneNotSupportedException {
+        var sudokuField1 = new SudokuField();
+        var sudokuField2 = sudokuField1.clone();
+        assertTrue(sudokuField1.equals(sudokuField2));
+    }
+
+    @Test
+    void compareTest() {
+        var sudokuField1 = new SudokuField();
+        var sudokuField2 = new SudokuField();
+
+        sudokuField1.setFieldValue(1);
+        sudokuField2.setFieldValue(1);
+        assertEquals(sudokuField1.compareTo(sudokuField2), 0);
+
+        sudokuField1.setFieldValue(2);
+        assertEquals(sudokuField1.compareTo(sudokuField2), 1);
+
+        sudokuField1.setFieldValue(0);
+        assertEquals(sudokuField1.compareTo(sudokuField2), -1);
+    }
 }

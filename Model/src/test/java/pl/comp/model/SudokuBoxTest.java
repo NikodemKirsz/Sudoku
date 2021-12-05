@@ -86,4 +86,11 @@ class SudokuBoxTest {
     void testToString() {
         assertTrue(sudokuBox1.toString().contains("SudokuBox"));
     }
+
+    @Test
+    void cloneTest() throws CloneNotSupportedException {
+        SudokuElement se = new SudokuBox();
+        se = sudokuBox1.clone();
+        assertEquals(sudokuBox1, se);
+    }
 }

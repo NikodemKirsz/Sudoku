@@ -15,7 +15,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-public class SudokuElement implements Serializable {
+public class SudokuElement implements Serializable, Cloneable {
     private final List<SudokuField> sudokuFields;
     private static final int size = 9;
 
@@ -90,5 +90,10 @@ public class SudokuElement implements Serializable {
         return new ToStringBuilder(this)
                 .append("sudokuFields", sudokuFields)
                 .toString();
+    }
+
+    @Override
+    protected SudokuElement clone() throws CloneNotSupportedException {
+        return (SudokuElement) super.clone();
     }
 }

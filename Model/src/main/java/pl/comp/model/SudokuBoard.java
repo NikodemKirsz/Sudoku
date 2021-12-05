@@ -9,6 +9,7 @@ package pl.comp.model;
 
 import java.io.Serializable;
 import java.lang.System;
+import java.lang.management.ClassLoadingMXBean;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -16,7 +17,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-public class SudokuBoard implements IObservable, Serializable {
+public class SudokuBoard implements IObservable, Serializable, Cloneable {
     private final SudokuField[][] sudokuFields;
     private final int boardSize;
     private final int boxSize; // square root of N
@@ -235,6 +236,12 @@ public class SudokuBoard implements IObservable, Serializable {
                 .append(", observer=").append(observer)
                 .append('}')
                 .toString();
+    }
+
+    @Override
+    public SudokuBoard clone() throws CloneNotSupportedException {
+        SudokuBoard clone = (SudokuBoard) super.clone();
+        return clone;
     }
 }
 

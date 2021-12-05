@@ -86,4 +86,11 @@ class SudokuColumnTest {
     void testToString() {
         assertTrue(sudokuColumn1.toString().contains("SudokuColumn"));
     }
+
+    @Test
+    void cloneTest() throws CloneNotSupportedException {
+        SudokuElement se = new SudokuColumn();
+        se = sudokuColumn1.clone();
+        assertEquals(sudokuColumn1, se);
+    }
 }

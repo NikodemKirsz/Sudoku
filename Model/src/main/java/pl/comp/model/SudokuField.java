@@ -12,7 +12,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-public class SudokuField implements Serializable {
+public class SudokuField implements Serializable, Cloneable, Comparable<SudokuField> {
     private int value;
 
     SudokuField() {
@@ -58,5 +58,21 @@ public class SudokuField implements Serializable {
         return new ToStringBuilder(this)
                 .append("value", value)
                 .toString();
+    }
+
+    @Override
+    protected SudokuField clone() throws CloneNotSupportedException {
+        return (SudokuField) super.clone();
+    }
+
+    @Override
+    public int compareTo(SudokuField o) {
+        if (o.getFieldValue() < this.value) {
+            return 1;
+        } else if (o.getFieldValue() > this.value) {
+            return -1;
+        } else {
+            return 0;
+        }
     }
 }
