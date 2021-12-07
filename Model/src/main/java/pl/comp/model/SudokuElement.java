@@ -45,10 +45,7 @@ public class SudokuElement implements Serializable, Cloneable {
 
     public List<SudokuField> getSudokuFields() {
         List<SudokuField> boardCopy = Arrays.asList(new SudokuField[size]);
-        for (int row = 0; row < size; row++) {
-            // TODO idk if this works
-            Collections.copy(boardCopy, sudokuFields);
-        }
+        Collections.copy(boardCopy, sudokuFields);
         return boardCopy;
     }
 

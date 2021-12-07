@@ -7,6 +7,7 @@
 
 package pl.comp.model;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import java.io.File;
@@ -16,12 +17,21 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.*;
 
 class FileSudokuBoardDaoTest {
-    final static String PATH_TO_SUCCESSFUL_FILE = "./files/fileSuccessful";
-    final static String PATH_TO_UNSUCCESSFUL_FILE = "./files/fileUnsuccessful";
+    final static String PATH_TO_DIRECTORY = "./testFiles/";
+    final static String PATH_TO_SUCCESSFUL_FILE = PATH_TO_DIRECTORY + "fileSuccessful";
+    final static String PATH_TO_UNSUCCESSFUL_FILE = PATH_TO_DIRECTORY + "fileUnsuccessful";
+    static File testDirectory;
 
     @BeforeAll
-    static void BeforeAll() throws IOException {
+    static void beforeAll() throws IOException {
+        testDirectory = new File(PATH_TO_DIRECTORY);
+        if (testDirectory.exists()) {
+            assertTrue(deleteDirectory(testDirectory));
+        }
+        assertTrue(testDirectory.mkdir());
+
         var unsuccessfulFile = new File(PATH_TO_UNSUCCESSFUL_FILE);
+
         if (unsuccessfulFile.isFile()) {
             boolean success = unsuccessfulFile.delete();
             if (success) {
@@ -78,5 +88,22 @@ class FileSudokuBoardDaoTest {
             e.printStackTrace();
         }
         assertNull(readSudokuBoard);
+    }
+
+    @AfterAll
+    static void afterAll() {
+        assertTrue(deleteDirectory(testDirectory));
+    }
+
+    static boolean deleteDirectory(File dir)
+    {
+        boolean success = true;
+        File[] allContents = dir.listFiles();
+        assert allContents != null;
+        for (File file : allContents) {
+            success &= file.delete();
+        }
+        success &= dir.delete();
+        return success;
     }
 }
