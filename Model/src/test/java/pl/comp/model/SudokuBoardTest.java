@@ -310,6 +310,29 @@ public class SudokuBoardTest {
         }
     }
 
+    @Test
+    void generateSudokuPuzzleTest() {
+        var player = new SudokuPlayer();
+        var sudokuBoard = new SudokuBoard(player);
+        var level = DifficultyLevel.Hard;
+
+        assertNotNull(sudokuBoard);
+
+        sudokuBoard.generateSudokuPuzzle(level);
+
+        var sudokuFields = sudokuBoard.getBoard();
+
+        int counter = 0;
+        for (int row = 0; row < size; row++) {
+            for (int column = 0; column < size; column++) {
+                if (sudokuFields[row][column].getFieldValue() == 0) {
+                    counter++;
+                }
+            }
+        }
+        assertEquals(level.getFieldsToDelete(), counter);
+    }
+
     @AfterEach
     void afterEach()
     {

@@ -62,6 +62,7 @@
                 <configuration>
                     <configLocation>./checkstyle2020.xml</configLocation>
                     <encoding>UTF-8</encoding>
+                    <excludes>**/module-info.java</excludes>
                     <consoleOutput>true</consoleOutput>
                     <linkXRef>false</linkXRef>
                 </configuration>
@@ -106,6 +107,7 @@
                 <configuration>
                     <configLocation>./checkstyle2020.xml</configLocation>
                     <encoding>UTF-8</encoding>
+                    <excludes>**/module-info.java</excludes>
                     <consoleOutput>true</consoleOutput>
                     <failsOnError>true</failsOnError>
                     <linkXRef>false</linkXRef>
@@ -217,7 +219,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.8.1</version>
+            <version>5.8.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>

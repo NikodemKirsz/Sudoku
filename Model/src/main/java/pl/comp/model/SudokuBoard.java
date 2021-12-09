@@ -9,7 +9,6 @@ package pl.comp.model;
 
 import java.io.Serializable;
 import java.lang.System;
-import java.lang.management.ClassLoadingMXBean;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -24,11 +23,11 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
     private final SudokuSolver sudokuSolver;
     private final IObserver observer;
 
-    SudokuBoard() {
-        this(new BacktrackingSudokuSolver(), new SudokuPlayer());
+    public SudokuBoard(IObserver observer) {
+        this(new BacktrackingSudokuSolver(), observer);
     }
 
-    SudokuBoard(SudokuSolver sudokuSolver, IObserver observer) {
+    public SudokuBoard(SudokuSolver sudokuSolver, IObserver observer) {
         this.boardSize = 9;
         this.boxSize = 3;
         this.sudokuFields = new SudokuField[boardSize][boardSize];
@@ -42,11 +41,39 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
         this.fillDiagonal();
     }
 
+    SudokuBoard() {
+        this(new BacktrackingSudokuSolver(), new SudokuPlayer());
+    }
+
     SudokuBoard(int[][] givenBoard) {
         this();
         for (int row = 0; row < boardSize; row++) {
             for (int column = 0; column < boardSize; column++) {
                 this.sudokuFields[row][column].setFieldValue(givenBoard[row][column]);
+            }
+        }
+    }
+
+    public void generateSudokuPuzzle(DifficultyLevel level) {
+        solveGame();
+        deleteFIelds(level.getFieldsToDelete());
+    }
+
+    private void deleteFIelds(int count) {
+        var rand = new Randomizer();
+
+        int changed = 0;
+        var changedArray = new boolean[boardSize][boardSize];
+
+        while (changed < count) {
+            int field = rand.getRandomInt(80, 0);
+            int row = field % 9;
+            int column = field / 9;
+
+            if (!changedArray[row][column]) {
+                set(row, column, 0);
+                changed++;
+                changedArray[row][column] = true;
             }
         }
     }
@@ -240,8 +267,7 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
 
     @Override
     public SudokuBoard clone() throws CloneNotSupportedException {
-        SudokuBoard clone = (SudokuBoard) super.clone();
-        return clone;
+        return (SudokuBoard) super.clone();
     }
 }
 
