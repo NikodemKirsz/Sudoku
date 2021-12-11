@@ -308,6 +308,7 @@ public class SudokuBoardTest {
                 assertEquals(board[i][j].getFieldValue(), boardCloned[i][j].getFieldValue());
             }
         }
+        assertNotSame(sudokuBoard, sudokuBoardCloned);
     }
 
     @Test
