@@ -90,7 +90,21 @@ public class SudokuElement implements Serializable, Cloneable {
     }
 
     @Override
-    protected SudokuElement clone() throws CloneNotSupportedException {
-        return (SudokuElement) super.clone();
+    public SudokuElement clone() throws CloneNotSupportedException {
+        SudokuElement clonedSudokuElement = new SudokuElement();
+
+        SudokuField[] clonedSudokuFields = new SudokuField[size];
+        for (int i = 0; i < size; i++) {
+            clonedSudokuFields[i] = new SudokuField();
+        }
+
+        var index = 0;
+        for (SudokuField field :
+                sudokuFields) {
+            clonedSudokuFields[index].setFieldValue(field.getFieldValue());
+            index++;
+        }
+        clonedSudokuElement.setSudokuFields(clonedSudokuFields);
+        return clonedSudokuElement;
     }
 }

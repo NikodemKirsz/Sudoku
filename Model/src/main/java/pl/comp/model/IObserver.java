@@ -7,6 +7,6 @@
 
 package pl.comp.model;
 
-public interface IObserver {
+public interface IObserver extends Cloneable {
     String onValueChanged(boolean isValid);
 }

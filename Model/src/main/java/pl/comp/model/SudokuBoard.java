@@ -20,8 +20,8 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
     private final SudokuField[][] sudokuFields;
     private final int boardSize;
     private final int boxSize; // square root of N
-    private final SudokuSolver sudokuSolver;
-    private final IObserver observer;
+    private final transient SudokuSolver sudokuSolver;
+    private final transient IObserver observer;
 
     public SudokuBoard(IObserver observer) {
         this(new BacktrackingSudokuSolver(), observer);
@@ -267,7 +267,13 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
 
     @Override
     public SudokuBoard clone() throws CloneNotSupportedException {
-        return (SudokuBoard) super.clone();
+        SudokuBoard clonedSudokuBoard = new SudokuBoard();
+        for (int i = 0; i < boardSize; i++) {
+            for (int j = 0; j < boardSize; j++) {
+                clonedSudokuBoard.set(i, j, this.get(i,j));
+            }
+        }
+        return clonedSudokuBoard;
     }
 }
 

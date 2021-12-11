@@ -9,7 +9,7 @@ package pl.comp.model;
 
 import java.io.Serializable;
 
-public class SudokuPlayer implements IObserver, Serializable, Cloneable {
+public class SudokuPlayer implements IObserver {
 
     public String onValueChanged(boolean isValid) {
         String msg = "Wartość pola zmieniona!"

@@ -89,8 +89,7 @@ class SudokuBoxTest {
 
     @Test
     void cloneTest() throws CloneNotSupportedException {
-        SudokuElement se = new SudokuBox();
-        se = sudokuBox1.clone();
-        assertEquals(sudokuBox1, se);
+        SudokuElement se = sudokuBox1.clone();
+        assertEquals(se.getSudokuFields(), sudokuBox1.getSudokuFields());
     }
 }

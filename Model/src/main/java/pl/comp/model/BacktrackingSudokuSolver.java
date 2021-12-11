@@ -9,7 +9,7 @@ package pl.comp.model;
 
 import java.io.Serializable;
 
-public class BacktrackingSudokuSolver implements SudokuSolver, Serializable, Cloneable {
+public class BacktrackingSudokuSolver implements SudokuSolver {
     private SudokuBoard board;
     private int boardSize;
     private int boxSize;
