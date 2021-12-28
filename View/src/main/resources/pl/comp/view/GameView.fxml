@@ -41,7 +41,7 @@
         </GridPane>
         <Pane fx:id="keyPad" layoutX="800.0" layoutY="220.0" prefHeight="360.0" prefWidth="360.0">
             <children>
-                <Button contentDisplay="CENTER" layoutX="30.0" layoutY="30.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="1" textAlignment="CENTER">
+                <Button fx:id="oneButton" contentDisplay="CENTER" layoutX="30.0" layoutY="30.0" mnemonicParsing="false" onAction="#handleButtonOne" prefHeight="80.0" prefWidth="80.0" text="1" textAlignment="CENTER">
                     <font>
                         <Font name="System Bold" size="36.0" />
                     </font>
@@ -53,7 +53,7 @@
                         </DropShadow>
                     </effect>
                 </Button>
-                <Button contentDisplay="CENTER" layoutX="140.0" layoutY="30.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="2" textAlignment="CENTER">
+                <Button fx:id="twoButton" contentDisplay="CENTER" layoutX="140.0" layoutY="30.0" mnemonicParsing="false" onAction="#handleButtonTwo" prefHeight="80.0" prefWidth="80.0" text="2" textAlignment="CENTER">
                     <font>
                         <Font name="System Bold" size="36.0" />
                     </font>
@@ -65,7 +65,7 @@
                         </DropShadow>
                     </effect>
                 </Button>
-                <Button contentDisplay="CENTER" layoutX="250.0" layoutY="30.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="3" textAlignment="CENTER">
+                <Button fx:id="threeButton" contentDisplay="CENTER" layoutX="250.0" layoutY="30.0" mnemonicParsing="false" onAction="#handleButtonThree" prefHeight="80.0" prefWidth="80.0" text="3" textAlignment="CENTER">
                     <font>
                         <Font name="System Bold" size="36.0" />
                     </font>
@@ -77,7 +77,7 @@
                         </DropShadow>
                     </effect>
                 </Button>
-                <Button contentDisplay="CENTER" layoutX="30.0" layoutY="140.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="4" textAlignment="CENTER">
+                <Button fx:id="fourButton" contentDisplay="CENTER" layoutX="30.0" layoutY="140.0" mnemonicParsing="false" onAction="#handleButtonFour" prefHeight="80.0" prefWidth="80.0" text="4" textAlignment="CENTER">
                     <font>
                         <Font name="System Bold" size="36.0" />
                     </font>
@@ -89,7 +89,7 @@
                         </DropShadow>
                     </effect>
                 </Button>
-                <Button contentDisplay="CENTER" layoutX="140.0" layoutY="140.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="5" textAlignment="CENTER">
+                <Button contentDisplay="CENTER" layoutX="140.0" layoutY="140.0" mnemonicParsing="false" onAction="#handleButtonFive" prefHeight="80.0" prefWidth="80.0" text="5" textAlignment="CENTER">
                     <font>
                         <Font name="System Bold" size="36.0" />
                     </font>
@@ -101,7 +101,7 @@
                         </DropShadow>
                     </effect>
                 </Button>
-                <Button contentDisplay="CENTER" layoutX="250.0" layoutY="140.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="6" textAlignment="CENTER">
+                <Button contentDisplay="CENTER" layoutX="250.0" layoutY="140.0" mnemonicParsing="false" onAction="#handleButtonSix" prefHeight="80.0" prefWidth="80.0" text="6" textAlignment="CENTER">
                     <font>
                         <Font name="System Bold" size="36.0" />
                     </font>
@@ -113,7 +113,7 @@
                         </DropShadow>
                     </effect>
                 </Button>
-                <Button contentDisplay="CENTER" layoutX="30.0" layoutY="250.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="7" textAlignment="CENTER">
+                <Button contentDisplay="CENTER" layoutX="30.0" layoutY="250.0" mnemonicParsing="false" onAction="#handleButtonSeven" prefHeight="80.0" prefWidth="80.0" text="7" textAlignment="CENTER">
                     <font>
                         <Font name="System Bold" size="36.0" />
                     </font>
@@ -125,7 +125,7 @@
                         </DropShadow>
                     </effect>
                 </Button>
-                <Button contentDisplay="CENTER" layoutX="140.0" layoutY="250.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="8" textAlignment="CENTER">
+                <Button contentDisplay="CENTER" layoutX="140.0" layoutY="250.0" mnemonicParsing="false" onAction="#handleButtonEight" prefHeight="80.0" prefWidth="80.0" text="8" textAlignment="CENTER">
                     <font>
                         <Font name="System Bold" size="36.0" />
                     </font>
@@ -137,7 +137,7 @@
                         </DropShadow>
                     </effect>
                 </Button>
-                <Button contentDisplay="CENTER" layoutX="250.0" layoutY="250.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="9" textAlignment="CENTER">
+                <Button contentDisplay="CENTER" layoutX="250.0" layoutY="250.0" mnemonicParsing="false" onAction="#handleButtonNine" prefHeight="80.0" prefWidth="80.0" text="9" textAlignment="CENTER">
                     <font>
                         <Font name="System Bold" size="36.0" />
                     </font>
