@@ -56,6 +56,7 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
 
     public void generateSudokuPuzzle(DifficultyLevel level) {
         solveGame();
+//        this.printBoard();
         deleteFIelds(level.getFieldsToDelete());
     }
 
@@ -92,6 +93,11 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
     public int get(int x, int y) {
         return this.sudokuFields[x][y].getFieldValue();
     }
+
+    public SudokuField getField(int x, int y) {
+        return this.sudokuFields[x][y];
+    }
+
 
     public void set(int x, int y, int value) {
         boolean wasChanged = this.sudokuFields[x][y].setFieldValue(value);
