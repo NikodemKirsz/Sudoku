@@ -29,7 +29,8 @@ public class SudokuElement implements Serializable, Cloneable {
     public boolean verify() {
         for (int i = 0; i < size; i++) {
             for (int j = i + 1; j < size; j++) {
-                if (sudokuFields.get(i).getFieldValue() == sudokuFields.get(j).getFieldValue()) {
+                if (sudokuFields.get(i).getFieldValue() == sudokuFields.get(j).getFieldValue()
+                        || sudokuFields.get(i).getFieldValue() == 0 || sudokuFields.get(j).getFieldValue() == 0) {
                     return false;
                 }
             }

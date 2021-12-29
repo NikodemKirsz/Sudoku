@@ -108,11 +108,24 @@ public class SudokuBoardTest {
                         {4, 9, 5, 6, 1, 2, 7, 8, 3},
                         {7, 1, 2, 8, 4, 3, 5, 6, 9}
                 };
+        var invalidBoardWithZero = new int[][]
+                {
+                        {5, 6, 1, 2, 3, 8, 4, 9, 7},
+                        {8, 7, 4, 5, 6, 9, 2, 3, 1},
+                        {2, 3, 9, 4, 7, 1, 6, 5, 8},
+                        {1, 5, 8, 3, 2, 7, 9, 4, 6},
+                        {3, 4, 7, 9, 5, 6, 8, 1, 2},
+                        {9, 2, 6, 1, 8, 4, 3, 7, 5},
+                        {6, 8, 3, 7, 9, 5, 1, 2, 4},
+                        {4, 9, 5, 6, 1, 2, 7, 8, 3},
+                        {7, 1, 2, 8, 4, 3, 5, 0, 9}
+                };
 
         int[][][] invalidBoards = {
                 invalidBoardRow,
                 invalidBoardColumn,
-                invalidBoardBox
+                invalidBoardBox,
+                invalidBoardWithZero
         };
 
         for (var invalidBoard : invalidBoards) {

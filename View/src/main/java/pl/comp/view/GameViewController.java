@@ -1,5 +1,6 @@
 package pl.comp.view;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.adapter.JavaBeanIntegerProperty;
 import javafx.beans.property.adapter.JavaBeanIntegerPropertyBuilder;
 import javafx.beans.value.ChangeListener;
@@ -213,7 +214,7 @@ public class GameViewController implements Initializable {
                             .bean(sudokuBoard.getField(row, column))
                             .name("fieldValue")
                             .build();
-                    gridLabels[row][column].textProperty().bindBidirectional(integerProperty, converter);
+                    Bindings.bindBidirectional(gridLabels[row][column].textProperty(), integerProperty, converter);
 
                     if (sudokuBoard.get(row, column) == 0) {
                         this.setModifiableLabel(row, column);
