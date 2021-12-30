@@ -157,6 +157,12 @@
             <Font size="27.0" />
          </font>
       </Label>
+      <Pane layoutX="822.0" layoutY="624.0" prefHeight="74.0" prefWidth="316.0">
+         <children>
+            <Button fx:id="saveButton" layoutX="14.0" layoutY="15.0" mnemonicParsing="false" onAction="#saveSudokuBoard" prefHeight="45.0" prefWidth="127.0" text="Zapisz" />
+            <Button fx:id="readButton" layoutX="175.0" layoutY="15.0" mnemonicParsing="false" onAction="#readSudokuBoard" prefHeight="45.0" prefWidth="127.0" text="Wczytaj" />
+         </children>
+      </Pane>
     </children>
     <effect>
         <DropShadow height="60.0" radius="29.5" width="60.0" />

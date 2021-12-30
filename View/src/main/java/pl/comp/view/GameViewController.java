@@ -20,10 +20,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.util.converter.NumberStringConverter;
+
+import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import pl.comp.model.FileSudokuBoardDao;
 import pl.comp.model.SudokuBoard;
 import pl.comp.model.SudokuPlayer;
 
@@ -31,6 +35,7 @@ public class GameViewController implements Initializable {
 
     private SudokuPlayer player;
     private SudokuBoard sudokuBoard;
+    private FileSudokuBoardDao boardDao;
 
     private Label[][] gridLabels;
     private int activeX;
@@ -62,6 +67,8 @@ public class GameViewController implements Initializable {
     private Button nineButton;
     @FXML
     private Label winLabel;
+    @FXML
+    private Button readButton;
 
     @FXML
     private void handleButtonOne() {
@@ -108,9 +115,23 @@ public class GameViewController implements Initializable {
         this.updateSudokuBoard(9);
     }
 
+    @FXML
+    private void saveSudokuBoard() {
+        boardDao.write(sudokuBoard);
+        readButton.setDisable(false);
+    }
+
+    @FXML
+    private void readSudokuBoard() {
+        sudokuBoard = boardDao.read();
+        this.setSudokuGrid(sudokuBoard);
+    }
+
     public GameViewController() {
         this.activeY = -1;
         this.activeX = -1;
+
+        this.boardDao = new FileSudokuBoardDao("./Model/files/saved_board");
 
         this.font = new Font("System", 48);
         this.activeFont = new Font("System", 51);
@@ -215,6 +236,9 @@ public class GameViewController implements Initializable {
                             .name("fieldValue")
                             .build();
                     Bindings.bindBidirectional(gridLabels[row][column].textProperty(), integerProperty, converter);
+                    // TODO
+                    gridLabels[row][column].setTextFill(Color.BLACK);
+                    gridLabels[row][column].onMouseClickedProperty().set(null);
 
                     if (sudokuBoard.get(row, column) == 0) {
                         this.setModifiableLabel(row, column);
@@ -230,5 +254,10 @@ public class GameViewController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         createNewSudoku();
+
+        File savedBoard = new File("./Model/files/saved_board");
+        if (!savedBoard.exists()) {
+            readButton.setDisable(true);
+        }
     }
 }
