@@ -29,7 +29,7 @@ class SudokuRowTest {
         for (var i = 0; i < size; i++)
         {
             sudokuFields[i] = new SudokuField();
-            sudokuFields[i].setFieldValue(i);
+            sudokuFields[i].setFieldValue(i+1);
         }
         sudokuRow1.setSudokuFields(sudokuFields);
         sudokuRow2.setSudokuFields(sudokuFields);

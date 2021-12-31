@@ -133,7 +133,7 @@ public class GameViewController implements Initializable {
         this.activeY = -1;
         this.activeX = -1;
 
-        this.boardDao = new FileSudokuBoardDao("./Model/files/saved_board");
+        this.boardDao = new FileSudokuBoardDao("./files/saved_board");
 
         this.font = new Font("System", 48);
         this.activeFont = new Font("System", 51);
@@ -192,11 +192,7 @@ public class GameViewController implements Initializable {
             @Override
             public void changed(ObservableValue<? extends String> observableValue,
                                 String s, String t1) {
-                if (sudokuBoard.isBoardValid()) {
-                    winLabel.setVisible(true);
-                } else {
-                    winLabel.setVisible(false);
-                }
+                winLabel.setVisible(sudokuBoard.isBoardValid());
             }
         });
     }
@@ -261,7 +257,7 @@ public class GameViewController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         createNewSudoku();
 
-        File savedBoard = new File("./Model/files/saved_board");
+        File savedBoard = new File("./files/saved_board");
         if (!savedBoard.exists()) {
             readButton.setDisable(true);
         }

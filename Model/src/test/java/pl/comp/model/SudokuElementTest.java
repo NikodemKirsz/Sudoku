@@ -29,7 +29,7 @@ class SudokuElementTest {
         for (var i = 0; i < size; i++)
         {
             sudokuFields[i] = new SudokuField();
-            sudokuFields[i].setFieldValue(i);
+            sudokuFields[i].setFieldValue(i+1);
         }
         sudokuElement1.setSudokuFields(sudokuFields);
         sudokuElement2.setSudokuFields(sudokuFields);
@@ -61,7 +61,7 @@ class SudokuElementTest {
         boolean isValid = true;
         for (var i = 0; i < size; i++)
         {
-            isValid &= readSudokuFields.get(i).getFieldValue() == i;
+            isValid &= readSudokuFields.get(i).getFieldValue() == i+1;
         }
         assertTrue(isValid);
 
