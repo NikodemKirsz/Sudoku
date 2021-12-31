@@ -2,6 +2,9 @@ package pl.comp.view;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -29,7 +32,8 @@ public final class SceneController {
     }
 
     private static void loadScene(Stage stage, URL viewUrl) throws IOException {
-        Parent root = FXMLLoader.load(viewUrl);
+        ResourceBundle resourceBundle = ResourceBundle.getBundle("pl.comp.view.Bundle");
+        Parent root = FXMLLoader.load(viewUrl, resourceBundle);
         var scene = new Scene(root);
         stage.setScene(scene);
         stage.show();

@@ -23,6 +23,7 @@ import javafx.util.converter.NumberStringConverter;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,6 +37,7 @@ public class GameViewController implements Initializable {
     private SudokuPlayer player;
     private SudokuBoard sudokuBoard;
     private FileSudokuBoardDao boardDao;
+    private Locale locale;
 
     private Label[][] gridLabels;
     private int activeX;
@@ -249,6 +251,10 @@ public class GameViewController implements Initializable {
                 }
             }
         }
+    }
+
+    private void takeLocale(Locale locale) {
+        this.locale = locale;
     }
 
     @Override

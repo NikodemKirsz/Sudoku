@@ -152,15 +152,21 @@
                 </Button>
             </children>
         </Pane>
-      <Label fx:id="winLabel" layoutX="822.0" layoutY="113.0" text="Brawo! Dobre rozwiązanie." visible="false">
+      <Label fx:id="winLabel" layoutX="822.0" layoutY="113.0" text="%winningLabel" visible="false">
          <font>
             <Font size="27.0" />
          </font>
       </Label>
       <Pane layoutX="822.0" layoutY="624.0" prefHeight="74.0" prefWidth="316.0">
          <children>
-            <Button fx:id="saveButton" layoutX="14.0" layoutY="15.0" mnemonicParsing="false" onAction="#saveSudokuBoard" prefHeight="45.0" prefWidth="127.0" text="Zapisz" />
-            <Button fx:id="readButton" layoutX="175.0" layoutY="15.0" mnemonicParsing="false" onAction="#readSudokuBoard" prefHeight="45.0" prefWidth="127.0" text="Wczytaj" />
+            <Button fx:id="saveButton" layoutX="14.0" layoutY="15.0" mnemonicParsing="false" onAction="#saveSudokuBoard" prefHeight="45.0" prefWidth="127.0" text="%saveButton">
+               <font>
+                  <Font size="24.0" />
+               </font></Button>
+            <Button fx:id="readButton" layoutX="175.0" layoutY="15.0" mnemonicParsing="false" onAction="#readSudokuBoard" prefHeight="45.0" prefWidth="127.0" text="%readButton">
+               <font>
+                  <Font size="24.0" />
+               </font></Button>
          </children>
       </Pane>
     </children>
