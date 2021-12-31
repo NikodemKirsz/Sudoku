@@ -1,13 +1,20 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>pl.cp.first</groupId>
-    <artifactId>FirstJava</artifactId>
-    <version>2.0</version>
-    <packaging>jar</packaging>
+    <groupId>pl.comp</groupId>
+    <artifactId>SudokuGameProject</artifactId>
+    <version>2.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
-    <name>00_${project.artifactId}-${project.version}</name>
+    <name>${project.artifactId}</name>
+
+    <modules>
+        <module>Model</module>
+        <module>View</module>
+    </modules>
 
     <url>http://maven.apache.org</url>
 
@@ -25,7 +32,7 @@
     </developers>
 
     <description>RCM</description>
-	
+
     <reporting>
         <plugins>
             <plugin>
@@ -40,6 +47,11 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.9.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
                 <version>3.1.1</version>
             </plugin>
@@ -48,8 +60,9 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>3.1.1</version>
                 <configuration>
-                    <configLocation>checkstyle2020.xml</configLocation>
+                    <configLocation>./checkstyle2020.xml</configLocation>
                     <encoding>UTF-8</encoding>
+                    <excludes>**/module-info.java</excludes>
                     <consoleOutput>true</consoleOutput>
                     <linkXRef>false</linkXRef>
                 </configuration>
@@ -74,7 +87,7 @@
             </plugin>
         </plugins>
     </reporting>
-    
+
     <build>
         <plugins>
             <plugin>
@@ -92,8 +105,9 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>3.1.1</version>
                 <configuration>
-                    <configLocation>checkstyle2020.xml</configLocation>
+                    <configLocation>./checkstyle2020.xml</configLocation>
                     <encoding>UTF-8</encoding>
+                    <excludes>**/module-info.java</excludes>
                     <consoleOutput>true</consoleOutput>
                     <failsOnError>true</failsOnError>
                     <linkXRef>false</linkXRef>
@@ -160,36 +174,27 @@
                 <version>3.8.2</version>
             </plugin>
             <plugin>
-                <groupId>com.mycila.maven-license-plugin</groupId>
-                <artifactId>maven-license-plugin</artifactId>
-                <version>1.9.0</version>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>4.1</version>
                 <configuration>
-                    <header>${license.dir}/license.txt</header>
                     <properties>
-                        <project>${project.name}</project>
-                        <year>${project.inceptionYear}</year>
+                        <owner>Mycila</owner>
+                        <email>mathieu.carbou@gmail.com</email>
                     </properties>
-                    <includes>
-                        <include>src/main/java/**</include>
-                        <include>src/test/java/**</include>
-                    </includes>
-                    <strictCheck>true</strictCheck>
+                    <licenseSets>
+                        <licenseSet>
+                            <header>file:///${license.dir}/license.txt</header>
+                            <excludes>
+                                <exclude>**/license.txt</exclude>
+                            </excludes>
+                            <includes>
+                                <include>src/main/java/**</include>
+                                <include>src/test/java/**</include>
+                            </includes>
+                        </licenseSet>
+                    </licenseSets>
                 </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>format</goal>
-                        </goals>
-                        <phase>process-sources</phase>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.mycila</groupId>
-                        <artifactId>licenses</artifactId>
-                        <version>1</version>
-                    </dependency>
-                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.openjfx</groupId>
@@ -214,18 +219,18 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.7.2</version>
+            <version>5.8.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.5</version>
+            <version>3.12.0</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>17</version>
+            <version>17.0.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
@@ -238,12 +243,12 @@
             <version>0.8.7</version>
         </dependency>
     </dependencies>
-    
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <license.dir>${basedir}</license.dir>
         <maven.compiler.release>17</maven.compiler.release>
+        <license.dir>${basedir}</license.dir>
     </properties>
 </project>
