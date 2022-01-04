@@ -56,7 +56,7 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
 
     public void generateSudokuPuzzle(DifficultyLevel level) {
         solveGame();
-//        this.printBoard();
+        //this.printBoard();
         deleteFIelds(level.getFieldsToDelete());
     }
 
