@@ -1,5 +1,9 @@
 package pl.comp.view;
 
+import java.net.URL;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -14,11 +18,6 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import pl.comp.model.DifficultyLevel;
-
-import java.net.URL;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.ResourceBundle;
 
 public class MenuViewController implements Initializable, LocaleChangeListener {
 
@@ -80,13 +79,23 @@ public class MenuViewController implements Initializable, LocaleChangeListener {
                 resourceBundle.getString("polish")
         );
         languageChoice.setItems(languages);
-        languageChoice.setValue(Objects.equals(String.valueOf(Locale.getDefault()), "pl_PL") ?
-                resourceBundle.getString("polish") : resourceBundle.getString("english"));
-        languageChoice.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+        languageChoice.setValue(Objects.equals(String.valueOf(Locale.getDefault()), "pl_PL")
+                ? resourceBundle.getString("polish")
+                : resourceBundle.getString("english"));
+        languageChoice
+                .getSelectionModel()
+                .selectedIndexProperty()
+                .addListener(new ChangeListener<Number>() {
+
             @Override
-            public void changed(ObservableValue<? extends Number> observableValue, Number number, Number number2) {
+            public void changed(
+                    ObservableValue<? extends Number> observableValue,
+                    Number number,
+                    Number number2) {
                 // nie wiem czemu to działa na odwrót
-                if (Objects.equals(languageChoice.getValue(), resourceBundle.getString("english"))) {
+                if (Objects.equals(
+                        languageChoice.getValue(),
+                        resourceBundle.getString("english"))) {
                     Locale.setDefault(new Locale("pl", "PL"));
                 } else {
                     Locale.setDefault(new Locale("en", "US"));

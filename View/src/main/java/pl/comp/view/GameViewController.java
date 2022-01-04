@@ -1,5 +1,11 @@
 package pl.comp.view;
 
+import java.io.File;
+import java.net.URL;
+import java.util.Locale;
+import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.adapter.JavaBeanIntegerProperty;
 import javafx.beans.property.adapter.JavaBeanIntegerPropertyBuilder;
@@ -20,14 +26,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.util.converter.NumberStringConverter;
-
-import java.io.File;
-import java.net.URL;
-import java.util.Locale;
-import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import pl.comp.model.FileSudokuBoardDao;
 import pl.comp.model.SudokuBoard;
 import pl.comp.model.SudokuPlayer;
@@ -218,7 +216,7 @@ public class GameViewController implements Initializable {
     private void updateSudokuBoard(int number) {
         if (this.activeY != -1 && this.activeX != -1) {
             gridLabels[activeX][activeY].setText(String.valueOf(number));
-//            sudokuBoard.printBoard();
+            // sudokuBoard.printBoard();
         }
     }
 
@@ -227,13 +225,16 @@ public class GameViewController implements Initializable {
         for (int row = 0; row < 9; row++) {
             for (int column = 0; column < 9; column++) {
                 try {
-                    JavaBeanIntegerPropertyBuilder builder = JavaBeanIntegerPropertyBuilder.create();
-                    JavaBeanIntegerProperty
-                            integerProperty = builder
-                            .bean(sudokuBoard.getField(row, column))
-                            .name("fieldValue")
-                            .build();
-                    Bindings.bindBidirectional(gridLabels[row][column].textProperty(), integerProperty, converter);
+                    var builder = JavaBeanIntegerPropertyBuilder.create();
+                    var integerProperty = builder
+                                        .bean(sudokuBoard.getField(row, column))
+                                        .name("fieldValue")
+                                        .build();
+                    Bindings.bindBidirectional(
+                            gridLabels[row][column].textProperty(),
+                            integerProperty,
+                            converter
+                    );
                     // TODO
                     gridLabels[row][column].setTextFill(Color.BLACK);
                     gridLabels[row][column].onMouseClickedProperty().set(null);
