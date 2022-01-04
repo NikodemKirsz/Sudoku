@@ -225,15 +225,16 @@ public class GameViewController implements Initializable {
         for (int row = 0; row < 9; row++) {
             for (int column = 0; column < 9; column++) {
                 try {
-                    JavaBeanIntegerPropertyBuilder builder =
-                            JavaBeanIntegerPropertyBuilder.create();
-                    JavaBeanIntegerProperty
-                            integerProperty = builder
-                            .bean(sudokuBoard.getField(row, column))
-                            .name("fieldValue")
-                            .build();
-                    Bindings.bindBidirectional(gridLabels[row][column]
-                            .textProperty(), integerProperty, converter);
+                    var builder = JavaBeanIntegerPropertyBuilder.create();
+                    var integerProperty = builder
+                                        .bean(sudokuBoard.getField(row, column))
+                                        .name("fieldValue")
+                                        .build();
+                    Bindings.bindBidirectional(
+                            gridLabels[row][column].textProperty(),
+                            integerProperty,
+                            converter
+                    );
                     // TODO
                     gridLabels[row][column].setTextFill(Color.BLACK);
                     gridLabels[row][column].onMouseClickedProperty().set(null);

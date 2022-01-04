@@ -80,16 +80,21 @@ public class MenuViewController implements Initializable, LocaleChangeListener {
         );
         languageChoice.setItems(languages);
         languageChoice.setValue(Objects.equals(String.valueOf(Locale.getDefault()), "pl_PL")
-                ? resourceBundle.getString("polish") : resourceBundle.getString("english"));
+                ? resourceBundle.getString("polish")
+                : resourceBundle.getString("english"));
+        languageChoice
+                .getSelectionModel()
+                .selectedIndexProperty()
+                .addListener(new ChangeListener<Number>() {
 
-        languageChoice.getSelectionModel().selectedIndexProperty().addListener(
-                new ChangeListener<Number>() {
             @Override
-            public void changed(ObservableValue<? extends Number> observableValue,
-                                Number number,
-                                Number number2) {
+            public void changed(
+                    ObservableValue<? extends Number> observableValue,
+                    Number number,
+                    Number number2) {
                 // nie wiem czemu to działa na odwrót
-                if (Objects.equals(languageChoice.getValue(),
+                if (Objects.equals(
+                        languageChoice.getValue(),
                         resourceBundle.getString("english"))) {
                     Locale.setDefault(new Locale("pl", "PL"));
                 } else {
