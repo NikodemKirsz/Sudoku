@@ -12,25 +12,26 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FileSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
 
     private final String filename;
+    private static final Logger logger = LoggerFactory.getLogger(FileSudokuBoardDao.class);
 
     public FileSudokuBoardDao(String filename) {
         this.filename = filename;
     }
 
     public SudokuBoard read() {
-
         SudokuBoard sudokuBoard = null;
 
         try (var fileInputStream = new FileInputStream(filename);
              var objectInputStream = new ObjectInputStream(fileInputStream)) {
             sudokuBoard = (SudokuBoard) objectInputStream.readObject();
         } catch (ClassNotFoundException | IOException e) {
-            e.printStackTrace();
-            System.out.print(e.toString());
+            logger.error(e.toString());
         }
         return sudokuBoard;
     }
@@ -40,8 +41,7 @@ public class FileSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
              var objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
             objectOutputStream.writeObject(obj);
         } catch (IOException e) {
-            e.printStackTrace();
-            System.out.print(e.toString());
+            logger.error(e.toString());
         }
     }
 

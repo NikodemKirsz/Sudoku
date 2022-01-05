@@ -1,0 +1,3 @@
+2022-01-05 18:31:33 ERROR java.io.FileNotFoundException: .\testFiles\fileUnsuccessful (Odmowa dostępu)
+2022-01-05 18:31:33 ERROR java.io.EOFException
+2022-01-05 18:31:33 ERROR java.lang.IllegalArgumentException: Max must not be smaller than min!

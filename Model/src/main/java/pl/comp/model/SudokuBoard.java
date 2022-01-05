@@ -15,6 +15,8 @@ import java.util.List;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SudokuBoard implements IObservable, Serializable, Cloneable {
     private final SudokuField[][] sudokuFields;
@@ -22,6 +24,7 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
     private final int boxSize; // square root of N
     private final transient SudokuSolver sudokuSolver;
     private final transient IObserver observer;
+    private static final Logger logger = LoggerFactory.getLogger("printBoardLogger");
 
     public SudokuBoard(IObserver observer) {
         this(new BacktrackingSudokuSolver(), observer);
@@ -221,11 +224,11 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
     public void printBoard() {
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
-                System.out.print(this.sudokuFields[i][j].getFieldValue() + "\t");
+                logger.info(this.sudokuFields[i][j].getFieldValue() + "\t");
             }
-            System.out.println();
+            logger.info("\n");
         }
-        System.out.println();
+        logger.info("\n");
     }
 
     @Override
