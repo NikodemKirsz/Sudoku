@@ -12,11 +12,14 @@ import org.slf4j.LoggerFactory;
 import pl.comp.exceptions.IllegalBoardValueException;
 import pl.comp.exceptions.SudokuException;
 
+import java.util.ResourceBundle;
+
 public class BacktrackingSudokuSolver implements SudokuSolver {
     private SudokuBoard board;
     private int boardSize;
     private int boxSize;
     private static final Logger logger = LoggerFactory.getLogger(BacktrackingSudokuSolver.class);
+    private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("pl.comp.model.Bundle");
 
     public BacktrackingSudokuSolver() {
     }
@@ -30,7 +33,7 @@ public class BacktrackingSudokuSolver implements SudokuSolver {
             fillRemaining(0, boxSize);
         } catch (IllegalBoardValueException e) {
             SudokuException exception = new SudokuException(e);
-            logger.error(exception + "\nCaused by", exception.getCause());
+            logger.error(exception + resourceBundle.getString("cause"), exception.getCause());
         }
     }
 
