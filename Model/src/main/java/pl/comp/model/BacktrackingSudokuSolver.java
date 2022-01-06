@@ -7,12 +7,16 @@
 
 package pl.comp.model;
 
-import java.io.Serializable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import pl.comp.exceptions.IllegalBoardValueException;
+import pl.comp.exceptions.SudokuException;
 
 public class BacktrackingSudokuSolver implements SudokuSolver {
     private SudokuBoard board;
     private int boardSize;
     private int boxSize;
+    private static final Logger logger = LoggerFactory.getLogger(BacktrackingSudokuSolver.class);
 
     public BacktrackingSudokuSolver() {
     }
@@ -22,11 +26,16 @@ public class BacktrackingSudokuSolver implements SudokuSolver {
         boardSize = givenBoard.getBoardSize();
         boxSize = givenBoard.getBoxSize();
 
-        fillRemaining(0, boxSize);
+        try {
+            fillRemaining(0, boxSize);
+        } catch (IllegalBoardValueException e) {
+            SudokuException exception = new SudokuException(e);
+            logger.error(exception + "\nCaused by", exception.getCause());
+        }
     }
 
     // A recursive function to fill remaining matrix
-    private boolean fillRemaining(int row, int column) {
+    private boolean fillRemaining(int row, int column) throws IllegalBoardValueException {
 
         // Look out for index out of bounds! (╯ ͠° ͟ʖ ͡°)╯
         if (column >= boardSize) {
@@ -60,7 +69,7 @@ public class BacktrackingSudokuSolver implements SudokuSolver {
     }
 
     // Check if safe to put in cell
-    public boolean isValid(int i, int j, int num) {
+    public boolean isValid(int i, int j, int num) throws IllegalBoardValueException {
         int temp = board.get(i, j);
         board.set(i, j, 0);
         boolean isUnused = (unUsedInRow(i, num)

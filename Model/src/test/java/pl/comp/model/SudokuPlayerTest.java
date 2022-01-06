@@ -8,23 +8,24 @@
 package pl.comp.model;
 
 import org.junit.jupiter.api.Test;
+import pl.comp.exceptions.IllegalBoardValueException;
 
 class SudokuPlayerTest {
 
     @Test
-    void onValueChanged() {
+    void onValueChanged() throws IllegalBoardValueException {
         var sudokuBoard = new SudokuBoard(new BacktrackingSudokuSolver(), null);
         sudokuBoard.solveGame();
 
         sudokuBoard.set(0, 0, 0);
         sudokuBoard.set(0, 0, 4);
-        sudokuBoard.set(0, 0, 11);
+        sudokuBoard.set(0, 0, 9);
 
         var sudokuBoardWithObserver = new SudokuBoard();
         sudokuBoardWithObserver.solveGame();
 
         sudokuBoardWithObserver.set(0, 0, 0);
         sudokuBoardWithObserver.set(0, 0, 4);
-        sudokuBoardWithObserver.set(0, 0, 11);
+        sudokuBoardWithObserver.set(0, 0, 9);
        }
 }

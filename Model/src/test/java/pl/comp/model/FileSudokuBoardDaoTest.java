@@ -10,6 +10,8 @@ package pl.comp.model;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import pl.comp.exceptions.FailedFileOperationException;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -60,9 +62,9 @@ class FileSudokuBoardDaoTest {
     }
 
     @Test
-    void writeUnsuccessful() throws FileNotFoundException {
+    void writeUnsuccessful() {
         try(var fileSudokuBoardDao = new FileSudokuBoardDao(PATH_TO_UNSUCCESSFUL_FILE)) {
-            fileSudokuBoardDao.write(null);
+            assertThrows(FailedFileOperationException.class, ()->fileSudokuBoardDao.write(null));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -81,13 +83,11 @@ class FileSudokuBoardDaoTest {
 
     @Test
     void readUnsuccessful() {
-        SudokuBoard readSudokuBoard = null;
         try(var fileSudokuBoardDao = new FileSudokuBoardDao(PATH_TO_UNSUCCESSFUL_FILE)) {
-            readSudokuBoard = fileSudokuBoardDao.read();
+            assertThrows(FailedFileOperationException.class, fileSudokuBoardDao::read);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        assertNull(readSudokuBoard);
     }
 
     @AfterAll

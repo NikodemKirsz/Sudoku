@@ -4,4 +4,5 @@ module pl.comp.model {
 
     exports pl.comp.model;
     opens pl.comp.model;
+    exports pl.comp.exceptions;
 }

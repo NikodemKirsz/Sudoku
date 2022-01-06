@@ -14,10 +14,16 @@ import java.util.List;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import pl.comp.exceptions.IllegalBoardValueException;
+import pl.comp.exceptions.NotEnoughElementsException;
+import pl.comp.exceptions.SudokuException;
 
 public class SudokuElement implements Serializable, Cloneable {
     private final List<SudokuField> sudokuFields;
     private static final int size = 9;
+    private static final Logger logger = LoggerFactory.getLogger(SudokuElement.class);
 
     public SudokuElement() {
         this.sudokuFields = Arrays.asList(new SudokuField[size]);
@@ -39,9 +45,18 @@ public class SudokuElement implements Serializable, Cloneable {
         return true;
     }
 
-    public void setSudokuFields(SudokuField[] sudokuFields) {
-        for (int i = 0; i < size; i++) {
-            this.sudokuFields.get(i).setFieldValue(sudokuFields[i].getFieldValue());
+    public void setSudokuFields(SudokuField[] sudokuFields)
+            throws NotEnoughElementsException, IllegalBoardValueException {
+        try {
+            if (sudokuFields.length != size) {
+                throw new NotEnoughElementsException("Not enough elements in list.");
+            }
+            for (int i = 0; i < size; i++) {
+                this.sudokuFields.get(i).setFieldValue(sudokuFields[i].getFieldValue());
+            }
+        } catch (IllegalBoardValueException | NotEnoughElementsException e) {
+            logger.error(e.toString());
+            throw e;
         }
     }
 
@@ -103,10 +118,20 @@ public class SudokuElement implements Serializable, Cloneable {
         var index = 0;
         for (SudokuField field :
                 sudokuFields) {
-            clonedSudokuFields[index].setFieldValue(field.getFieldValue());
+            try {
+                clonedSudokuFields[index].setFieldValue(field.getFieldValue());
+            } catch (IllegalBoardValueException e) {
+                SudokuException exception = new SudokuException(e);
+                logger.error(exception + "\nCaused by", exception.getCause());
+            }
             index++;
         }
-        clonedSudokuElement.setSudokuFields(clonedSudokuFields);
+        try {
+            clonedSudokuElement.setSudokuFields(clonedSudokuFields);
+        } catch (NotEnoughElementsException | IllegalBoardValueException e) {
+            SudokuException exception = new SudokuException(e);
+            logger.error(exception + "\nCaused by", exception.getCause());
+        }
         return clonedSudokuElement;
     }
 }

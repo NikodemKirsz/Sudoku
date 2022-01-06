@@ -26,6 +26,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.util.converter.NumberStringConverter;
+import pl.comp.exceptions.DaoException;
+import pl.comp.exceptions.FailedFileOperationException;
+import pl.comp.exceptions.IllegalBoardValueException;
+import pl.comp.exceptions.SudokuException;
 import pl.comp.model.FileSudokuBoardDao;
 import pl.comp.model.SudokuBoard;
 import pl.comp.model.SudokuPlayer;
@@ -116,13 +120,13 @@ public class GameViewController implements Initializable {
     }
 
     @FXML
-    private void saveSudokuBoard() {
+    private void saveSudokuBoard() throws DaoException {
         boardDao.write(sudokuBoard);
         readButton.setDisable(false);
     }
 
     @FXML
-    private void readSudokuBoard() {
+    private void readSudokuBoard() throws DaoException {
         sudokuBoard = boardDao.read();
         this.setSudokuGrid(sudokuBoard);
     }
@@ -143,7 +147,7 @@ public class GameViewController implements Initializable {
         this.dropShadow.setColor(Color.color(0.4, 0.5, 0.5));
     }
 
-    private void createNewSudoku() {
+    private void createNewSudoku() throws IllegalBoardValueException {
         player = new SudokuPlayer();
         sudokuBoard = new SudokuBoard(player);
 
@@ -190,7 +194,11 @@ public class GameViewController implements Initializable {
             @Override
             public void changed(ObservableValue<? extends String> observableValue,
                                 String s, String t1) {
-                winLabel.setVisible(sudokuBoard.isBoardValid());
+                try {
+                    winLabel.setVisible(sudokuBoard.isBoardValid());
+                } catch (SudokuException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -256,7 +264,11 @@ public class GameViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        createNewSudoku();
+        try {
+            createNewSudoku();
+        } catch (IllegalBoardValueException e) {
+            Logger.getLogger(GameViewController.class.getName()).log(Level.SEVERE, null, e);
+        }
 
         File savedBoard = new File("./files/saved_board");
         if (!savedBoard.exists()) {

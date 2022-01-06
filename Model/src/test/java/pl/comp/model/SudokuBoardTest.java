@@ -12,12 +12,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import pl.comp.exceptions.IllegalBoardValueException;
+import pl.comp.exceptions.NotEnoughElementsException;
 
 public class SudokuBoardTest {
     private final int size = 9;
 
     @Test
-    void printBoardOut() {
+    void printBoardOut() throws IllegalBoardValueException {
         var sudoku = new SudokuBoard();
         sudoku.solveGame();
         sudoku.printBoard();
@@ -25,7 +27,7 @@ public class SudokuBoardTest {
     }
 
     @Test
-    void differentBoardsTest() {
+    void differentBoardsTest() throws IllegalBoardValueException {
         var board1 = new SudokuBoard();
         board1.solveGame();
         var board2 = new SudokuBoard();
@@ -47,14 +49,14 @@ public class SudokuBoardTest {
     }
 
     @Test
-    void getBoardTest() {
+    void getBoardTest() throws IllegalBoardValueException {
         var sudoku = new SudokuBoard();
         sudoku.getBoard()[0][0].setFieldValue(0);
         assertEquals(sudoku.getBoard()[0][0].getFieldValue(),0);
     }
 
     @Test
-    void isValidTest() {
+    void isValidTest() throws NotEnoughElementsException, IllegalBoardValueException {
         int[][] validBoard  = new int[][]
                 {
                         {5, 6, 1, 2, 3, 8, 4, 9, 7},
@@ -136,7 +138,7 @@ public class SudokuBoardTest {
     }
 
     @Test
-    void getRowTest() {
+    void getRowTest() throws NotEnoughElementsException, IllegalBoardValueException {
         var firstRow = new int[] {5, 6, 1, 2, 3, 8, 4, 9, 7};
         var validBoard = new int[][]
                 {
@@ -166,7 +168,7 @@ public class SudokuBoardTest {
     }
 
     @Test
-    void getColumnTest() {
+    void getColumnTest() throws NotEnoughElementsException, IllegalBoardValueException {
         var firstColumn = new int[] {5, 8, 2, 1, 3, 9, 6, 4, 7};
         var validBoard = new int[][]
                 {
@@ -196,7 +198,7 @@ public class SudokuBoardTest {
     }
 
     @Test
-    void getBoxTest() {
+    void getBoxTest() throws NotEnoughElementsException, IllegalBoardValueException {
         var firstBox = new int[] {5, 6, 1, 8, 7, 4, 2, 3, 5};
         var validBoard = new int[][]
                 {
@@ -233,8 +235,7 @@ public class SudokuBoardTest {
     private SudokuBoard differentSudokuBoard;
 
     @BeforeEach
-    void beforeEach()
-    {
+    void beforeEach() throws IllegalBoardValueException {
         var backtrackingSudokuSolver = new BacktrackingSudokuSolver();
         var observer = new SudokuPlayer();
         var arr = new int[][]
@@ -310,7 +311,7 @@ public class SudokuBoardTest {
     }
 
     @Test
-    void cloneTest() throws CloneNotSupportedException {
+    void cloneTest() throws CloneNotSupportedException, IllegalBoardValueException {
         SudokuBoard sudokuBoard = new SudokuBoard();
         sudokuBoard.solveGame();
         SudokuBoard sudokuBoardCloned = sudokuBoard.clone();
@@ -325,7 +326,7 @@ public class SudokuBoardTest {
     }
 
     @Test
-    void generateSudokuPuzzleTest() {
+    void generateSudokuPuzzleTest() throws IllegalBoardValueException {
         var player = new SudokuPlayer();
         var sudokuBoard = new SudokuBoard(player);
         var level = DifficultyLevel.Hard;
@@ -355,7 +356,7 @@ public class SudokuBoardTest {
         differentSudokuBoard = null;
     }
 
-    private void fillSudokuBoard(int[][] differentArr, SudokuBoard differentSudokuBoard) {
+    private void fillSudokuBoard(int[][] differentArr, SudokuBoard differentSudokuBoard) throws IllegalBoardValueException {
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 differentSudokuBoard.set(i, j, differentArr[i][j]);

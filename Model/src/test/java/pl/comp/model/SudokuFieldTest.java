@@ -8,13 +8,14 @@
 package pl.comp.model;
 
 import org.junit.jupiter.api.Test;
+import pl.comp.exceptions.IllegalBoardValueException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class SudokuFieldTest {
 
     @Test
-    void getFieldValue() {
+    void getFieldValue() throws IllegalBoardValueException {
         var sudokuField = new SudokuField();
 
         int value = 8;
@@ -27,7 +28,7 @@ class SudokuFieldTest {
     }
 
     @Test
-    void setFieldValue() {
+    void setFieldValue() throws IllegalBoardValueException {
         var sudokuField = new SudokuField();
 
         int value = 8;
@@ -39,16 +40,16 @@ class SudokuFieldTest {
         assertNotEquals(sudokuField.getFieldValue(), value + 1);
 
         int valueOutOfBound = 88;
-        sudokuField.setFieldValue(valueOutOfBound);
-        assertEquals(sudokuField.getFieldValue(), value);
+        int finalValueOutOfBound = valueOutOfBound;
+        assertThrows(IllegalBoardValueException.class, ()->sudokuField.setFieldValue(finalValueOutOfBound));
 
         valueOutOfBound = -10;
-        sudokuField.setFieldValue(valueOutOfBound);
-        assertEquals(sudokuField.getFieldValue(), value);
+        int finalValueOutOfBound1 = valueOutOfBound;
+        assertThrows(IllegalBoardValueException.class, ()->sudokuField.setFieldValue(finalValueOutOfBound1));
     }
 
     @Test
-    void testEquals() {
+    void testEquals() throws IllegalBoardValueException {
         var sudokuField1 = new SudokuField();
         var sudokuField2 = new SudokuField();
         var sudokuField3 = new SudokuField();
@@ -66,7 +67,7 @@ class SudokuFieldTest {
     }
 
     @Test
-    void testHashCode() {
+    void testHashCode() throws IllegalBoardValueException {
         var sudokuField1 = new SudokuField();
         var sudokuField2 = new SudokuField();
         var sudokuField3 = new SudokuField();
@@ -83,7 +84,7 @@ class SudokuFieldTest {
     }
 
     @Test
-    void testToString() {
+    void testToString() throws IllegalBoardValueException {
         var sudokuField1 = new SudokuField();
         var sudokuField3 = new SudokuField();
         sudokuField1.setFieldValue(1);
@@ -102,7 +103,7 @@ class SudokuFieldTest {
     }
 
     @Test
-    void compareTest() {
+    void compareTest() throws IllegalBoardValueException {
         var sudokuField1 = new SudokuField();
         var sudokuField2 = new SudokuField();
 

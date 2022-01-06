@@ -17,6 +17,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.comp.exceptions.IllegalBoardValueException;
+import pl.comp.exceptions.NotEnoughElementsException;
+import pl.comp.exceptions.SudokuException;
 
 public class SudokuBoard implements IObservable, Serializable, Cloneable {
     private final SudokuField[][] sudokuFields;
@@ -26,11 +29,12 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
     private final transient IObserver observer;
     private static final Logger logger = LoggerFactory.getLogger("printBoardLogger");
 
-    public SudokuBoard(IObserver observer) {
+    public SudokuBoard(IObserver observer) throws IllegalBoardValueException {
         this(new BacktrackingSudokuSolver(), observer);
     }
 
-    public SudokuBoard(SudokuSolver sudokuSolver, IObserver observer) {
+    public SudokuBoard(SudokuSolver sudokuSolver, IObserver observer)
+            throws IllegalBoardValueException {
         this.boardSize = 9;
         this.boxSize = 3;
         this.sudokuFields = new SudokuField[boardSize][boardSize];
@@ -44,11 +48,11 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
         this.fillDiagonal();
     }
 
-    SudokuBoard() {
+    SudokuBoard() throws IllegalBoardValueException {
         this(new BacktrackingSudokuSolver(), new SudokuPlayer());
     }
 
-    SudokuBoard(int[][] givenBoard) {
+    SudokuBoard(int[][] givenBoard) throws IllegalBoardValueException {
         this();
         for (int row = 0; row < boardSize; row++) {
             for (int column = 0; column < boardSize; column++) {
@@ -57,13 +61,13 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
         }
     }
 
-    public void generateSudokuPuzzle(DifficultyLevel level) {
+    public void generateSudokuPuzzle(DifficultyLevel level) throws IllegalBoardValueException {
         solveGame();
         // this.printBoard();
         deleteFIelds(level.getFieldsToDelete());
     }
 
-    private void deleteFIelds(int count) {
+    private void deleteFIelds(int count) throws IllegalBoardValueException {
         var rand = new Randomizer();
 
         int changed = 0;
@@ -88,7 +92,13 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
 
     public void notifyObserver() {
         if (observer != null) {
-            boolean isValid = isBoardValid();
+            boolean isValid = false;
+            try {
+                isValid = isBoardValid();
+            } catch (NotEnoughElementsException | IllegalBoardValueException e) {
+                SudokuException exception = new SudokuException(e);
+                logger.error(exception + "\nCaused by", exception.getCause());
+            }
             observer.onValueChanged(isValid);
         }
     }
@@ -102,7 +112,7 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
     }
 
 
-    public void set(int x, int y, int value) {
+    public void set(int x, int y, int value) throws IllegalBoardValueException {
         boolean wasChanged = this.sudokuFields[x][y].setFieldValue(value);
         if (wasChanged) {
             notifyObserver();
@@ -125,7 +135,7 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
         return boardCopy;
     }
 
-    public SudokuRow getRow(int row) {
+    public SudokuRow getRow(int row) throws NotEnoughElementsException, IllegalBoardValueException {
         var sudokuFields = new SudokuField[boardSize];
         for (int j = 0; j < boardSize; j++) {
             sudokuFields[j] = new SudokuField();
@@ -140,7 +150,8 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
         return sudokuRow;
     }
 
-    public SudokuColumn getColumn(int column) {
+    public SudokuColumn getColumn(int column)
+            throws NotEnoughElementsException, IllegalBoardValueException {
         var sudokuFields = new SudokuField[boardSize];
         for (int j = 0; j < boardSize; j++) {
             sudokuFields[j] = new SudokuField();
@@ -155,7 +166,8 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
         return sudokuColumn;
     }
 
-    public SudokuBox getBox(int x, int y) {
+    public SudokuBox getBox(int x, int y)
+            throws NotEnoughElementsException, IllegalBoardValueException {
         x -= (x % 3);
         y -= (y % 3);
 
@@ -181,7 +193,7 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
 
     // Board Generator
     // Fill the diagonal boxSize number of boxSize x boxSize matrices.
-    private void fillDiagonal() {
+    private void fillDiagonal() throws IllegalBoardValueException {
         for (int x = 0; x < boardSize; x += boxSize) {
             // Fill only diagonals (row==column).
             fillBox(x, x);
@@ -189,7 +201,7 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
     }
 
     // Fill indicated matrix.
-    private void fillBox(int row, int column) {
+    private void fillBox(int row, int column) throws IllegalBoardValueException {
         List<Integer> boxFields = Arrays.asList(new Integer[boardSize]);
         for (int j = 0; j < boardSize; j++) {
             boxFields.set(j, j + 1);
@@ -203,7 +215,7 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
         }
     }
 
-    private boolean checkBoard() {
+    private boolean checkBoard() throws NotEnoughElementsException, IllegalBoardValueException {
         boolean isValid = true;
         for (int i = 0; i < boardSize; i++) {
             isValid &= getRow(i).verify();
@@ -216,7 +228,7 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
     }
 
     // Checking whole board
-    public boolean isBoardValid() {
+    public boolean isBoardValid() throws NotEnoughElementsException, IllegalBoardValueException {
         return checkBoard();
     }
 
@@ -276,10 +288,21 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
 
     @Override
     public SudokuBoard clone() throws CloneNotSupportedException {
-        SudokuBoard clonedSudokuBoard = new SudokuBoard();
+        SudokuBoard clonedSudokuBoard = null;
+        try {
+            clonedSudokuBoard = new SudokuBoard();
+        } catch (IllegalBoardValueException e) {
+            SudokuException exception = new SudokuException(e);
+            logger.error(exception + "\nCaused by", exception.getCause());
+        }
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
-                clonedSudokuBoard.set(i, j, this.get(i,j));
+                try {
+                    clonedSudokuBoard.set(i, j, this.get(i,j));
+                } catch (IllegalBoardValueException e) {
+                    SudokuException exception = new SudokuException(e);
+                    logger.error(exception + "\nCaused by", exception.getCause());
+                }
             }
         }
         return clonedSudokuBoard;

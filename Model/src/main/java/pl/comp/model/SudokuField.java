@@ -11,9 +11,13 @@ import java.io.Serializable;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import pl.comp.exceptions.IllegalBoardValueException;
 
 public class SudokuField implements Serializable, Cloneable, Comparable<SudokuField> {
     private int value;
+    private static final Logger logger = LoggerFactory.getLogger(SudokuField.class);
 
     SudokuField() {
         this.value = 0;
@@ -23,12 +27,18 @@ public class SudokuField implements Serializable, Cloneable, Comparable<SudokuFi
         return value;
     }
 
-    public boolean setFieldValue(int value) {
-        if (value >= 0 && value <= 9) {
-            this.value = value;
-            return true;
-        }
-        return false;
+    public boolean setFieldValue(int value) throws IllegalBoardValueException {
+        try {
+            if (value >= 0 && value <= 9) {
+                this.value = value;
+                return true;
+            } else {
+                throw new IllegalBoardValueException("Wrong value was passed to the field.");
+            }
+        } catch (IllegalBoardValueException e) {
+                logger.error(e.toString());
+                throw e;
+            }
     }
 
     @Override

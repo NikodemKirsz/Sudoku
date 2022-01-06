@@ -1,6 +1,7 @@
 package pl.comp.model;
 
 import org.junit.jupiter.api.Test;
+import pl.comp.exceptions.IllegalBoardValueException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -9,7 +10,7 @@ class RepositoryTest {
     private int size = 9;
 
     @Test
-    void createInstance() throws CloneNotSupportedException {
+    void createInstance() throws CloneNotSupportedException, IllegalBoardValueException {
         SudokuBoard sudokuBoard = new SudokuBoard();
         sudokuBoard.solveGame();
         repo = new Repository(sudokuBoard);

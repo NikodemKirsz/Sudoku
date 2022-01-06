@@ -8,12 +8,15 @@
 package pl.comp.model;
 
 import org.junit.jupiter.api.Test;
+import pl.comp.exceptions.IllegalBoardValueException;
+import pl.comp.exceptions.NotEnoughElementsException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class BacktrackingSudokuSolverTest {
 
     @Test
-    void solveSudokuTest() {
+    void solveSudokuTest() throws NotEnoughElementsException, IllegalBoardValueException {
         final var sudokuBoards = new SudokuBoard[5];
         final SudokuSolver sudokuSolver;
         sudokuSolver = new BacktrackingSudokuSolver();
@@ -37,7 +40,7 @@ class BacktrackingSudokuSolverTest {
     }
 
     @Test
-    void isValidTest() {
+    void isValidTest() throws IllegalBoardValueException {
         final int N = 9;
 
         // valid array test

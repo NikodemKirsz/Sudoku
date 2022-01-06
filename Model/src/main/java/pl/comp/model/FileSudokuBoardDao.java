@@ -14,6 +14,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.comp.exceptions.DaoException;
+import pl.comp.exceptions.FailedFileOperationException;
 
 public class FileSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
 
@@ -24,30 +26,34 @@ public class FileSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
         this.filename = filename;
     }
 
-    public SudokuBoard read() {
+    public SudokuBoard read() throws DaoException {
         SudokuBoard sudokuBoard = null;
 
         try (var fileInputStream = new FileInputStream(filename);
              var objectInputStream = new ObjectInputStream(fileInputStream)) {
             sudokuBoard = (SudokuBoard) objectInputStream.readObject();
         } catch (ClassNotFoundException | IOException e) {
-            logger.error(e.toString());
+            DaoException exception = new FailedFileOperationException("File operation failed", e);
+            logger.error(exception + "\nCaused by", exception.getCause());
+            throw exception;
         }
         return sudokuBoard;
     }
 
-    public void write(SudokuBoard obj) {
+    public void write(SudokuBoard obj) throws DaoException {
         try (var fileOutputStream = new FileOutputStream(filename);
              var objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
             objectOutputStream.writeObject(obj);
         } catch (IOException e) {
-            logger.error(e.toString());
+            DaoException exception = new FailedFileOperationException("File operation failed", e);
+            logger.error(exception + "\nCaused by", exception.getCause());
+            throw exception;
         }
     }
 
     @Override
     public void close() {
-        System.out.println("FileSudokuBoardDao closed!");
+        logger.info("FileSudokuBoardDao closed!");
     }
 
 }

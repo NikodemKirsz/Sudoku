@@ -9,6 +9,8 @@ package pl.comp.model;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import pl.comp.exceptions.IllegalBoardValueException;
+import pl.comp.exceptions.NotEnoughElementsException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,13 +19,15 @@ class SudokuElementTest {
     private SudokuElement sudokuElement1;
     private SudokuElement sudokuElement2;
     private SudokuElement sudokuElement3;
+    private SudokuElement sudokuElement4;
     private SudokuField sudokuFields[];
 
     @BeforeEach
-    void init() {
+    void init() throws NotEnoughElementsException, IllegalBoardValueException {
         sudokuElement1 = new SudokuElement();
         sudokuElement2 = new SudokuElement();
         sudokuElement3 = new SudokuElement();
+        sudokuElement4 = new SudokuElement();
 
         sudokuFields = new SudokuField[size];
         for (var i = 0; i < size; i++)
@@ -39,10 +43,16 @@ class SudokuElementTest {
             sudokuFields[size - i].setFieldValue(i);
         }
         sudokuElement3.setSudokuFields(sudokuFields);
+
+        sudokuFields = new SudokuField[size - 1];
+        for (var i = size - 1; i > 0; i--) {
+            sudokuFields[size - 1 - i] = new SudokuField();
+            sudokuFields[size - 1 - i].setFieldValue(i);
+        }
     }
 
     @Test
-    void verify() {
+    void verify() throws NotEnoughElementsException, IllegalBoardValueException {
         assertTrue(sudokuElement1.verify());
 
         var invalidSudokuFields = new SudokuField[size];
@@ -74,13 +84,18 @@ class SudokuElementTest {
     }
 
     @Test
+    void setSudokuFieldsException() {
+        assertThrows(NotEnoughElementsException.class, () -> sudokuElement4.setSudokuFields(sudokuFields));
+    }
+
+    @Test
     void equalsTest() {
         assertTrue(SudokuElement.equals(sudokuElement1, sudokuElement2));
         assertFalse(SudokuElement.equals(sudokuElement1, sudokuElement3));
     }
 
     @Test
-    void testEquals() {
+    void testEquals() throws IllegalBoardValueException {
         assertTrue(sudokuElement1.equals(sudokuElement2));
         assertFalse(sudokuElement1.equals(sudokuElement3));
         assertFalse(sudokuElement1.equals(new SudokuBoard()));

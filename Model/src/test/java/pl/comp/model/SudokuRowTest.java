@@ -9,6 +9,8 @@ package pl.comp.model;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import pl.comp.exceptions.IllegalBoardValueException;
+import pl.comp.exceptions.NotEnoughElementsException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,7 +22,7 @@ class SudokuRowTest {
     private SudokuField sudokuFields[];
 
     @BeforeEach
-    void init() {
+    void init() throws NotEnoughElementsException, IllegalBoardValueException {
         sudokuRow1 = new SudokuRow();
         sudokuRow2 = new SudokuRow();
         sudokuRow3 = new SudokuRow();
@@ -42,7 +44,7 @@ class SudokuRowTest {
     }
 
     @Test
-    void verify() {
+    void verify() throws NotEnoughElementsException, IllegalBoardValueException {
         assertTrue(sudokuRow1.verify());
 
         var invalidSudokuFields = new SudokuField[size];
@@ -62,7 +64,7 @@ class SudokuRowTest {
     }
 
     @Test
-    void testEquals() {
+    void testEquals() throws IllegalBoardValueException {
         assertTrue(sudokuRow1.equals(sudokuRow2));
         assertFalse(sudokuRow1.equals(sudokuRow3));
         assertFalse(sudokuRow1.equals(new SudokuBoard()));
