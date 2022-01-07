@@ -11,6 +11,8 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.ResourceBundle;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -24,6 +26,7 @@ public class SudokuElement implements Serializable, Cloneable {
     private final List<SudokuField> sudokuFields;
     private static final int size = 9;
     private static final Logger logger = LoggerFactory.getLogger(SudokuElement.class);
+    private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("pl.comp.model.Bundle");
 
     public SudokuElement() {
         this.sudokuFields = Arrays.asList(new SudokuField[size]);
@@ -49,7 +52,7 @@ public class SudokuElement implements Serializable, Cloneable {
             throws NotEnoughElementsException, IllegalBoardValueException {
         try {
             if (sudokuFields.length != size) {
-                throw new NotEnoughElementsException("Not enough elements in list.");
+                throw new NotEnoughElementsException(resourceBundle.getString("NotEnoughElements"));
             }
             for (int i = 0; i < size; i++) {
                 this.sudokuFields.get(i).setFieldValue(sudokuFields[i].getFieldValue());
@@ -122,7 +125,7 @@ public class SudokuElement implements Serializable, Cloneable {
                 clonedSudokuFields[index].setFieldValue(field.getFieldValue());
             } catch (IllegalBoardValueException e) {
                 SudokuException exception = new SudokuException(e);
-                logger.error(exception + "\nCaused by", exception.getCause());
+                logger.error(exception + resourceBundle.getString("cause"), exception.getCause());
             }
             index++;
         }
@@ -130,7 +133,7 @@ public class SudokuElement implements Serializable, Cloneable {
             clonedSudokuElement.setSudokuFields(clonedSudokuFields);
         } catch (NotEnoughElementsException | IllegalBoardValueException e) {
             SudokuException exception = new SudokuException(e);
-            logger.error(exception + "\nCaused by", exception.getCause());
+            logger.error(exception + resourceBundle.getString("cause"), exception.getCause());
         }
         return clonedSudokuElement;
     }

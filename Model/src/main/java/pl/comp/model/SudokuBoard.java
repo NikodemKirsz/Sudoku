@@ -12,6 +12,8 @@ import java.lang.System;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.ResourceBundle;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -28,6 +30,7 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
     private final transient SudokuSolver sudokuSolver;
     private final transient IObserver observer;
     private static final Logger logger = LoggerFactory.getLogger("printBoardLogger");
+    private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("pl.comp.model.Bundle");
 
     public SudokuBoard(IObserver observer) throws IllegalBoardValueException {
         this(new BacktrackingSudokuSolver(), observer);
@@ -97,7 +100,7 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
                 isValid = isBoardValid();
             } catch (NotEnoughElementsException | IllegalBoardValueException e) {
                 SudokuException exception = new SudokuException(e);
-                logger.error(exception + "\nCaused by", exception.getCause());
+                logger.error(exception + resourceBundle.getString("cause"), exception.getCause());
             }
             observer.onValueChanged(isValid);
         }
@@ -293,7 +296,7 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
             clonedSudokuBoard = new SudokuBoard();
         } catch (IllegalBoardValueException e) {
             SudokuException exception = new SudokuException(e);
-            logger.error(exception + "\nCaused by", exception.getCause());
+            logger.error(exception + resourceBundle.getString("cause"), exception.getCause());
         }
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
@@ -301,7 +304,7 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
                     clonedSudokuBoard.set(i, j, this.get(i,j));
                 } catch (IllegalBoardValueException e) {
                     SudokuException exception = new SudokuException(e);
-                    logger.error(exception + "\nCaused by", exception.getCause());
+                    logger.error(exception + resourceBundle.getString("cause"), exception.getCause());
                 }
             }
         }
