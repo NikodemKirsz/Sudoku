@@ -11,7 +11,7 @@ public class Bundle extends ListResourceBundle {
                 {"NotEnoughElements", "Niewystarczająca liczba elementów listy."},
                 {"cause", "\nSpowodowany przez"},
                 {"closed", "zamkniety"},
-                {"max-min"}, {"Wartość maksymalna nie może być mniejsza od minimalnej."}
+                {"max-min", "Wartość maksymalna nie może być mniejsza od minimalnej."}
         };
     }
 }

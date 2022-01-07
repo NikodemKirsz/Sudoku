@@ -37,7 +37,7 @@ public class FileSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
              var objectInputStream = new ObjectInputStream(fileInputStream)) {
             sudokuBoard = (SudokuBoard) objectInputStream.readObject();
         } catch (ClassNotFoundException | IOException e) {
-            DaoException exception = new FailedFileOperationException("File operation failed", e);
+            DaoException exception = new FailedFileOperationException(resourceBundle.getString("FailedFileOperation"), e);
             logger.error(exception + resourceBundle.getString("cause"), exception.getCause());
             throw exception;
         }

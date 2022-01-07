@@ -6,7 +6,6 @@ import java.util.ResourceBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.comp.exceptions.RandomizerException;
-import pl.comp.exceptions.SudokuException;
 
 public class Randomizer {
 
@@ -29,7 +28,7 @@ public class Randomizer {
     public int getRandomInt(int max, int min) {
         try {
             if (max < min) {
-                throw new IllegalArgumentException(resourceBundle.getString("min-max"));
+                throw new IllegalArgumentException(resourceBundle.getString("max-min"));
             }
         } catch (IllegalArgumentException e) {
             RandomizerException exception = new RandomizerException(e);
