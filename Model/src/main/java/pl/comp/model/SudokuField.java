@@ -8,8 +8,8 @@
 package pl.comp.model;
 
 import java.io.Serializable;
+import java.util.Locale;
 import java.util.ResourceBundle;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -20,7 +20,8 @@ import pl.comp.exceptions.IllegalBoardValueException;
 public class SudokuField implements Serializable, Cloneable, Comparable<SudokuField> {
     private int value;
     private static final Logger logger = LoggerFactory.getLogger(SudokuField.class);
-    private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("pl.comp.model.Bundle");
+    private static final ResourceBundle
+            resourceBundle = ResourceBundle.getBundle("pl.comp.model.Bundle");
 
     SudokuField() {
         this.value = 0;

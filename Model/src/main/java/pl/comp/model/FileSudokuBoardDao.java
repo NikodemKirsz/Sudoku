@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ResourceBundle;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.comp.exceptions.DaoException;
@@ -23,7 +22,8 @@ public class FileSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
 
     private final String filename;
     private static final Logger logger = LoggerFactory.getLogger(FileSudokuBoardDao.class);
-    private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("pl.comp.model.Bundle");
+    private static final ResourceBundle
+            resourceBundle = ResourceBundle.getBundle("pl.comp.model.Bundle");
 
 
     public FileSudokuBoardDao(String filename) {
@@ -37,7 +37,8 @@ public class FileSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
              var objectInputStream = new ObjectInputStream(fileInputStream)) {
             sudokuBoard = (SudokuBoard) objectInputStream.readObject();
         } catch (ClassNotFoundException | IOException e) {
-            DaoException exception = new FailedFileOperationException(resourceBundle.getString("FailedFileOperation"), e);
+            DaoException exception = new FailedFileOperationException(
+                    resourceBundle.getString("FailedFileOperation"), e);
             logger.error(exception + resourceBundle.getString("cause"), exception.getCause());
             throw exception;
         }
@@ -49,7 +50,8 @@ public class FileSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
              var objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
             objectOutputStream.writeObject(obj);
         } catch (IOException e) {
-            DaoException exception = new FailedFileOperationException(resourceBundle.getString("FailedFileOperation"), e);
+            DaoException exception = new FailedFileOperationException(
+                    resourceBundle.getString("FailedFileOperation"), e);
             logger.error(exception + resourceBundle.getString("cause"), exception.getCause());
             throw exception;
         }

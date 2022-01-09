@@ -32,14 +32,16 @@ import pl.comp.exceptions.IllegalBoardValueException;
 import pl.comp.exceptions.SudokuException;
 import pl.comp.model.FileSudokuBoardDao;
 import pl.comp.model.SudokuBoard;
+import pl.comp.model.SudokuBoardDaoFactory;
 import pl.comp.model.SudokuPlayer;
 
 public class GameViewController implements Initializable {
 
     private SudokuPlayer player;
     private SudokuBoard sudokuBoard;
+    private SudokuBoard originalSudokuBoard;
     private FileSudokuBoardDao boardDao;
-    private Locale locale;
+    private FileSudokuBoardDao originalBoardDao;
 
     private Label[][] gridLabels;
     private int activeX;
@@ -122,12 +124,14 @@ public class GameViewController implements Initializable {
     @FXML
     private void saveSudokuBoard() throws DaoException {
         boardDao.write(sudokuBoard);
+        originalBoardDao.write(originalSudokuBoard);
         readButton.setDisable(false);
     }
 
     @FXML
     private void readSudokuBoard() throws DaoException {
         sudokuBoard = boardDao.read();
+        originalSudokuBoard = originalBoardDao.read();
         this.setSudokuGrid(sudokuBoard);
     }
 
@@ -135,7 +139,10 @@ public class GameViewController implements Initializable {
         this.activeY = -1;
         this.activeX = -1;
 
-        this.boardDao = new FileSudokuBoardDao("./files/saved_board");
+        this.boardDao = (FileSudokuBoardDao) SudokuBoardDaoFactory
+                .getFileDao("./files/saved_board");
+        this.originalBoardDao = (FileSudokuBoardDao) SudokuBoardDaoFactory
+                .getFileDao("./files/saved_board_original");
 
         this.font = new Font("System", 48);
         this.activeFont = new Font("System", 51);
@@ -147,12 +154,13 @@ public class GameViewController implements Initializable {
         this.dropShadow.setColor(Color.color(0.4, 0.5, 0.5));
     }
 
-    private void createNewSudoku() throws IllegalBoardValueException {
+    private void createNewSudoku() throws IllegalBoardValueException, CloneNotSupportedException {
         player = new SudokuPlayer();
         sudokuBoard = new SudokuBoard(player);
 
         //Ten poziom trudności trzeba będzie gdzięs indziej zapamiętać
         sudokuBoard.generateSudokuPuzzle(MenuViewController.level);
+        originalSudokuBoard = sudokuBoard.clone();
 
         initializeGrid();
 
@@ -179,7 +187,9 @@ public class GameViewController implements Initializable {
 
     private void setModifiableLabel(int row, int column) {
         // setting modifiable labels
-        gridLabels[row][column].setText("");
+        if (sudokuBoard.get(row, column) == 0) {
+            gridLabels[row][column].setText("");
+        }
         gridLabels[row][column].setTextFill(Color.RED);
 
         // setting onAction for every label
@@ -247,7 +257,8 @@ public class GameViewController implements Initializable {
                     gridLabels[row][column].setTextFill(Color.BLACK);
                     gridLabels[row][column].onMouseClickedProperty().set(null);
 
-                    if (sudokuBoard.get(row, column) == 0) {
+                    // set field modifiable if it was empty in original board
+                    if (originalSudokuBoard.get(row, column) == 0) {
                         this.setModifiableLabel(row, column);
                     }
 
@@ -258,15 +269,11 @@ public class GameViewController implements Initializable {
         }
     }
 
-    private void takeLocale(Locale locale) {
-        this.locale = locale;
-    }
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
             createNewSudoku();
-        } catch (IllegalBoardValueException e) {
+        } catch (IllegalBoardValueException | CloneNotSupportedException e) {
             Logger.getLogger(GameViewController.class.getName()).log(Level.SEVERE, null, e);
         }
 

@@ -10,6 +10,10 @@ package pl.comp.model;
 import org.junit.jupiter.api.Test;
 import pl.comp.exceptions.IllegalBoardValueException;
 
+import javax.swing.*;
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class SudokuFieldTest {
@@ -30,6 +34,10 @@ class SudokuFieldTest {
     @Test
     void setFieldValue() throws IllegalBoardValueException {
         var sudokuField = new SudokuField();
+        Locale locale = new Locale("en","US");
+//        ResourceBundle resourceBundle = ResourceBundle.getBundle("pl.comp.model.Bundle", locale);
+//        System.out.println(resourceBundle.getString("cause"));
+        Locale.setDefault(locale);
 
         int value = 8;
         sudokuField.setFieldValue(value);

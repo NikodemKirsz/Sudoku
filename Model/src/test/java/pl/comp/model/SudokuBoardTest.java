@@ -348,6 +348,15 @@ public class SudokuBoardTest {
         assertEquals(level.getFieldsToDelete(), counter);
     }
 
+    @Test
+    void getField() {
+        SudokuField sudokuField = firstSudokuBoard.getField(1,1);
+        SudokuField sudokuField1 = firstSudokuBoard.getField(2,5);
+
+        assertEquals(firstSudokuBoard.getField(1,1), sudokuField);
+        assertNotEquals(firstSudokuBoard.getField(8,8), sudokuField1);
+    }
+
     @AfterEach
     void afterEach()
     {

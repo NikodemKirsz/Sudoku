@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -26,7 +25,8 @@ public class SudokuElement implements Serializable, Cloneable {
     private final List<SudokuField> sudokuFields;
     private static final int size = 9;
     private static final Logger logger = LoggerFactory.getLogger(SudokuElement.class);
-    private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("pl.comp.model.Bundle");
+    private static final ResourceBundle
+            resourceBundle = ResourceBundle.getBundle("pl.comp.model.Bundle");
 
     public SudokuElement() {
         this.sudokuFields = Arrays.asList(new SudokuField[size]);

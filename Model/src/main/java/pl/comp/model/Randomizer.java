@@ -2,7 +2,6 @@ package pl.comp.model;
 
 import java.util.Random;
 import java.util.ResourceBundle;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.comp.exceptions.RandomizerException;
@@ -11,7 +10,8 @@ public class Randomizer {
 
     private final Random rand;
     private static final Logger logger = LoggerFactory.getLogger(Randomizer.class);
-    private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("pl.comp.model.Bundle");
+    private static final ResourceBundle
+            resourceBundle = ResourceBundle.getBundle("pl.comp.model.Bundle");
 
     public Randomizer() {
         rand = new Random();

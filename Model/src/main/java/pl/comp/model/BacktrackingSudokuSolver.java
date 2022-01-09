@@ -7,19 +7,19 @@
 
 package pl.comp.model;
 
+import java.util.ResourceBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.comp.exceptions.IllegalBoardValueException;
 import pl.comp.exceptions.SudokuException;
-
-import java.util.ResourceBundle;
 
 public class BacktrackingSudokuSolver implements SudokuSolver {
     private SudokuBoard board;
     private int boardSize;
     private int boxSize;
     private static final Logger logger = LoggerFactory.getLogger(BacktrackingSudokuSolver.class);
-    private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("pl.comp.model.Bundle");
+    private static final ResourceBundle
+            resourceBundle = ResourceBundle.getBundle("pl.comp.model.Bundle");
 
     public BacktrackingSudokuSolver() {
     }
