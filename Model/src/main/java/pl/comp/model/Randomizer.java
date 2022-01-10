@@ -27,14 +27,8 @@ public class Randomizer {
     }
 
     public int getRandomInt(int max, int min) {
-        try {
-            if (max < min) {
-                throw new IllegalArgumentException(resourceBundle.getString("max-min"));
-            }
-        } catch (IllegalArgumentException e) {
-            RandomizerException exception = new RandomizerException(e);
-            logger.error(exception + resourceBundle.getString("cause"), exception.getCause());
-            throw exception;
+        if (max < min) {
+            throw new IllegalArgumentException(resourceBundle.getString("max-min"));
         }
         return Math.abs(rand.nextInt()) % (max - min + 1) + min;
     }

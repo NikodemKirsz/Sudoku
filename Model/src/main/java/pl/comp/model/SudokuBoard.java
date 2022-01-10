@@ -12,7 +12,7 @@ import java.lang.System;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.ResourceBundle;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.comp.exceptions.IllegalBoardValueException;
 import pl.comp.exceptions.NotEnoughElementsException;
+import pl.comp.exceptions.RandomizerException;
 import pl.comp.exceptions.SudokuException;
 
 public class SudokuBoard implements IObservable, Serializable, Cloneable {
@@ -28,16 +29,14 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
     private final int boxSize; // square root of N
     private final transient SudokuSolver sudokuSolver;
     private final transient IObserver observer;
-    private static final Logger logger = LoggerFactory.getLogger("printBoardLogger");
-    private static final ResourceBundle
-            resourceBundle = ResourceBundle.getBundle("pl.comp.model.Bundle");
+    private static final Logger printBoardLogger = LoggerFactory.getLogger("printBoardLogger");
+    private static final Logger logger = LoggerFactory.getLogger(SudokuBoard.class);
 
-    public SudokuBoard(IObserver observer) throws IllegalBoardValueException {
+    public SudokuBoard(IObserver observer) {
         this(new BacktrackingSudokuSolver(), observer);
     }
 
-    public SudokuBoard(SudokuSolver sudokuSolver, IObserver observer)
-            throws IllegalBoardValueException {
+    public SudokuBoard(SudokuSolver sudokuSolver, IObserver observer) {
         this.boardSize = 9;
         this.boxSize = 3;
         this.sudokuFields = new SudokuField[boardSize][boardSize];
@@ -51,33 +50,43 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
         this.fillDiagonal();
     }
 
-    SudokuBoard() throws IllegalBoardValueException {
+    SudokuBoard() {
         this(new BacktrackingSudokuSolver(), new SudokuPlayer());
     }
 
-    SudokuBoard(int[][] givenBoard) throws IllegalBoardValueException {
+    SudokuBoard(int[][] givenBoard) {
         this();
         for (int row = 0; row < boardSize; row++) {
             for (int column = 0; column < boardSize; column++) {
-                this.sudokuFields[row][column].setFieldValue(givenBoard[row][column]);
+                try {
+                    this.sudokuFields[row][column].setFieldValue(givenBoard[row][column]);
+                } catch (SudokuException e) {
+                    logger.error(e.getLocalizedMessage());
+                }
             }
         }
     }
 
-    public void generateSudokuPuzzle(DifficultyLevel level) throws IllegalBoardValueException {
+    public void generateSudokuPuzzle(DifficultyLevel level)  {
         solveGame();
         // this.printBoard();
-        deleteFIelds(level.getFieldsToDelete());
+        deleteFields(level.getFieldsToDelete());
     }
 
-    private void deleteFIelds(int count) throws IllegalBoardValueException {
+    private void deleteFields(int count) {
         var rand = new Randomizer();
 
         int changed = 0;
         var changedArray = new boolean[boardSize][boardSize];
 
+        int field = 0;
         while (changed < count) {
-            int field = rand.getRandomInt(80, 0);
+            try {
+                field = rand.getRandomInt(80, 0);
+            } catch (IllegalBoardValueException e) {
+                var exception = new RandomizerException(e);
+                logger.error(exception.getLocalizedMessage());
+            }
             int row = field % 9;
             int column = field / 9;
 
@@ -96,12 +105,7 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
     public void notifyObserver() {
         if (observer != null) {
             boolean isValid = false;
-            try {
-                isValid = isBoardValid();
-            } catch (NotEnoughElementsException | IllegalBoardValueException e) {
-                SudokuException exception = new SudokuException(e);
-                logger.error(exception + resourceBundle.getString("cause"), exception.getCause());
-            }
+            isValid = isBoardValid();
             observer.onValueChanged(isValid);
         }
     }
@@ -114,8 +118,13 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
         return this.sudokuFields[x][y];
     }
 
-    public void set(int x, int y, int value) throws IllegalBoardValueException {
-        boolean wasChanged = this.sudokuFields[x][y].setFieldValue(value);
+    public void set(int x, int y, int value) {
+        boolean wasChanged = false;
+        try {
+            wasChanged = this.sudokuFields[x][y].setFieldValue(value);
+        } catch (SudokuException e) {
+            logger.error(e.getLocalizedMessage());
+        }
         if (wasChanged) {
             notifyObserver();
         }
@@ -137,17 +146,21 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
         return boardCopy;
     }
 
-    public SudokuRow getRow(int row) throws NotEnoughElementsException, IllegalBoardValueException {
+    public SudokuRow getRow(int row) {
         var sudokuFields = new SudokuField[boardSize];
         for (int j = 0; j < boardSize; j++) {
             sudokuFields[j] = new SudokuField();
         }
 
         var sudokuRow = new SudokuRow();
-        for (int i = 0; i < boardSize; i++) {
-            sudokuFields[i].setFieldValue(this.sudokuFields[row][i].getFieldValue());
+        try {
+            for (int i = 0; i < boardSize; i++) {
+                sudokuFields[i].setFieldValue(this.sudokuFields[row][i].getFieldValue());
+            }
+            sudokuRow.setSudokuFields(sudokuFields);
+        } catch (SudokuException e) {
+            logger.error(e.getLocalizedMessage());
         }
-        sudokuRow.setSudokuFields(sudokuFields);
 
         return sudokuRow;
     }
@@ -160,10 +173,14 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
         }
 
         var sudokuColumn = new SudokuColumn();
-        for (int i = 0; i < boardSize; i++) {
-            sudokuFields[i].setFieldValue(this.sudokuFields[i][column].getFieldValue());
+        try {
+            for (int i = 0; i < boardSize; i++) {
+                sudokuFields[i].setFieldValue(this.sudokuFields[i][column].getFieldValue());
+            }
+            sudokuColumn.setSudokuFields(sudokuFields);
+        } catch (SudokuException e) {
+            logger.error(e.getLocalizedMessage());
         }
-        sudokuColumn.setSudokuFields(sudokuFields);
 
         return sudokuColumn;
     }
@@ -180,15 +197,19 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
 
         var sudokuBox = new SudokuBox();
         int i = 0;
-        for (int row = 0; row < boxSize; row++) {
-            for (int column = 0; column < boxSize; column++) {
-                sudokuFields[i].setFieldValue(
-                        this.sudokuFields[x + row][y + column].getFieldValue()
-                );
-                i++;
+        try {
+            for (int row = 0; row < boxSize; row++) {
+                for (int column = 0; column < boxSize; column++) {
+                    sudokuFields[i].setFieldValue(
+                            this.sudokuFields[x + row][y + column].getFieldValue()
+                    );
+                    i++;
+                }
             }
+            sudokuBox.setSudokuFields(sudokuFields);
+        } catch (SudokuException e) {
+            logger.error(e.getLocalizedMessage());
         }
-        sudokuBox.setSudokuFields(sudokuFields);
 
         return sudokuBox;
     }
@@ -238,11 +259,11 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
     public void printBoard() {
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
-                logger.info(this.sudokuFields[i][j].getFieldValue() + "\t");
+                printBoardLogger.info(this.sudokuFields[i][j].getFieldValue() + "\t");
             }
-            logger.info("\n");
+            printBoardLogger.info("\n");
         }
-        logger.info("\n");
+        printBoardLogger.info("\n");
     }
 
     @Override
@@ -291,21 +312,11 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
     @Override
     public SudokuBoard clone() throws CloneNotSupportedException {
         SudokuBoard clonedSudokuBoard = null;
-        try {
-            clonedSudokuBoard = new SudokuBoard();
-        } catch (IllegalBoardValueException e) {
-            SudokuException exception = new SudokuException(e);
-            logger.error(exception + resourceBundle.getString("cause"), exception.getCause());
-        }
+
+        clonedSudokuBoard = new SudokuBoard();
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
-                try {
-                    clonedSudokuBoard.set(i, j, this.get(i,j));
-                } catch (IllegalBoardValueException e) {
-                    SudokuException exception = new SudokuException(e);
-                    logger.error(exception
-                            + resourceBundle.getString("cause"), exception.getCause());
-                }
+                clonedSudokuBoard.set(i, j, this.get(i,j));
             }
         }
         return clonedSudokuBoard;

@@ -8,18 +8,14 @@
 package pl.comp.model;
 
 import java.io.Serializable;
-import java.util.Locale;
 import java.util.ResourceBundle;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import pl.comp.exceptions.IllegalBoardValueException;
 
 public class SudokuField implements Serializable, Cloneable, Comparable<SudokuField> {
     private int value;
-    private static final Logger logger = LoggerFactory.getLogger(SudokuField.class);
     private static final ResourceBundle
             resourceBundle = ResourceBundle.getBundle("pl.comp.model.Bundle");
 
@@ -32,17 +28,12 @@ public class SudokuField implements Serializable, Cloneable, Comparable<SudokuFi
     }
 
     public boolean setFieldValue(int value) throws IllegalBoardValueException {
-        try {
-            if (value >= 0 && value <= 9) {
-                this.value = value;
-                return true;
-            } else {
-                throw new IllegalBoardValueException(resourceBundle.getString("IllegalBoardValue"));
-            }
-        } catch (IllegalBoardValueException e) {
-                logger.error(e.toString());
-                throw e;
-            }
+        if (value >= 0 && value <= 9) {
+            this.value = value;
+            return true;
+        } else {
+            throw new IllegalBoardValueException(resourceBundle.getString("IllegalBoardValue"));
+        }
     }
 
     @Override

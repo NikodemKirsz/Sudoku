@@ -1,6 +1,6 @@
 package pl.comp.exceptions;
 
-public class SudokuException extends Exception {
+public class SudokuException extends RuntimeException {
     public SudokuException(Throwable cause) {
         super(cause);
     }

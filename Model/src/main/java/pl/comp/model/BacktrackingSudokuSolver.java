@@ -38,7 +38,7 @@ public class BacktrackingSudokuSolver implements SudokuSolver {
     }
 
     // A recursive function to fill remaining matrix
-    private boolean fillRemaining(int row, int column) throws IllegalBoardValueException {
+    private boolean fillRemaining(int row, int column) {
 
         // Look out for index out of bounds! (╯ ͠° ͟ʖ ͡°)╯
         if (column >= boardSize) {
@@ -72,7 +72,7 @@ public class BacktrackingSudokuSolver implements SudokuSolver {
     }
 
     // Check if safe to put in cell
-    public boolean isValid(int i, int j, int num) throws IllegalBoardValueException {
+    public boolean isValid(int i, int j, int num) {
         int temp = board.get(i, j);
         board.set(i, j, 0);
         boolean isUnused = (unUsedInRow(i, num)

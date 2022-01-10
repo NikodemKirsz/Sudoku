@@ -3,8 +3,8 @@ package pl.comp.view;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.adapter.JavaBeanIntegerPropertyBuilder;
 import javafx.fxml.FXML;
@@ -33,6 +33,8 @@ public class GameViewController implements Initializable {
     private SudokuBoard originalSudokuBoard;
     private FileSudokuBoardDao boardDao;
     private FileSudokuBoardDao originalBoardDao;
+
+    private static final Logger logger = LoggerFactory.getLogger(GameViewController.class);
 
     private Label[][] gridLabels;
     private int activeX;
@@ -113,14 +115,14 @@ public class GameViewController implements Initializable {
     }
 
     @FXML
-    private void saveSudokuBoard() throws DaoException {
+    private void saveSudokuBoard() {
         boardDao.write(sudokuBoard);
         originalBoardDao.write(originalSudokuBoard);
         readButton.setDisable(false);
     }
 
     @FXML
-    private void readSudokuBoard() throws DaoException {
+    private void readSudokuBoard() {
         sudokuBoard = boardDao.read();
         originalSudokuBoard = originalBoardDao.read();
         this.setSudokuGrid(sudokuBoard);
@@ -149,7 +151,7 @@ public class GameViewController implements Initializable {
         this.dropShadow.setColor(Color.color(0.4, 0.5, 0.5));
     }
 
-    private void createNewSudoku() throws IllegalBoardValueException, CloneNotSupportedException {
+    private void createNewSudoku() throws CloneNotSupportedException {
         player = new SudokuPlayer();
         sudokuBoard = new SudokuBoard(player);
 
@@ -196,11 +198,7 @@ public class GameViewController implements Initializable {
         });
 
         gridLabels[row][column].textProperty().addListener((observableValue, s, t1) -> {
-            try {
-                winLabel.setVisible(sudokuBoard.isBoardValid());
-            } catch (SudokuException e) {
-                e.printStackTrace();
-            }
+            winLabel.setVisible(sudokuBoard.isBoardValid());
         });
     }
 
@@ -227,7 +225,7 @@ public class GameViewController implements Initializable {
     private void updateSudokuBoard(int number) {
         if (this.activeY != -1 && this.activeX != -1) {
             gridLabels[activeX][activeY].setText(String.valueOf(number));
-            //sudokuBoard.printBoard();
+            sudokuBoard.printBoard();
         }
     }
 
@@ -255,8 +253,8 @@ public class GameViewController implements Initializable {
                         this.setModifiableLabel(row, column);
                     }
 
-                } catch (NoSuchMethodException e) {
-                    Logger.getLogger(GameViewController.class.getName()).log(Level.SEVERE, "", e);
+                } catch (Exception e) {
+                    logger.error(e.getLocalizedMessage());
                 }
             }
         }
@@ -266,8 +264,8 @@ public class GameViewController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
             createNewSudoku();
-        } catch (IllegalBoardValueException | CloneNotSupportedException e) {
-            Logger.getLogger(GameViewController.class.getName()).log(Level.SEVERE, "", e);
+        } catch (CloneNotSupportedException e) {
+            logger.error(e.getLocalizedMessage());
         }
 
         File savedBoard = new File(FilesManager.SUDOKU_BOARD_PATH);

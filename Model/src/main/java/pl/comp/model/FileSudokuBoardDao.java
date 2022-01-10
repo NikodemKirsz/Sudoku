@@ -30,8 +30,8 @@ public class FileSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
         this.fileName = filename;
     }
 
-    public SudokuBoard read() throws DaoException {
-        SudokuBoard sudokuBoard;
+    public SudokuBoard read() {
+        SudokuBoard sudokuBoard = null;
 
         try (var fileInputStream = new FileInputStream(fileName);
              var objectInputStream = new ObjectInputStream(fileInputStream)) {
@@ -40,12 +40,11 @@ public class FileSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
             DaoException exception = new FailedFileOperationException(
                     resourceBundle.getString("FailedFileOperation"), e);
             logger.error(exception + resourceBundle.getString("cause"), exception.getCause());
-            throw exception;
         }
         return sudokuBoard;
     }
 
-    public void write(SudokuBoard obj) throws DaoException {
+    public void write(SudokuBoard obj) {
         try (var fileOutputStream = new FileOutputStream(fileName);
              var objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
             objectOutputStream.writeObject(obj);
@@ -53,7 +52,6 @@ public class FileSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
             DaoException exception = new FailedFileOperationException(
                     resourceBundle.getString("FailedFileOperation"), e);
             logger.error(exception + resourceBundle.getString("cause"), exception.getCause());
-            throw exception;
         }
     }
 
