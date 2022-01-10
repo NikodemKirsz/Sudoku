@@ -18,6 +18,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import pl.comp.model.DifficultyLevel;
+import pl.comp.model.FilesManager;
 
 public class MenuViewController implements Initializable, LocaleChangeListener {
 
@@ -103,6 +104,8 @@ public class MenuViewController implements Initializable, LocaleChangeListener {
                 onLocaleChange();
             }
         });
+
+        FilesManager.ensureFilesDirExists();
     }
 
     @Override

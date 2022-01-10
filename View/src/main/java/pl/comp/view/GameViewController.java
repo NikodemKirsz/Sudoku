@@ -2,16 +2,11 @@ package pl.comp.view;
 
 import java.io.File;
 import java.net.URL;
-import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.adapter.JavaBeanIntegerProperty;
 import javafx.beans.property.adapter.JavaBeanIntegerPropertyBuilder;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
@@ -27,13 +22,9 @@ import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.util.converter.NumberStringConverter;
 import pl.comp.exceptions.DaoException;
-import pl.comp.exceptions.FailedFileOperationException;
 import pl.comp.exceptions.IllegalBoardValueException;
 import pl.comp.exceptions.SudokuException;
-import pl.comp.model.FileSudokuBoardDao;
-import pl.comp.model.SudokuBoard;
-import pl.comp.model.SudokuBoardDaoFactory;
-import pl.comp.model.SudokuPlayer;
+import pl.comp.model.*;
 
 public class GameViewController implements Initializable {
 
@@ -144,9 +135,9 @@ public class GameViewController implements Initializable {
         this.activeX = -1;
 
         this.boardDao = (FileSudokuBoardDao) SudokuBoardDaoFactory
-                .getFileDao("./files/saved_board");
+                .getFileDao(FilesManager.SUDOKU_BOARD_PATH);
         this.originalBoardDao = (FileSudokuBoardDao) SudokuBoardDaoFactory
-                .getFileDao("./files/saved_board_original");
+                .getFileDao(FilesManager.SUDOKU_BOARD_ORIGINAL_PATH);
 
         this.font = new Font("System", 48);
         this.activeFont = new Font("System", 51);
@@ -223,9 +214,11 @@ public class GameViewController implements Initializable {
                 if (row == this.activeX && column == this.activeY) {
                     gridLabels[row][column].setEffect(dropShadow);
                     gridLabels[row][column].setFont(activeFont);
-                    gridLabels[row][column].setStyle("-fx-border-color: grey;\n"
-                                                    + "-fx-border-width: 1;\n"
-                                                    + "-fx-border-style: solid;\n");
+                    gridLabels[row][column].setStyle("""
+                            -fx-border-color: grey;
+                            -fx-border-width: 1;
+                            -fx-border-style: solid;
+                            """);
                 }
             }
         }
@@ -263,7 +256,7 @@ public class GameViewController implements Initializable {
                     }
 
                 } catch (NoSuchMethodException e) {
-                    Logger.getLogger(GameViewController.class.getName()).log(Level.SEVERE, null, e);
+                    Logger.getLogger(GameViewController.class.getName()).log(Level.SEVERE, "", e);
                 }
             }
         }
@@ -274,10 +267,10 @@ public class GameViewController implements Initializable {
         try {
             createNewSudoku();
         } catch (IllegalBoardValueException | CloneNotSupportedException e) {
-            Logger.getLogger(GameViewController.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(GameViewController.class.getName()).log(Level.SEVERE, "", e);
         }
 
-        File savedBoard = new File("./files/saved_board");
+        File savedBoard = new File(FilesManager.SUDOKU_BOARD_PATH);
         if (!savedBoard.exists()) {
             readButton.setDisable(true);
         }
