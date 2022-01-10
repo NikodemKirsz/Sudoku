@@ -133,6 +133,10 @@ public class GameViewController implements Initializable {
         sudokuBoard = boardDao.read();
         originalSudokuBoard = originalBoardDao.read();
         this.setSudokuGrid(sudokuBoard);
+
+        this.activeY = -1;
+        this.activeX = -1;
+        this.clearFocus();
     }
 
     public GameViewController() {
@@ -194,21 +198,17 @@ public class GameViewController implements Initializable {
 
         // setting onAction for every label
         gridLabels[row][column].onMouseClickedProperty()
-                .set((EventHandler<MouseEvent>) (MouseEvent t) -> {
+                .set((MouseEvent t) -> {
             this.activeX = row;
             this.activeY = column;
             this.clearFocus();
         });
 
-        gridLabels[row][column].textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observableValue,
-                                String s, String t1) {
-                try {
-                    winLabel.setVisible(sudokuBoard.isBoardValid());
-                } catch (SudokuException e) {
-                    e.printStackTrace();
-                }
+        gridLabels[row][column].textProperty().addListener((observableValue, s, t1) -> {
+            try {
+                winLabel.setVisible(sudokuBoard.isBoardValid());
+            } catch (SudokuException e) {
+                e.printStackTrace();
             }
         });
     }
@@ -253,7 +253,7 @@ public class GameViewController implements Initializable {
                             integerProperty,
                             converter
                     );
-                    // TODO
+
                     gridLabels[row][column].setTextFill(Color.BLACK);
                     gridLabels[row][column].onMouseClickedProperty().set(null);
 

@@ -9,11 +9,7 @@ package pl.comp.model;
 
 import org.junit.jupiter.api.Test;
 import pl.comp.exceptions.IllegalBoardValueException;
-
-import javax.swing.*;
 import java.util.Locale;
-import java.util.ResourceBundle;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class SudokuFieldTest {

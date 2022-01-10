@@ -8,10 +8,11 @@ import pl.comp.exceptions.RandomizerException;
 
 public class Randomizer {
 
-    private final Random rand;
     private static final Logger logger = LoggerFactory.getLogger(Randomizer.class);
     private static final ResourceBundle
             resourceBundle = ResourceBundle.getBundle("pl.comp.model.Bundle");
+
+    private final Random rand;
 
     public Randomizer() {
         rand = new Random();
