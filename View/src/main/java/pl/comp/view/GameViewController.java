@@ -3,6 +3,8 @@ package pl.comp.view;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import javafx.beans.property.ObjectProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javafx.beans.binding.Bindings;
@@ -225,7 +227,7 @@ public class GameViewController implements Initializable {
     private void updateSudokuBoard(int number) {
         if (this.activeY != -1 && this.activeX != -1) {
             gridLabels[activeX][activeY].setText(String.valueOf(number));
-            logger.info("Label: " + number + " SudokuBoardField: " + sudokuBoard.get(activeX, activeY));
+            logger.info("Label: " + gridLabels[activeX][activeY].textProperty() + " SudokuBoardField: " + sudokuBoard.get(activeX, activeY));
             // TODO: this is wrong bardzo XD but działa
             // if binding is broken then just bind it again
             if (number != sudokuBoard.get(activeX, activeY)) {

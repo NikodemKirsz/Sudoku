@@ -19,7 +19,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.comp.exceptions.IllegalBoardValueException;
-import pl.comp.exceptions.NotEnoughElementsException;
 import pl.comp.exceptions.RandomizerException;
 import pl.comp.exceptions.SudokuException;
 
@@ -104,7 +103,7 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
 
     public void notifyObserver() {
         if (observer != null) {
-            boolean isValid = false;
+            boolean isValid;
             isValid = isBoardValid();
             observer.onValueChanged(isValid);
         }
@@ -165,8 +164,7 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
         return sudokuRow;
     }
 
-    public SudokuColumn getColumn(int column)
-            throws NotEnoughElementsException, IllegalBoardValueException {
+    public SudokuColumn getColumn(int column) {
         var sudokuFields = new SudokuField[boardSize];
         for (int j = 0; j < boardSize; j++) {
             sudokuFields[j] = new SudokuField();
@@ -185,8 +183,7 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
         return sudokuColumn;
     }
 
-    public SudokuBox getBox(int x, int y)
-            throws NotEnoughElementsException, IllegalBoardValueException {
+    public SudokuBox getBox(int x, int y) {
         x -= (x % 3);
         y -= (y % 3);
 
@@ -216,7 +213,7 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
 
     // Board Generator
     // Fill the diagonal boxSize number of boxSize x boxSize matrices.
-    private void fillDiagonal() throws IllegalBoardValueException {
+    private void fillDiagonal() {
         for (int x = 0; x < boardSize; x += boxSize) {
             // Fill only diagonals (row==column).
             fillBox(x, x);
@@ -224,7 +221,7 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
     }
 
     // Fill indicated matrix.
-    private void fillBox(int row, int column) throws IllegalBoardValueException {
+    private void fillBox(int row, int column) {
         List<Integer> boxFields = Arrays.asList(new Integer[boardSize]);
         for (int j = 0; j < boardSize; j++) {
             boxFields.set(j, j + 1);
@@ -238,7 +235,7 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
         }
     }
 
-    private boolean checkBoard() throws NotEnoughElementsException, IllegalBoardValueException {
+    private boolean checkBoard() {
         boolean isValid = true;
         for (int i = 0; i < boardSize; i++) {
             isValid &= getRow(i).verify();
@@ -251,7 +248,7 @@ public class SudokuBoard implements IObservable, Serializable, Cloneable {
     }
 
     // Checking whole board
-    public boolean isBoardValid() throws NotEnoughElementsException, IllegalBoardValueException {
+    public boolean isBoardValid() {
         return checkBoard();
     }
 
