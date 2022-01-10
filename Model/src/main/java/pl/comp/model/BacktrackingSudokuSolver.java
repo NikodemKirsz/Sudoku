@@ -19,7 +19,7 @@ public class BacktrackingSudokuSolver implements SudokuSolver {
     private int boxSize;
     private static final Logger logger = LoggerFactory.getLogger(BacktrackingSudokuSolver.class);
     private static final ResourceBundle
-            resourceBundle = ResourceBundle.getBundle("pl.comp.model.Bundle");
+            resourceBundle = ResourceBundle.getBundle("bundle");
 
     public BacktrackingSudokuSolver() {
     }

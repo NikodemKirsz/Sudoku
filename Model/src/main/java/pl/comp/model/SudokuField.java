@@ -17,7 +17,7 @@ import pl.comp.exceptions.IllegalBoardValueException;
 public class SudokuField implements Serializable, Cloneable, Comparable<SudokuField> {
     private int value;
     private static final ResourceBundle
-            resourceBundle = ResourceBundle.getBundle("pl.comp.model.Bundle");
+            resourceBundle = ResourceBundle.getBundle("bundle");
 
     SudokuField() {
         this.value = 0;

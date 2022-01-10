@@ -25,7 +25,7 @@ public class SudokuElement implements Serializable, Cloneable {
     private static final int size = 9;
     private static final Logger logger = LoggerFactory.getLogger(SudokuElement.class);
     private static final ResourceBundle
-            resourceBundle = ResourceBundle.getBundle("pl.comp.model.Bundle");
+            resourceBundle = ResourceBundle.getBundle("bundle");
 
     public SudokuElement() {
         this.sudokuFields = Arrays.asList(new SudokuField[size]);

@@ -6,6 +6,6 @@ import java.util.ResourceBundle;
 public class ResourceBundleManager {
 
     public static ResourceBundle changeLanguage(Locale locale) {
-        return ResourceBundle.getBundle("pl.comp.view.Bundle", locale);
+        return ResourceBundle.getBundle("viewBundle", locale);
     }
 }

@@ -36,6 +36,10 @@ public class MenuViewController implements Initializable, LocaleChangeListener {
     @FXML private ChoiceBox<String> languageChoice;
     @FXML private Label choiceLabel;
 
+    @FXML private Label authorsLabel;
+    @FXML private Label firstAuthor;
+    @FXML private Label secondAuthor;
+
     @FXML
     private void onPlayButtonClicked(ActionEvent e) {
         Stage stage = MainApp.getCurrentStage();
@@ -74,6 +78,11 @@ public class MenuViewController implements Initializable, LocaleChangeListener {
                 hardButton
         };
         onEasyButtonClick();
+
+        var authorsResource = ResourceBundle.getBundle("pl.comp.view.AuthorsBundle");
+        authorsLabel.setText(authorsResource.getString("title"));
+        firstAuthor.setText(authorsResource.getString("first_author"));
+        secondAuthor.setText(authorsResource.getString("second_author"));
 
         languages = FXCollections.observableArrayList(
                 resourceBundle.getString("english"),
@@ -117,6 +126,10 @@ public class MenuViewController implements Initializable, LocaleChangeListener {
         normalButton.setText(resourceBundle.getString("medium"));
         hardButton.setText(resourceBundle.getString("hard"));
         choiceLabel.setText(resourceBundle.getString("choiceLabel"));
+        var authorsResource = ResourceBundle.getBundle("pl.comp.view.AuthorsBundle");
+        authorsLabel.setText(authorsResource.getString("title"));
+        firstAuthor.setText(authorsResource.getString("first_author"));
+        secondAuthor.setText(authorsResource.getString("second_author"));
         // TODO: make choiceBox change it's language too
     }
 }

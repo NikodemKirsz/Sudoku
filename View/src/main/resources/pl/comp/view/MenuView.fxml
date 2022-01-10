@@ -49,5 +49,17 @@
             </font>
         </Button>
       <ChoiceBox fx:id="languageChoice" layoutX="994.0" layoutY="43.0" prefWidth="150.0" />
+      <Label fx:id="authorsLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="1027.0" layoutY="653.0" prefHeight="35.0" prefWidth="115.0">
+         <font>
+            <Font size="24.0" />
+         </font></Label>
+      <Label fx:id="firstAuthor" layoutX="1028.0" layoutY="694.0">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
+      <Label fx:id="secondAuthor" layoutX="1041.0" layoutY="721.0">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
     </children>
 </AnchorPane>

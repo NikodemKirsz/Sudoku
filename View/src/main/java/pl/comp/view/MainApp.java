@@ -20,7 +20,7 @@ public class MainApp extends Application {
         currentStage = stage;
 
         Locale.setDefault(new Locale("en", "US"));
-        ResourceBundle resourceBundle = ResourceBundle.getBundle("pl.comp.view.Bundle");
+        ResourceBundle resourceBundle = ResourceBundle.getBundle("viewBundle");
 
         URL sceneUrl = MainApp.class.getResource("MenuView.fxml");
         assert sceneUrl != null;

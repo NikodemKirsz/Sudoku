@@ -10,7 +10,7 @@ public class Randomizer {
 
     private static final Logger logger = LoggerFactory.getLogger(Randomizer.class);
     private static final ResourceBundle
-            resourceBundle = ResourceBundle.getBundle("pl.comp.model.Bundle");
+            resourceBundle = ResourceBundle.getBundle("bundle");
 
     private final Random rand;
 

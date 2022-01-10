@@ -31,7 +31,7 @@ public final class SceneController {
     }
 
     private static void loadScene(Stage stage, URL viewUrl) throws IOException {
-        ResourceBundle resourceBundle = ResourceBundle.getBundle("pl.comp.view.Bundle");
+        ResourceBundle resourceBundle = ResourceBundle.getBundle("viewBundle");
         Parent root = FXMLLoader.load(viewUrl, resourceBundle);
         var scene = new Scene(root);
         stage.setScene(scene);

@@ -23,7 +23,7 @@ public class FileSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
     private final String fileName;
     private static final Logger logger = LoggerFactory.getLogger(FileSudokuBoardDao.class);
     private static final ResourceBundle
-            resourceBundle = ResourceBundle.getBundle("pl.comp.model.Bundle");
+            resourceBundle = ResourceBundle.getBundle("bundle");
 
 
     public FileSudokuBoardDao(String filename) {
