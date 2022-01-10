@@ -225,7 +225,13 @@ public class GameViewController implements Initializable {
     private void updateSudokuBoard(int number) {
         if (this.activeY != -1 && this.activeX != -1) {
             gridLabels[activeX][activeY].setText(String.valueOf(number));
-            sudokuBoard.printBoard();
+            logger.info("Label: " + number + " SudokuBoardField: " + sudokuBoard.get(activeX, activeY));
+            // TODO: this is wrong bardzo XD but działa
+            // if binding is broken then just bind it again
+            if (number != sudokuBoard.get(activeX, activeY)) {
+                this.setSudokuGrid(sudokuBoard);
+                gridLabels[activeX][activeY].setText(String.valueOf(number));
+            }
         }
     }
 
