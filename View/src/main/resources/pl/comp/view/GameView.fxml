@@ -39,6 +39,17 @@
          <effect>
             <DropShadow />
          </effect>
+         <children>
+            <Pane style="-fx-border-color: BLACK; -fx-border-width: 1.5;" GridPane.columnSpan="3" GridPane.rowSpan="3" />
+            <Pane layoutX="10.0" layoutY="10.0" style="-fx-border-color: BLACK; -fx-border-width: 1.5;" GridPane.columnIndex="3" GridPane.columnSpan="3" GridPane.rowSpan="3" />
+            <Pane layoutX="250.0" layoutY="10.0" style="-fx-border-color: BLACK; -fx-border-width: 1.5;" GridPane.columnIndex="6" GridPane.columnSpan="3" GridPane.rowSpan="3" />
+            <Pane style="-fx-border-color: BLACK; -fx-border-width: 1.5;" GridPane.columnSpan="3" GridPane.rowIndex="6" GridPane.rowSpan="3" />
+            <Pane style="-fx-border-color: BLACK; -fx-border-width: 1.5;" GridPane.columnIndex="6" GridPane.columnSpan="3" GridPane.rowIndex="3" GridPane.rowSpan="3" />
+            <Pane style="-fx-border-color: BLACK; -fx-border-width: 1.5;" GridPane.columnIndex="3" GridPane.columnSpan="3" GridPane.rowIndex="3" GridPane.rowSpan="3" />
+            <Pane style="-fx-border-color: BLACK; -fx-border-width: 1.5;" GridPane.columnSpan="3" GridPane.rowIndex="3" GridPane.rowSpan="3" />
+            <Pane style="-fx-border-color: BLACK; -fx-border-width: 1.5;" GridPane.columnIndex="6" GridPane.columnSpan="3" GridPane.rowIndex="6" GridPane.rowSpan="3" />
+            <Pane style="-fx-border-color: BLACK; -fx-border-width: 1.5;" GridPane.columnIndex="3" GridPane.columnSpan="3" GridPane.rowIndex="6" GridPane.rowSpan="3" />
+         </children>
         </GridPane>
         <Pane fx:id="keyPad" layoutX="800.0" layoutY="220.0" prefHeight="360.0" prefWidth="360.0">
             <children>

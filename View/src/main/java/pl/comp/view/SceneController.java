@@ -17,7 +17,7 @@ public final class SceneController {
     }
 
     public static void loadGameScene(Stage stage) {
-        var gameViewUrl = thisClass.getResource("GameView.fxml");
+        URL gameViewUrl = thisClass.getResource("GameView.fxml");
         try {
             loadScene(stage, gameViewUrl);
         } catch (Exception e) {
@@ -25,14 +25,19 @@ public final class SceneController {
         }
     }
 
-    public static void loadMenuScene(Stage stage) throws IOException  {
-        var gameViewUrl = thisClass.getResource("MenuView.fxml");
-        loadScene(stage, gameViewUrl);
+    public static void loadMenuScene(Stage stage) {
+        URL menuViewUrl = thisClass.getResource("MenuView.fxml");
+        try {
+            loadScene(stage, menuViewUrl);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private static void loadScene(Stage stage, URL viewUrl) throws IOException {
-        ResourceBundle resourceBundle = ResourceBundle.getBundle("viewBundle");
+        var resourceBundle = ResourceBundle.getBundle("viewBundle");
         Parent root = FXMLLoader.load(viewUrl, resourceBundle);
+
         var scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
