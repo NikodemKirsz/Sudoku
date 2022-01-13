@@ -1,20 +1,21 @@
 package pl.comp.model;
 
 import java.io.File;
+import java.nio.file.Paths;
 
 public class FilesManager {
     private static final String SUDOKU_BOARD_NAME= "saved_board";
     private static final String SUDOKU_BOARD_ORIGINAL_NAME = "saved_board_original";
 
-    public static final String FILES_PATH = "./files";
-    public static final String SUDOKU_BOARD_PATH = FILES_PATH + "/" + SUDOKU_BOARD_NAME;
-    public static final String SUDOKU_BOARD_ORIGINAL_PATH = FILES_PATH + "/" + SUDOKU_BOARD_ORIGINAL_NAME;
+    public static final String FILES_PATH =  Paths.get("files").toString();
+    public static final String SUDOKU_BOARD_PATH = getPath(SUDOKU_BOARD_NAME);
+    public static final String SUDOKU_BOARD_ORIGINAL_PATH = getPath(SUDOKU_BOARD_ORIGINAL_NAME);
 
     private FilesManager() {
     }
 
     public static String getPath(final String fileName) {
-        return FILES_PATH + "/" + fileName;
+        return Paths.get(FILES_PATH, fileName).toString();
     }
 
     public static boolean ensureFilesDirExists() {
