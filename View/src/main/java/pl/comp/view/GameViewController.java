@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.adapter.JavaBeanIntegerProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javafx.beans.binding.Bindings;
@@ -35,6 +36,8 @@ public class GameViewController implements Initializable {
     private SudokuBoard originalSudokuBoard;
     private FileSudokuBoardDao boardDao;
     private FileSudokuBoardDao originalBoardDao;
+
+    private JavaBeanIntegerProperty[][] integerProperty = new JavaBeanIntegerProperty[9][9];
 
     private static final Logger logger = LoggerFactory.getLogger(GameViewController.class);
 
@@ -194,10 +197,10 @@ public class GameViewController implements Initializable {
         // setting onAction for every label
         gridLabels[row][column].onMouseClickedProperty()
                 .set((MouseEvent t) -> {
-            this.activeX = row;
-            this.activeY = column;
-            this.clearFocus();
-        });
+                    this.activeX = row;
+                    this.activeY = column;
+                    this.clearFocus();
+                });
 
         gridLabels[row][column].textProperty().addListener((observableValue, s, t1) -> {
             winLabel.setVisible(sudokuBoard.isBoardValid());
@@ -227,29 +230,24 @@ public class GameViewController implements Initializable {
     private void updateSudokuBoard(int number) {
         if (this.activeY != -1 && this.activeX != -1) {
             gridLabels[activeX][activeY].setText(String.valueOf(number));
-            logger.info("Label: " + gridLabels[activeX][activeY].textProperty() + " SudokuBoardField: " + sudokuBoard.get(activeX, activeY));
-            // TODO: this is wrong bardzo XD but działa
-            // if binding is broken then just bind it again
-            if (number != sudokuBoard.get(activeX, activeY)) {
-                this.setSudokuGrid(sudokuBoard);
-                gridLabels[activeX][activeY].setText(String.valueOf(number));
-            }
+            logger.info("Label: " + gridLabels[activeX][activeY].textProperty()
+                    + " SudokuBoardField: " + sudokuBoard.get(activeX, activeY));
         }
     }
 
     private void setSudokuGrid(SudokuBoard sudokuBoard) {
         NumberStringConverter converter = new NumberStringConverter();
+        var builder = JavaBeanIntegerPropertyBuilder.create();
         for (int row = 0; row < 9; row++) {
             for (int column = 0; column < 9; column++) {
                 try {
-                    var builder = JavaBeanIntegerPropertyBuilder.create();
-                    var integerProperty = builder
-                                        .bean(sudokuBoard.getField(row, column))
-                                        .name("fieldValue")
-                                        .build();
+                    integerProperty[row][column] = builder
+                            .bean(sudokuBoard.getField(row, column))
+                            .name("fieldValue")
+                            .build();
                     Bindings.bindBidirectional(
                             gridLabels[row][column].textProperty(),
-                            integerProperty,
+                            integerProperty[row][column],
                             converter
                     );
 
