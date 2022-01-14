@@ -27,52 +27,73 @@ import javafx.util.converter.NumberStringConverter;
 import pl.comp.exceptions.DaoException;
 import pl.comp.exceptions.IllegalBoardValueException;
 import pl.comp.exceptions.SudokuException;
+import pl.comp.exceptions.ViewException;
 import pl.comp.model.*;
 
 public class GameViewController implements Initializable {
 
+    private static final Logger logger = LoggerFactory.getLogger(GameViewController.class);
+
+    private Font font;
+    private Font activeFont;
+    private DropShadow dropShadow;
+    private ResourceBundle resourceBundle;
+
+    private JavaBeanIntegerProperty[][] integerProperty = new JavaBeanIntegerProperty[9][9];
     private SudokuPlayer player;
     private SudokuBoard sudokuBoard;
     private SudokuBoard originalSudokuBoard;
     private FileSudokuBoardDao boardDao;
     private FileSudokuBoardDao originalBoardDao;
-
-    private JavaBeanIntegerProperty[][] integerProperty = new JavaBeanIntegerProperty[9][9];
-
-    private static final Logger logger = LoggerFactory.getLogger(GameViewController.class);
-
     private Label[][] gridLabels;
+
     private int activeX;
     private int activeY;
 
-    private final Font font;
-    private final Font activeFont;
-    private final DropShadow dropShadow;
+    @FXML private GridPane sudokuGrid;
+    @FXML private Button oneButton;
+    @FXML private Button twoButton;
+    @FXML private Button threeButton;
+    @FXML private Button fourButton;
+    @FXML private Button fiveButton;
+    @FXML private Button sixButton;
+    @FXML private Button sevenButton;
+    @FXML private Button eightButton;
+    @FXML private Button nineButton;
+    @FXML private Label winLabel;
+    @FXML private Button readButton;
 
-    @FXML
-    private GridPane sudokuGrid;
-    @FXML
-    private Button oneButton;
-    @FXML
-    private Button twoButton;
-    @FXML
-    private Button threeButton;
-    @FXML
-    private Button fourButton;
-    @FXML
-    private Button fiveButton;
-    @FXML
-    private Button sixButton;
-    @FXML
-    private Button sevenButton;
-    @FXML
-    private Button eightButton;
-    @FXML
-    private Button nineButton;
-    @FXML
-    private Label winLabel;
-    @FXML
-    private Button readButton;
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        this.resourceBundle = resourceBundle;
+        this.activeY = -1;
+        this.activeX = -1;
+
+        this.boardDao = (FileSudokuBoardDao) SudokuBoardDaoFactory
+                .getFileDao(FilesManager.SUDOKU_BOARD_PATH);
+        this.originalBoardDao = (FileSudokuBoardDao) SudokuBoardDaoFactory
+                .getFileDao(FilesManager.SUDOKU_BOARD_ORIGINAL_PATH);
+
+        this.font = new Font("System", 48);
+        this.activeFont = new Font("System", 51);
+
+        this.dropShadow = new DropShadow();
+        this.dropShadow.setRadius(5.0);
+        this.dropShadow.setOffsetX(3.0);
+        this.dropShadow.setOffsetY(3.0);
+        this.dropShadow.setColor(Color.color(0.4, 0.5, 0.5));
+
+        try {
+            createNewSudoku();
+        } catch (CloneNotSupportedException e) {
+            logger.error(e.getLocalizedMessage());
+        }
+
+        File savedBoard = new File(FilesManager.SUDOKU_BOARD_PATH);
+        if (!savedBoard.exists()) {
+            readButton.setDisable(true);
+        }
+    }
 
     @FXML
     private void handleButtonOne() {
@@ -135,25 +156,6 @@ public class GameViewController implements Initializable {
         this.activeY = -1;
         this.activeX = -1;
         this.clearFocus();
-    }
-
-    public GameViewController() {
-        this.activeY = -1;
-        this.activeX = -1;
-
-        this.boardDao = (FileSudokuBoardDao) SudokuBoardDaoFactory
-                .getFileDao(FilesManager.SUDOKU_BOARD_PATH);
-        this.originalBoardDao = (FileSudokuBoardDao) SudokuBoardDaoFactory
-                .getFileDao(FilesManager.SUDOKU_BOARD_ORIGINAL_PATH);
-
-        this.font = new Font("System", 48);
-        this.activeFont = new Font("System", 51);
-
-        this.dropShadow = new DropShadow();
-        this.dropShadow.setRadius(5.0);
-        this.dropShadow.setOffsetX(3.0);
-        this.dropShadow.setOffsetY(3.0);
-        this.dropShadow.setColor(Color.color(0.4, 0.5, 0.5));
     }
 
     private void createNewSudoku() throws CloneNotSupportedException {
@@ -260,23 +262,11 @@ public class GameViewController implements Initializable {
                     }
 
                 } catch (Exception e) {
-                    logger.error(e.getLocalizedMessage());
+                    var exception = new ViewException(
+                            resourceBundle.getString("viewException"), e);
+                    logger.error(exception + resourceBundle.getString("cause"), exception.getCause());
                 }
             }
-        }
-    }
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        try {
-            createNewSudoku();
-        } catch (CloneNotSupportedException e) {
-            logger.error(e.getLocalizedMessage());
-        }
-
-        File savedBoard = new File(FilesManager.SUDOKU_BOARD_PATH);
-        if (!savedBoard.exists()) {
-            readButton.setDisable(true);
         }
     }
 }
