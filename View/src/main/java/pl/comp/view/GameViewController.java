@@ -1,11 +1,8 @@
 package pl.comp.view;
 
-import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.stream.IntStream;
 
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.adapter.JavaBeanIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -28,9 +25,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.util.converter.NumberStringConverter;
-import pl.comp.exceptions.DaoException;
-import pl.comp.exceptions.IllegalBoardValueException;
-import pl.comp.exceptions.SudokuException;
 import pl.comp.exceptions.ViewException;
 import pl.comp.model.*;
 
@@ -51,11 +45,9 @@ public class GameViewController implements Initializable {
     private FileSudokuBoardDao originalBoardDao;
     private JdbcSudokuBoardDao jdbc;
     private Label[][] gridLabels;
-    private ObservableList<String> indices;
 
     private int activeX;
     private int activeY;
-    private int activeIndex;
 
     @FXML private GridPane sudokuGrid;
     @FXML private Button oneButton;
@@ -92,10 +84,6 @@ public class GameViewController implements Initializable {
         this.dropShadow.setOffsetY(3.0);
         this.dropShadow.setColor(Color.color(0.4, 0.5, 0.5));
 
-        indices = FXCollections.observableArrayList(
-                "1", "2", "3", "4", "5"
-        );
-
         try {
             createNewSudoku();
         } catch (CloneNotSupportedException e) {
@@ -113,7 +101,7 @@ public class GameViewController implements Initializable {
         jdbc = (JdbcSudokuBoardDao) SudokuBoardDaoFactory.getDatabaseDao();
         jdbc.initialize();
 
-        this.checkEmpty();
+        this.fillSavedChoiceBox();
     }
 
     @FXML
@@ -163,7 +151,6 @@ public class GameViewController implements Initializable {
 
     @FXML
     private void saveChange() {
-        activeIndex = Integer.parseInt(saveChoice.getValue());
         saveButton.setDisable(false);
         readButton.setDisable(false);
     }
@@ -173,8 +160,9 @@ public class GameViewController implements Initializable {
 //        boardDao.write(sudokuBoard);
 //        originalBoardDao.write(originalSudokuBoard);
 //        readButton.setDisable(false);
+        var activeIndex = getIntFromStringStart(saveChoice.getValue()) - 1;
         jdbc.updateBoard(activeIndex, sudokuBoard, originalSudokuBoard);
-        this.checkEmpty();
+        this.fillSavedChoiceBox();
     }
 
     @FXML
@@ -182,6 +170,14 @@ public class GameViewController implements Initializable {
 //        sudokuBoard = boardDao.read();
 //        originalSudokuBoard = originalBoardDao.read();
 //        this.setSudokuGrid(sudokuBoard);
+        String activeField = saveChoice.getValue();
+
+        if (activeField.contains("empty")) {
+            return;
+        }
+
+        var activeIndex = getIntFromStringStart(activeField) - 1;
+        jdbc.updateBoard(activeIndex, sudokuBoard, originalSudokuBoard);
         var boards = jdbc.readBoth(activeIndex);
         sudokuBoard = boards.getValue0();
         originalSudokuBoard = boards.getValue1();
@@ -191,13 +187,15 @@ public class GameViewController implements Initializable {
         this.clearFocus();
     }
 
-    private void checkEmpty() {
-        ObservableList<String> list = null;
-        for (int i = 1; i <= 5; i++) {
+    private void fillSavedChoiceBox() {
+        ObservableList<String> list = saveChoice.getItems();
+        list.clear();
+        for (int i = 0; i < 5; i++) {
+            int index = i + 1;
             if (jdbc.isRecordEmpty(i)) {
-                list.add(i + " (empty)");
+                list.add(index + " (empty)");
             } else {
-                list.add(String.valueOf(i));
+                list.add(String.valueOf(index));
             }
         }
         saveChoice.setItems(list);
@@ -313,5 +311,17 @@ public class GameViewController implements Initializable {
                 }
             }
         }
+    }
+
+    private int getIntFromStringStart(String s) {
+        if (s == null || s.isEmpty() || s.isBlank()) return -1;
+
+        int endIndex = 0;
+        for (int i = 0; i < s.length(); i++) {
+            if (Character.isDigit(s.charAt(i))) {
+                endIndex++;
+            }
+        }
+        return Integer.parseInt(s.substring(0, endIndex));
     }
 }

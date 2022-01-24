@@ -9,7 +9,7 @@ import java.sql.*;
 
 public class JdbcSudokuBoardDao implements Dao<SudokuBoard>{
 
-    final int SAVED_BOARDS = 5;
+    final int SAVED_BOARDS_COUNT = 5;
     final String DB_NAME = "sudoku_boards.db";
     final String DB_PATH = FilesManager.getPath(DB_NAME);
     final String CONNECTION_URL = "jdbc:sqlite:" + DB_PATH;
@@ -43,7 +43,7 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>{
                         Character.getNumericValue(originalBoardFields.charAt(i)));
             }
 
-            logger.info("SudokuBoards loaded.");
+            logger.info("SudokuBoards read.");
 
         } catch (SQLException exception) {
             logger.error(exception.getLocalizedMessage());
@@ -99,9 +99,9 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>{
     }
 
     public void updateBoard(int index, SudokuBoard modified, SudokuBoard original) throws IllegalArgumentException {
-        if (index < 0 || index > 5) throw new IllegalArgumentException("pupa hihihi"); //TODO
+        if (indexOutOfRange(index)) throw new IllegalArgumentException("pupa hihihi"); //TODO
         
-        String queues = "UPDATE Boards SET board = ?, originalBoard = ? WHERE id = ?";
+        String queues = "UPDATE Boards SET name = ?, board = ?, originalBoard = ? WHERE id = ?";
 
         var boardFields = new StringBuilder(81);
         var originalBoardFields = new StringBuilder(81);
@@ -113,9 +113,10 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>{
 
         try (var conn = DriverManager.getConnection(CONNECTION_URL)) {
             PreparedStatement pstmt = conn.prepareStatement(queues);
-            pstmt.setString(1, boardFields.toString());
-            pstmt.setString(2, originalBoardFields.toString());
-            pstmt.setInt(3, index);
+            pstmt.setString(1, "SB(" + LocalDateTime.now() + ")");
+            pstmt.setString(2, boardFields.toString());
+            pstmt.setString(3, originalBoardFields.toString());
+            pstmt.setInt(4, index);
             pstmt.executeUpdate();
             logger.info("Record modified.");
 
@@ -143,7 +144,7 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>{
 
     public void initialize() {
         if (initialized) return;
-        this.ensureTableExists();
+        this.ensureTableValidity();
         initialized = true;
     }
 
@@ -152,19 +153,18 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>{
     }
 
     private String getName(int index) {
-        if (!indexInRange(index)) throw new IllegalArgumentException("pupa hihihi");
+        if (indexOutOfRange(index)) throw new IllegalArgumentException("pupa hihihi");
 
         String queues = """ 
-                            SELECT name 
-                            FROM Boards 
-                            WHERE id = 1;
+                            SELECT *
+                            FROM Boards
+                            WHERE id = ?;
                         """;
 
         try (var conn = DriverManager.getConnection(CONNECTION_URL)){
-//            /*PreparedStatement pstmt = conn.prepareStatement(queues);
-//            pstmt.setInt(1, index);*/
-            Statement statement = conn.createStatement();
-            ResultSet rs = statement.executeQuery(queues);
+            PreparedStatement pstmt = conn.prepareStatement(queues);
+            pstmt.setInt(1, index);
+            ResultSet rs = pstmt.executeQuery();
 
             return rs.getString("name");
         } catch (SQLException e) {
@@ -174,42 +174,27 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>{
         return null;
     }
 
-    private void ensureTableExists() {
+    private void ensureTableValidity() {
 
-        if (tableExists()) {
-            logger.info("Table exists and is good");
-            return;
+        if (checkTableExists()) {
+            if (checkTableValidity()) {
+                logger.info("Table exists and is valid");
+            }
+            else {
+                logger.info("Table exists but is not valid!\nCreating new table and filling with defaults");
+                dropTable();
+                createTable();
+                fillTableWithDefaults();
+            }
         }
-
-        String queues = """
-                DROP TABLE Boards;
-                
-                CREATE TABLE Boards (
-                     id integer PRIMARY KEY,
-                     name text NOT NULL,
-                     board text,
-                     originalBoard text
-                );
-                
-                INSERT Boards VALUES
-                    (0, "empty", "", ""),
-                    (1, "empty", "", ""),
-                    (2, "empty", "", ""),
-                    (3, "empty", "", ""),
-                    (4, "empty", "", "");
-                """;
-
-        try (var conn = DriverManager.getConnection(CONNECTION_URL)) {
-            Statement statement = conn.createStatement();
-            statement.execute(queues);
-            logger.info("Table created");
-
-        } catch (SQLException exception) {
-            logger.error(exception.getLocalizedMessage());
+        else {
+            logger.info("Table deos not exist!\nCreating new table and filling with defaults");
+            createTable();
+            fillTableWithDefaults();
         }
     }
 
-    private boolean tableExists() {
+    private boolean checkTableValidity() {
         String queues = "SELECT * FROM Boards";
 
         try (var conn = DriverManager.getConnection(CONNECTION_URL)){
@@ -219,7 +204,7 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>{
             int count = 0;
             while (rs.next()) {
                 int index = rs.getInt("id");
-                if (!indexInRange(index)) {
+                if (indexOutOfRange(index)) {
                     return false;
                 }
                 count++;
@@ -234,8 +219,74 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>{
         return true;
     }
 
-    private boolean indexInRange(int index) {
-        return (index >= 0 && index < SAVED_BOARDS);
+    private boolean checkTableExists() {
+        String queues = "SELECT * FROM Boards";
+
+        try (var conn = DriverManager.getConnection(CONNECTION_URL)){
+            Statement statement = conn.createStatement();
+            statement.executeQuery(queues);
+        } catch (SQLException e) {
+            logger.error(e.getLocalizedMessage());
+            return false;
+        }
+        return true;
+    }
+
+    private void fillTableWithDefaults() {
+        String queues = """
+                INSERT INTO Boards VALUES
+                    (0, "empty", "", ""),
+                    (1, "empty", "", ""),
+                    (2, "empty", "", ""),
+                    (3, "empty", "", ""),
+                    (4, "empty", "", "");
+                """;
+
+        try (var conn = DriverManager.getConnection(CONNECTION_URL)) {
+            Statement statement = conn.createStatement();
+            statement.execute(queues);
+            logger.info("Filled Table");
+
+        } catch (SQLException exception) {
+            logger.error(exception.getLocalizedMessage());
+        }
+    }
+
+    private void createTable() {
+        String queues = """
+                CREATE TABLE Boards (
+                     id integer PRIMARY KEY,
+                     name text NOT NULL,
+                     board text,
+                     originalBoard text
+                );
+                """;
+
+        try (var conn = DriverManager.getConnection(CONNECTION_URL)) {
+            Statement statement = conn.createStatement();
+            statement.execute(queues);
+            logger.info("Table created");
+        } catch (SQLException exception) {
+            logger.error(exception.getLocalizedMessage());
+        }
+    }
+
+    private void dropTable() {
+        String queues = """
+                DROP TABLE Boards
+                """;
+
+        try (var conn = DriverManager.getConnection(CONNECTION_URL)) {
+            Statement statement = conn.createStatement();
+            statement.execute(queues);
+            logger.info("Table Dropped");
+        } catch (SQLException exception) {
+            logger.error(exception.getLocalizedMessage());
+        }
+    }
+
+    private boolean indexOutOfRange(int index) {
+        return (index < 0 || index >= SAVED_BOARDS_COUNT);
     }
 }
 
