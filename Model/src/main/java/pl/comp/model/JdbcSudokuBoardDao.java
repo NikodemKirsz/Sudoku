@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import org.javatuples.Pair;
 import pl.comp.exceptions.DatabaseException;
 import pl.comp.exceptions.OutOfDatabaseException;
+import pl.comp.exceptions.ProszeNieUzywacTejMetodyException;
 
 import java.sql.*;
 import java.util.ResourceBundle;
@@ -71,52 +72,8 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
 
     @Override
     public void write(SudokuBoard obj) {
-        String queues = "INSERT INTO Boards(name, board) VALUES(?,?)";
-
-        var boardFields = new StringBuilder(81);
-
-        for (int i = 0; i < 81; i++) {
-            boardFields.append(obj.getField(i / 9, i % 9).getFieldValue());
-        }
-
-        try (var conn = DriverManager.getConnection(CONNECTION_URL)) {
-            PreparedStatement pstmt = conn.prepareStatement(queues);
-            pstmt.setString(1, "SudokuBoard(" + LocalDateTime.now() + ")");
-            pstmt.setString(2, boardFields.toString());
-            pstmt.executeUpdate();
-            logger.info("Record added.");
-
-        } catch (SQLException exception) {
-            var databaseException = new DatabaseException(
-                    resourceBundle.getString("DatabaseFail"), exception);
-            logger.error(databaseException + resourceBundle.getString("cause"), databaseException.getCause());
-        }
-    }
-
-    public void write(SudokuBoard modified, SudokuBoard original) {
-        String queues = "INSERT INTO Boards(name, board, originalBoard) VALUES(?,?,?)";
-
-        var boardFields = new StringBuilder(81);
-        var originalBoardFields = new StringBuilder(81);
-
-        for (int i = 0; i < 81; i++) {
-            boardFields.append(modified.getField(i / 9, i % 9).getFieldValue());
-            originalBoardFields.append(original.getField(i / 9, i % 9).getFieldValue());
-        }
-
-        try (var conn = DriverManager.getConnection(CONNECTION_URL)) {
-            PreparedStatement pstmt = conn.prepareStatement(queues);
-            pstmt.setString(1, "SudokuBoard(" + LocalDateTime.now() + ")");
-            pstmt.setString(2, boardFields.toString());
-            pstmt.setString(3, originalBoardFields.toString());
-            pstmt.executeUpdate();
-            logger.info("Record added.");
-
-        } catch (SQLException exception) {
-            var databaseException = new DatabaseException(
-                    resourceBundle.getString("DatabaseFail"), exception);
-            logger.error(databaseException + resourceBundle.getString("cause"), databaseException.getCause());
-        }
+        throw new ProszeNieUzywacTejMetodyException("Ta metoda jest w tej klasie bezuzyteczna, " +
+                "ale tak nma kazaliu w zadaniu, a my posluszni studenci - robimy jak nam kaza");
     }
 
     public void updateBoard(int index, SudokuBoard modified, SudokuBoard original) throws IllegalArgumentException {
