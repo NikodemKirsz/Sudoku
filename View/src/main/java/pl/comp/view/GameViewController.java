@@ -6,6 +6,7 @@ import java.util.ResourceBundle;
 import javafx.beans.property.adapter.JavaBeanIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.ChoiceBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.util.converter.NumberStringConverter;
+import pl.comp.exceptions.DatabaseException;
 import pl.comp.exceptions.ViewException;
 import pl.comp.model.*;
 
@@ -161,7 +163,13 @@ public class GameViewController implements Initializable {
 //        originalBoardDao.write(originalSudokuBoard);
 //        readButton.setDisable(false);
         var activeIndex = getIntFromStringStart(saveChoice.getValue()) - 1;
-        jdbc.updateBoard(activeIndex, sudokuBoard, originalSudokuBoard);
+        try {
+            jdbc.updateBoard(activeIndex, sudokuBoard, originalSudokuBoard);
+        } catch (DatabaseException exception) {
+            var e = new ViewException(
+                    resourceBundle.getString("viewException"), exception);
+            logger.error(e + resourceBundle.getString("cause"), e.getCause());
+        }
         this.fillSavedChoiceBox();
         saveChoice.setValue(String.valueOf(activeIndex + 1));
     }
