@@ -12,10 +12,12 @@ public final class SudokuBoardDaoFactory {
     private SudokuBoardDaoFactory() {
     }
 
-    public static Dao<SudokuBoard> getFileDao(final String fileName) {
-        return new FileSudokuBoardDao(fileName);
+    public static Dao<SudokuBoard> getFileDao(final String filePath) {
+        return new FileSudokuBoardDao(filePath);
     }
 
-    public static Dao<SudokuBoard> getDatabaseDao() { return new JdbcSudokuBoardDao(); }
+    public static Dao<SudokuBoard> getDatabaseDao() {
+        return new JdbcSudokuBoardDao();
+    }
 }
 

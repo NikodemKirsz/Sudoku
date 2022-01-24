@@ -20,20 +20,20 @@ import pl.comp.exceptions.FailedFileOperationException;
 
 public class FileSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
 
-    private final String fileName;
+    private final String filePath;
     private static final Logger logger = LoggerFactory.getLogger(FileSudokuBoardDao.class);
     private static final ResourceBundle
             resourceBundle = ResourceBundle.getBundle("bundle");
 
 
-    public FileSudokuBoardDao(String filename) {
-        this.fileName = filename;
+    public FileSudokuBoardDao(String filePath) {
+        this.filePath = filePath;
     }
 
     public SudokuBoard read() {
         SudokuBoard sudokuBoard = null;
 
-        try (var fileInputStream = new FileInputStream(fileName);
+        try (var fileInputStream = new FileInputStream(filePath);
              var objectInputStream = new ObjectInputStream(fileInputStream)) {
             sudokuBoard = (SudokuBoard) objectInputStream.readObject();
         } catch (ClassNotFoundException | IOException e) {
@@ -45,7 +45,7 @@ public class FileSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
     }
 
     public void write(SudokuBoard obj) {
-        try (var fileOutputStream = new FileOutputStream(fileName);
+        try (var fileOutputStream = new FileOutputStream(filePath);
              var objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
             objectOutputStream.writeObject(obj);
         } catch (IOException e) {

@@ -93,6 +93,9 @@ public class GameViewController implements Initializable {
         if (!savedBoard.exists()) {
             readButton.setDisable(true);
         }
+
+        var jdbc = SudokuBoardDaoFactory.getDatabaseDao();
+        jdbc.read();
     }
 
     @FXML
