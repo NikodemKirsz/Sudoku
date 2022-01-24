@@ -3,9 +3,13 @@ package pl.comp.view;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.stream.IntStream;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.adapter.JavaBeanIntegerProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.ChoiceBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javafx.beans.binding.Bindings;
@@ -45,10 +49,13 @@ public class GameViewController implements Initializable {
     private SudokuBoard originalSudokuBoard;
     private FileSudokuBoardDao boardDao;
     private FileSudokuBoardDao originalBoardDao;
+    private JdbcSudokuBoardDao jdbc;
     private Label[][] gridLabels;
+    private ObservableList<String> indices;
 
     private int activeX;
     private int activeY;
+    private int activeIndex;
 
     @FXML private GridPane sudokuGrid;
     @FXML private Button oneButton;
@@ -62,6 +69,8 @@ public class GameViewController implements Initializable {
     @FXML private Button nineButton;
     @FXML private Label winLabel;
     @FXML private Button readButton;
+    @FXML private Button saveButton;
+    @FXML private ChoiceBox<String> saveChoice;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -83,19 +92,28 @@ public class GameViewController implements Initializable {
         this.dropShadow.setOffsetY(3.0);
         this.dropShadow.setColor(Color.color(0.4, 0.5, 0.5));
 
+        indices = FXCollections.observableArrayList(
+                "1", "2", "3", "4", "5"
+        );
+
         try {
             createNewSudoku();
         } catch (CloneNotSupportedException e) {
             logger.error(e.getLocalizedMessage());
         }
 
-        File savedBoard = new File(FilesManager.SUDOKU_BOARD_PATH);
-        if (!savedBoard.exists()) {
-            readButton.setDisable(true);
-        }
+//        File savedBoard = new File(FilesManager.SUDOKU_BOARD_PATH);
+//        if (!savedBoard.exists()) {
+//            readButton.setDisable(true);
+//        }
 
-        var jdbc = SudokuBoardDaoFactory.getDatabaseDao();
-        jdbc.read();
+        readButton.setDisable(true);
+        saveButton.setDisable(true);
+
+        jdbc = (JdbcSudokuBoardDao) SudokuBoardDaoFactory.getDatabaseDao();
+        jdbc.initialize();
+
+        this.checkEmpty();
     }
 
     @FXML
@@ -144,21 +162,45 @@ public class GameViewController implements Initializable {
     }
 
     @FXML
-    private void saveSudokuBoard() {
-        boardDao.write(sudokuBoard);
-        originalBoardDao.write(originalSudokuBoard);
+    private void saveChange() {
+        activeIndex = Integer.parseInt(saveChoice.getValue());
+        saveButton.setDisable(false);
         readButton.setDisable(false);
     }
 
     @FXML
+    private void saveSudokuBoard() {
+//        boardDao.write(sudokuBoard);
+//        originalBoardDao.write(originalSudokuBoard);
+//        readButton.setDisable(false);
+        jdbc.updateBoard(activeIndex, sudokuBoard, originalSudokuBoard);
+        this.checkEmpty();
+    }
+
+    @FXML
     private void readSudokuBoard() {
-        sudokuBoard = boardDao.read();
-        originalSudokuBoard = originalBoardDao.read();
-        this.setSudokuGrid(sudokuBoard);
+//        sudokuBoard = boardDao.read();
+//        originalSudokuBoard = originalBoardDao.read();
+//        this.setSudokuGrid(sudokuBoard);
+        var boards = jdbc.readBoth(activeIndex);
+        sudokuBoard = boards.getValue0();
+        originalSudokuBoard = boards.getValue1();
 
         this.activeY = -1;
         this.activeX = -1;
         this.clearFocus();
+    }
+
+    private void checkEmpty() {
+        ObservableList<String> list = null;
+        for (int i = 1; i <= 5; i++) {
+            if (jdbc.isRecordEmpty(i)) {
+                list.add(i + " (empty)");
+            } else {
+                list.add(String.valueOf(i));
+            }
+        }
+        saveChoice.setItems(list);
     }
 
     private void createNewSudoku() throws CloneNotSupportedException {

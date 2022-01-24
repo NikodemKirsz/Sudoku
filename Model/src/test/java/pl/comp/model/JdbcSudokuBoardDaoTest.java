@@ -25,6 +25,7 @@ class JdbcSudokuBoardDaoTest {
         boards.getValue0().printBoard();
         boards.getValue1().printBoard();
         jdbc.updateBoard(3, boards.getValue0(), boards.getValue1());
+        jdbc.isRecordEmpty(2);
     }
 
 //    /*@BeforeAll

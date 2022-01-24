@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -163,23 +164,26 @@
                 </Button>
             </children>
         </Pane>
-      <Label fx:id="winLabel" layoutX="822.0" layoutY="113.0" text="%winningLabel" visible="false">
+      <Label fx:id="winLabel" layoutX="822.0" layoutY="645.0" text="%winningLabel" visible="false">
          <font>
             <Font size="27.0" />
          </font>
       </Label>
-      <Pane layoutX="822.0" layoutY="624.0" prefHeight="74.0" prefWidth="316.0">
+      <Pane layoutX="822.0" layoutY="66.0" prefHeight="74.0" prefWidth="316.0">
          <children>
             <Button fx:id="saveButton" layoutX="14.0" layoutY="15.0" mnemonicParsing="false" onAction="#saveSudokuBoard" prefHeight="45.0" prefWidth="127.0" text="%saveButton">
                <font>
                   <Font size="24.0" />
-               </font></Button>
+               </font>
+            </Button>
             <Button fx:id="readButton" layoutX="175.0" layoutY="15.0" mnemonicParsing="false" onAction="#readSudokuBoard" prefHeight="45.0" prefWidth="127.0" text="%readButton">
                <font>
                   <Font size="24.0" />
-               </font></Button>
+               </font>
+            </Button>
          </children>
       </Pane>
+      <ChoiceBox fx:id="saveChoice" onAction="#saveChange" layoutX="905.0" layoutY="157.0" prefWidth="150.0" />
     </children>
     <effect>
         <DropShadow height="60.0" radius="29.5" width="60.0" />
