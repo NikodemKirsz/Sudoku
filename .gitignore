@@ -5,6 +5,6 @@ target*/
 .classpath
 .project
 .settings/
-files/
+Model/files/
 logs/
 SudokuGameProject.iml
