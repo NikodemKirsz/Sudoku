@@ -10,7 +10,6 @@ import pl.comp.exceptions.OutOfDatabaseException;
 import pl.comp.exceptions.ProszeNieUzywacTejMetodyException;
 
 import java.sql.*;
-import java.util.EmptyStackException;
 import java.util.ResourceBundle;
 
 public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {

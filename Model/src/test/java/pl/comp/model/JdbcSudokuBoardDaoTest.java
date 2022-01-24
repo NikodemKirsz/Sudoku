@@ -3,6 +3,7 @@ package pl.comp.model;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import pl.comp.exceptions.EmptyRecordException;
 import pl.comp.exceptions.OutOfDatabaseException;
 import pl.comp.exceptions.ProszeNieUzywacTejMetodyException;
 
@@ -85,6 +86,11 @@ class JdbcSudokuBoardDaoTest {
     @Test
     void proszeNieUzywacTejMetodyExceptionTest() {
         assertThrows(ProszeNieUzywacTejMetodyException.class, ()->jdbc.write(new SudokuBoard()));
+    }
+
+    @Test
+    void readBothException() {
+        assertThrows(EmptyRecordException.class, ()->jdbc.readBoth(1));
     }
 
     @AfterAll
