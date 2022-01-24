@@ -5,9 +5,11 @@ import org.slf4j.LoggerFactory;
 import java.time.LocalDateTime;
 import org.javatuples.Pair;
 import pl.comp.exceptions.DatabaseException;
+import pl.comp.exceptions.EmptyRecordException;
 import pl.comp.exceptions.OutOfDatabaseException;
 
 import java.sql.*;
+import java.util.EmptyStackException;
 import java.util.ResourceBundle;
 
 public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
@@ -35,7 +37,7 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
     public Pair<SudokuBoard, SudokuBoard> readBoth(int index) {
 
         if (this.isRecordEmpty(index)) {
-            throw new IllegalArgumentException(); //TODO
+            throw new EmptyRecordException();
         }
 
         var board = new SudokuBoard();
@@ -119,7 +121,7 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
         }
     }
 
-    public void updateBoard(int index, SudokuBoard modified, SudokuBoard original) throws IllegalArgumentException {
+    public void updateBoard(int index, SudokuBoard modified, SudokuBoard original) {
         if (indexOutOfRange(index)) { throw new OutOfDatabaseException(); }
         
         String queues = "UPDATE Boards SET name = ?, board = ?, originalBoard = ? WHERE id = ?";
