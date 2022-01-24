@@ -10,13 +10,17 @@ import java.sql.*;
 public class JdbcSudokuBoardDao implements Dao<SudokuBoard>{
 
     final int SAVED_BOARDS_COUNT = 5;
-    final String DB_NAME = "sudoku_boards.db";
-    final String DB_PATH = FilesManager.getPath(DB_NAME);
-    final String CONNECTION_URL = "jdbc:sqlite:" + DB_PATH;
+    final String DB_PATH;
+    final String CONNECTION_URL;
 
     private static final Logger logger = LoggerFactory.getLogger(JdbcSudokuBoardDao.class);
 
     private boolean initialized = false;
+
+    public JdbcSudokuBoardDao(final String filePath) {
+        this.DB_PATH = filePath;
+        CONNECTION_URL = "jdbc:sqlite:" + DB_PATH;
+    }
 
     @Override
     public SudokuBoard read() {
@@ -24,6 +28,11 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>{
     }
 
     public Pair<SudokuBoard, SudokuBoard> readBoth(int index) {
+
+        if (this.isRecordEmpty(index)) {
+            throw new IllegalArgumentException(); //TODO
+        }
+
         var board = new SudokuBoard();
         var originalBoard = new SudokuBoard();
 
@@ -36,6 +45,7 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>{
 
             String boardFields = rs.getString("board");
             String originalBoardFields = rs.getString("originalBoard");
+
             for (int i = 0; i < 81; i++) {
                 board.set(i / 9, i % 9,
                         Character.getNumericValue(boardFields.charAt(i)));
@@ -122,23 +132,6 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>{
 
         } catch (SQLException exception) {
             logger.error(exception.getLocalizedMessage());
-        }
-    }
-
-    public void selectAll(){
-        String queues = "SELECT * FROM Boards";
-
-        try (var conn = DriverManager.getConnection(CONNECTION_URL)){
-            Statement statement = conn.createStatement();
-            ResultSet rs = statement.executeQuery(queues);
-
-            while (rs.next()) {
-                System.out.println(rs.getInt("id") +  "\t" +
-                        rs.getString("name") + "\t" +
-                        rs.getString("board"));
-            }
-        } catch (SQLException e) {
-            logger.error(e.getLocalizedMessage());
         }
     }
 

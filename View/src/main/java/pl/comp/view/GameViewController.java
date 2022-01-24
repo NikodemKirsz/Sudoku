@@ -4,7 +4,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import javafx.beans.property.adapter.JavaBeanIntegerProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ChoiceBox;
 import org.slf4j.Logger;
@@ -37,7 +36,7 @@ public class GameViewController implements Initializable {
     private DropShadow dropShadow;
     private ResourceBundle resourceBundle;
 
-    private JavaBeanIntegerProperty[][] integerProperty = new JavaBeanIntegerProperty[9][9];
+    private final JavaBeanIntegerProperty[][] integerProperty = new JavaBeanIntegerProperty[9][9];
     private SudokuPlayer player;
     private SudokuBoard sudokuBoard;
     private SudokuBoard originalSudokuBoard;
@@ -98,7 +97,7 @@ public class GameViewController implements Initializable {
         readButton.setDisable(true);
         saveButton.setDisable(true);
 
-        jdbc = (JdbcSudokuBoardDao) SudokuBoardDaoFactory.getDatabaseDao();
+        jdbc = (JdbcSudokuBoardDao) SudokuBoardDaoFactory.getDatabaseDao(FilesManager.DATABASE_PATH);
         jdbc.initialize();
 
         this.fillSavedChoiceBox();
@@ -248,9 +247,9 @@ public class GameViewController implements Initializable {
                     this.clearFocus();
                 });
 
-        gridLabels[row][column].textProperty().addListener((observableValue, s, t1) -> {
-            winLabel.setVisible(sudokuBoard.isBoardValid());
-        });
+        gridLabels[row][column].textProperty().addListener(
+                (observableValue, s, t1) -> winLabel.setVisible(sudokuBoard.isBoardValid())
+        );
     }
 
     private void clearFocus() {

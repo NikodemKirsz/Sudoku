@@ -6,10 +6,12 @@ import java.nio.file.Paths;
 public class FilesManager {
     private static final String SUDOKU_BOARD_NAME= "saved_board";
     private static final String SUDOKU_BOARD_ORIGINAL_NAME = "saved_board_original";
+    private static final String DATABASE_NAME = "sudoku_boards.db";
 
     public static final String FILES_PATH =  Paths.get("files").toString();
     public static final String SUDOKU_BOARD_PATH = getPath(SUDOKU_BOARD_NAME);
     public static final String SUDOKU_BOARD_ORIGINAL_PATH = getPath(SUDOKU_BOARD_ORIGINAL_NAME);
+    public static final String DATABASE_PATH = getPath(DATABASE_NAME);
 
     private FilesManager() {
     }
