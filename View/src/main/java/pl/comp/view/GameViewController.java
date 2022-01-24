@@ -163,6 +163,7 @@ public class GameViewController implements Initializable {
         var activeIndex = getIntFromStringStart(saveChoice.getValue()) - 1;
         jdbc.updateBoard(activeIndex, sudokuBoard, originalSudokuBoard);
         this.fillSavedChoiceBox();
+        saveChoice.setValue(String.valueOf(activeIndex + 1));
     }
 
     @FXML
@@ -177,10 +178,10 @@ public class GameViewController implements Initializable {
         }
 
         var activeIndex = getIntFromStringStart(activeField) - 1;
-        jdbc.updateBoard(activeIndex, sudokuBoard, originalSudokuBoard);
         var boards = jdbc.readBoth(activeIndex);
         sudokuBoard = boards.getValue0();
         originalSudokuBoard = boards.getValue1();
+        this.setSudokuGrid(sudokuBoard);
 
         this.activeY = -1;
         this.activeX = -1;
