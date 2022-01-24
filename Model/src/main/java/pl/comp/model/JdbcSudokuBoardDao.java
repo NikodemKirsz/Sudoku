@@ -4,16 +4,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.time.LocalDateTime;
 import org.javatuples.Pair;
+import pl.comp.exceptions.DatabaseException;
+import pl.comp.exceptions.OutOfDatabaseException;
 
 import java.sql.*;
+import java.util.ResourceBundle;
 
-public class JdbcSudokuBoardDao implements Dao<SudokuBoard>{
+public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
 
     final int SAVED_BOARDS_COUNT = 5;
     final String DB_PATH;
     final String CONNECTION_URL;
 
     private static final Logger logger = LoggerFactory.getLogger(JdbcSudokuBoardDao.class);
+    private static final ResourceBundle
+            resourceBundle = ResourceBundle.getBundle("bundle");
 
     private boolean initialized = false;
 
@@ -56,7 +61,9 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>{
             logger.info("SudokuBoards read.");
 
         } catch (SQLException exception) {
-            logger.error(exception.getLocalizedMessage());
+            var databaseException = new DatabaseException(
+                    resourceBundle.getString("DatabaseFail"), exception);
+            logger.error(databaseException + resourceBundle.getString("cause"), databaseException.getCause());
         }
 
         return Pair.with(board, originalBoard);
@@ -80,7 +87,9 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>{
             logger.info("Record added.");
 
         } catch (SQLException exception) {
-            logger.error(exception.getLocalizedMessage());
+            var databaseException = new DatabaseException(
+                    resourceBundle.getString("DatabaseFail"), exception);
+            logger.error(databaseException + resourceBundle.getString("cause"), databaseException.getCause());
         }
     }
 
@@ -104,12 +113,14 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>{
             logger.info("Record added.");
 
         } catch (SQLException exception) {
-            logger.error(exception.getLocalizedMessage());
+            var databaseException = new DatabaseException(
+                    resourceBundle.getString("DatabaseFail"), exception);
+            logger.error(databaseException + resourceBundle.getString("cause"), databaseException.getCause());
         }
     }
 
     public void updateBoard(int index, SudokuBoard modified, SudokuBoard original) throws IllegalArgumentException {
-        if (indexOutOfRange(index)) throw new IllegalArgumentException("pupa hihihi"); //TODO
+        if (indexOutOfRange(index)) { throw new OutOfDatabaseException(); }
         
         String queues = "UPDATE Boards SET name = ?, board = ?, originalBoard = ? WHERE id = ?";
 
@@ -131,7 +142,9 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>{
             logger.info("Record modified.");
 
         } catch (SQLException exception) {
-            logger.error(exception.getLocalizedMessage());
+            var databaseException = new DatabaseException(
+                    resourceBundle.getString("DatabaseFail"), exception);
+            logger.error(databaseException + resourceBundle.getString("cause"), databaseException.getCause());
         }
     }
 
@@ -142,11 +155,16 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>{
     }
 
     public boolean isRecordEmpty(int index) {
-        return getName(index).equals("empty");
+        try {
+            return getName(index).equals("empty");
+        } catch (DatabaseException exception) {
+            logger.error(exception.getLocalizedMessage());
+        }
+        return false;
     }
 
     private String getName(int index) {
-        if (indexOutOfRange(index)) throw new IllegalArgumentException("pupa hihihi");
+        if (indexOutOfRange(index)) { throw new OutOfDatabaseException(); }
 
         String queues = """ 
                             SELECT *
@@ -160,8 +178,10 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>{
             ResultSet rs = pstmt.executeQuery();
 
             return rs.getString("name");
-        } catch (SQLException e) {
-            logger.error(e.getLocalizedMessage());
+        } catch (SQLException exception) {
+            var databaseException = new DatabaseException(
+                    resourceBundle.getString("DatabaseFail"), exception);
+            logger.error(databaseException + resourceBundle.getString("cause"), databaseException.getCause());
         }
 
         return null;
@@ -205,8 +225,10 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>{
             if (count != 5) {
                 return false;
             }
-        } catch (SQLException e) {
-            logger.error(e.getLocalizedMessage());
+        } catch (SQLException exception) {
+            var databaseException = new DatabaseException(
+                    resourceBundle.getString("DatabaseFail"), exception);
+            logger.error(databaseException + resourceBundle.getString("cause"), databaseException.getCause());
             return false;
         }
         return true;
@@ -218,8 +240,10 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>{
         try (var conn = DriverManager.getConnection(CONNECTION_URL)){
             Statement statement = conn.createStatement();
             statement.executeQuery(queues);
-        } catch (SQLException e) {
-            logger.error(e.getLocalizedMessage());
+        } catch (SQLException exception) {
+            var databaseException = new DatabaseException(
+                    resourceBundle.getString("DatabaseFail"), exception);
+            logger.error(databaseException + resourceBundle.getString("cause"), databaseException.getCause());
             return false;
         }
         return true;
@@ -241,7 +265,9 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>{
             logger.info("Filled Table");
 
         } catch (SQLException exception) {
-            logger.error(exception.getLocalizedMessage());
+            var databaseException = new DatabaseException(
+                    resourceBundle.getString("DatabaseFail"), exception);
+            logger.error(databaseException + resourceBundle.getString("cause"), databaseException.getCause());
         }
     }
 
@@ -260,7 +286,9 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>{
             statement.execute(queues);
             logger.info("Table created");
         } catch (SQLException exception) {
-            logger.error(exception.getLocalizedMessage());
+            var databaseException = new DatabaseException(
+                    resourceBundle.getString("DatabaseFail"), exception);
+            logger.error(databaseException + resourceBundle.getString("cause"), databaseException.getCause());
         }
     }
 
@@ -274,7 +302,9 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>{
             statement.execute(queues);
             logger.info("Table Dropped");
         } catch (SQLException exception) {
-            logger.error(exception.getLocalizedMessage());
+            var databaseException = new DatabaseException(
+                    resourceBundle.getString("DatabaseFail"), exception);
+            logger.error(databaseException + resourceBundle.getString("cause"), databaseException.getCause());
         }
     }
 
@@ -282,8 +312,3 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>{
         return (index < 0 || index >= SAVED_BOARDS_COUNT);
     }
 }
-
-
-
-
-
