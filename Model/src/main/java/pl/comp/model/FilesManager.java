@@ -4,7 +4,7 @@ import java.io.File;
 import java.nio.file.Paths;
 
 public class FilesManager {
-    private static final String SUDOKU_BOARD_NAME= "saved_board";
+    private static final String SUDOKU_BOARD_NAME = "saved_board";
     private static final String SUDOKU_BOARD_ORIGINAL_NAME = "saved_board_original";
     private static final String DATABASE_NAME = "sudoku_boards.db";
 
@@ -25,8 +25,7 @@ public class FilesManager {
 
         if (filesDirectory.exists()) {
             return true;
-        }
-        else {
+        } else {
             return filesDirectory.mkdir();
         }
     }

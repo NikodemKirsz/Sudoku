@@ -2,21 +2,17 @@ package pl.comp.view;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-
-import javafx.beans.property.adapter.JavaBeanIntegerProperty;
-import javafx.collections.ObservableList;
-import javafx.scene.chart.PieChart;
-import javafx.scene.control.ChoiceBox;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.adapter.JavaBeanIntegerProperty;
 import javafx.beans.property.adapter.JavaBeanIntegerPropertyBuilder;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
@@ -25,9 +21,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.util.converter.NumberStringConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pl.comp.exceptions.DatabaseException;
 import pl.comp.exceptions.ViewException;
-import pl.comp.model.*;
+import pl.comp.model.FilesManager;
+import pl.comp.model.JdbcSudokuBoardDao;
+import pl.comp.model.SudokuBoard;
+import pl.comp.model.SudokuBoardDaoFactory;
+import pl.comp.model.SudokuPlayer;
 
 public class GameViewController implements Initializable {
 
@@ -42,8 +44,6 @@ public class GameViewController implements Initializable {
     private SudokuPlayer player;
     private SudokuBoard sudokuBoard;
     private SudokuBoard originalSudokuBoard;
-    private FileSudokuBoardDao boardDao;
-    private FileSudokuBoardDao originalBoardDao;
     private JdbcSudokuBoardDao jdbc;
     private Label[][] gridLabels;
 
@@ -51,15 +51,6 @@ public class GameViewController implements Initializable {
     private int activeY;
 
     @FXML private GridPane sudokuGrid;
-    @FXML private Button oneButton;
-    @FXML private Button twoButton;
-    @FXML private Button threeButton;
-    @FXML private Button fourButton;
-    @FXML private Button fiveButton;
-    @FXML private Button sixButton;
-    @FXML private Button sevenButton;
-    @FXML private Button eightButton;
-    @FXML private Button nineButton;
     @FXML private Label winLabel;
     @FXML private Button readButton;
     @FXML private Button saveButton;
@@ -70,11 +61,6 @@ public class GameViewController implements Initializable {
         this.resourceBundle = resourceBundle;
         this.activeY = -1;
         this.activeX = -1;
-
-        this.boardDao = (FileSudokuBoardDao) SudokuBoardDaoFactory
-                .getFileDao(FilesManager.SUDOKU_BOARD_PATH);
-        this.originalBoardDao = (FileSudokuBoardDao) SudokuBoardDaoFactory
-                .getFileDao(FilesManager.SUDOKU_BOARD_ORIGINAL_PATH);
 
         this.font = new Font("System", 48);
         this.activeFont = new Font("System", 51);
@@ -91,15 +77,12 @@ public class GameViewController implements Initializable {
             logger.error(e.getLocalizedMessage());
         }
 
-//        File savedBoard = new File(FilesManager.SUDOKU_BOARD_PATH);
-//        if (!savedBoard.exists()) {
-//            readButton.setDisable(true);
-//        }
-
         readButton.setDisable(true);
         saveButton.setDisable(true);
 
-        jdbc = (JdbcSudokuBoardDao) SudokuBoardDaoFactory.getDatabaseDao(FilesManager.DATABASE_PATH);
+        jdbc = (JdbcSudokuBoardDao) SudokuBoardDaoFactory.getDatabaseDao(
+                FilesManager.DATABASE_PATH
+        );
         jdbc.initialize();
 
         this.fillSavedChoiceBox();
@@ -158,9 +141,6 @@ public class GameViewController implements Initializable {
 
     @FXML
     private void saveSudokuBoard() {
-//        boardDao.write(sudokuBoard);
-//        originalBoardDao.write(originalSudokuBoard);
-//        readButton.setDisable(false);
         var activeIndex = getIntFromStringStart(saveChoice.getValue()) - 1;
         try {
             jdbc.updateBoard(activeIndex, sudokuBoard, originalSudokuBoard);
@@ -175,9 +155,6 @@ public class GameViewController implements Initializable {
 
     @FXML
     private void readSudokuBoard() {
-//        sudokuBoard = boardDao.read();
-//        originalSudokuBoard = originalBoardDao.read();
-//        this.setSudokuGrid(sudokuBoard);
         String activeField = saveChoice.getValue();
 
         if (activeField.contains("empty")) {
@@ -213,7 +190,6 @@ public class GameViewController implements Initializable {
         player = new SudokuPlayer();
         sudokuBoard = new SudokuBoard(player);
 
-        //Ten poziom trudności trzeba będzie gdzięs indziej zapamiętać
         sudokuBoard.generateSudokuPuzzle(MenuViewController.level);
         originalSudokuBoard = sudokuBoard.clone();
 
@@ -315,14 +291,18 @@ public class GameViewController implements Initializable {
                 } catch (Exception e) {
                     var exception = new ViewException(
                             resourceBundle.getString("viewException"), e);
-                    logger.error(exception + resourceBundle.getString("cause"), exception.getCause());
+                    logger.error(exception + resourceBundle.getString(
+                            "cause"), exception.getCause()
+                    );
                 }
             }
         }
     }
 
     private int getIntFromStringStart(String s) {
-        if (s == null || s.isEmpty() || s.isBlank()) return -1;
+        if (s == null || s.isEmpty() || s.isBlank()) {
+            return -1;
+        }
 
         int endIndex = 0;
         for (int i = 0; i < s.length(); i++) {

@@ -1,22 +1,26 @@
 package pl.comp.model;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.time.LocalDateTime;
+import java.util.ResourceBundle;
+import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.time.LocalDateTime;
-import org.javatuples.Pair;
 import pl.comp.exceptions.DatabaseException;
 import pl.comp.exceptions.EmptyRecordException;
 import pl.comp.exceptions.OutOfDatabaseException;
 import pl.comp.exceptions.ProszeNieUzywacTejMetodyException;
 
-import java.sql.*;
-import java.util.ResourceBundle;
-
 public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
 
-    final int SAVED_BOARDS_COUNT = 5;
-    final String DB_PATH;
-    final String CONNECTION_URL;
+    final int savedBoardsCount = 5;
+    final String dbPath;
+    final String connectionUrl;
 
     private static final Logger logger = LoggerFactory.getLogger(JdbcSudokuBoardDao.class);
     private static final ResourceBundle
@@ -25,8 +29,8 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
     private boolean initialized = false;
 
     public JdbcSudokuBoardDao(final String filePath) {
-        this.DB_PATH = filePath;
-        CONNECTION_URL = "jdbc:sqlite:" + DB_PATH;
+        this.dbPath = filePath;
+        connectionUrl = "jdbc:sqlite:" + dbPath;
     }
 
     @Override
@@ -46,7 +50,7 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
         String queues = "SELECT board, originalBoard FROM Boards WHERE id = "
                 + index + ";";
 
-        try (Connection conn = DriverManager.getConnection(CONNECTION_URL)) {
+        try (Connection conn = DriverManager.getConnection(connectionUrl)) {
             Statement statement = conn.createStatement();
             ResultSet rs = statement.executeQuery(queues);
 
@@ -65,7 +69,9 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
         } catch (SQLException exception) {
             var databaseException = new DatabaseException(
                     resourceBundle.getString("DatabaseFail"), exception);
-            logger.error(databaseException + resourceBundle.getString("cause"), databaseException.getCause());
+            logger.error(databaseException + resourceBundle.getString(
+                    "cause"), databaseException.getCause()
+            );
         }
 
         return Pair.with(board, originalBoard);
@@ -73,12 +79,14 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
 
     @Override
     public void write(SudokuBoard obj) {
-        throw new ProszeNieUzywacTejMetodyException("Ta metoda jest w tej klasie bezuzyteczna, " +
-                "ale tak nma kazaliu w zadaniu, a my posluszni studenci - robimy jak nam kaza");
+        throw new ProszeNieUzywacTejMetodyException("Ta metoda jest w tej klasie bezuzyteczna, "
+                + "ale tak nma kazaliu w zadaniu, a my posluszni studenci - robimy jak nam kaza");
     }
 
     public void updateBoard(int index, SudokuBoard modified, SudokuBoard original) {
-        if (indexOutOfRange(index)) { throw new OutOfDatabaseException(); }
+        if (indexOutOfRange(index)) {
+            throw new OutOfDatabaseException();
+        }
         
         String queues = "UPDATE Boards SET name = ?, board = ?, originalBoard = ? WHERE id = ?";
 
@@ -90,7 +98,7 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
             originalBoardFields.append(original.getField(i / 9, i % 9).getFieldValue());
         }
 
-        try (var conn = DriverManager.getConnection(CONNECTION_URL)) {
+        try (var conn = DriverManager.getConnection(connectionUrl)) {
             PreparedStatement pstmt = conn.prepareStatement(queues);
             pstmt.setString(1, "SB(" + LocalDateTime.now() + ")");
             pstmt.setString(2, boardFields.toString());
@@ -102,12 +110,16 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
         } catch (SQLException exception) {
             var databaseException = new DatabaseException(
                     resourceBundle.getString("DatabaseFail"), exception);
-            logger.error(databaseException + resourceBundle.getString("cause"), databaseException.getCause());
+            logger.error(databaseException + resourceBundle.getString(
+                    "cause"), databaseException.getCause()
+            );
         }
     }
 
     public void initialize() {
-        if (initialized) return;
+        if (initialized) {
+            return;
+        }
         this.ensureTableValidity();
         initialized = true;
     }
@@ -122,7 +134,9 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
     }
 
     private String getName(int index) {
-        if (indexOutOfRange(index)) { throw new OutOfDatabaseException(); }
+        if (indexOutOfRange(index)) {
+            throw new OutOfDatabaseException();
+        }
 
         String queues = """ 
                             SELECT *
@@ -130,7 +144,7 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
                             WHERE id = ?;
                         """;
 
-        try (var conn = DriverManager.getConnection(CONNECTION_URL)){
+        try (var conn = DriverManager.getConnection(connectionUrl)) {
             PreparedStatement pstmt = conn.prepareStatement(queues);
             pstmt.setInt(1, index);
             ResultSet rs = pstmt.executeQuery();
@@ -139,7 +153,9 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
         } catch (SQLException exception) {
             var databaseException = new DatabaseException(
                     resourceBundle.getString("DatabaseFail"), exception);
-            logger.error(databaseException + resourceBundle.getString("cause"), databaseException.getCause());
+            logger.error(databaseException + resourceBundle.getString(
+                    "cause"), databaseException.getCause()
+            );
         }
 
         return null;
@@ -150,16 +166,16 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
         if (checkTableExists()) {
             if (checkTableValidity()) {
                 logger.info("Table exists and is valid");
-            }
-            else {
-                logger.info("Table exists but is not valid!\nCreating new table and filling with defaults");
+            } else {
+                logger.info("Table exists but is not valid!\n"
+                        + "Creating new table and filling with defaults");
                 dropTable();
                 createTable();
                 fillTableWithDefaults();
             }
-        }
-        else {
-            logger.info("Table deos not exist!\nCreating new table and filling with defaults");
+        } else {
+            logger.info("Table deos not exist!\n"
+                    + "Creating new table and filling with defaults");
             createTable();
             fillTableWithDefaults();
         }
@@ -168,7 +184,7 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
     private boolean checkTableValidity() {
         String queues = "SELECT * FROM Boards";
 
-        try (var conn = DriverManager.getConnection(CONNECTION_URL)){
+        try (var conn = DriverManager.getConnection(connectionUrl)) {
             Statement statement = conn.createStatement();
             ResultSet rs = statement.executeQuery(queues);
 
@@ -186,7 +202,9 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
         } catch (SQLException exception) {
             var databaseException = new DatabaseException(
                     resourceBundle.getString("DatabaseFail"), exception);
-            logger.error(databaseException + resourceBundle.getString("cause"), databaseException.getCause());
+            logger.error(databaseException + resourceBundle.getString(
+                    "cause"), databaseException.getCause()
+            );
             return false;
         }
         return true;
@@ -195,13 +213,15 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
     private boolean checkTableExists() {
         String queues = "SELECT * FROM Boards";
 
-        try (var conn = DriverManager.getConnection(CONNECTION_URL)){
+        try (var conn = DriverManager.getConnection(connectionUrl)) {
             Statement statement = conn.createStatement();
             statement.executeQuery(queues);
         } catch (SQLException exception) {
             var databaseException = new DatabaseException(
                     resourceBundle.getString("DatabaseFail"), exception);
-            logger.error(databaseException + resourceBundle.getString("cause"), databaseException.getCause());
+            logger.error(databaseException + resourceBundle.getString(
+                    "cause"), databaseException.getCause()
+            );
             return false;
         }
         return true;
@@ -217,7 +237,7 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
                     (4, "empty", "", "");
                 """;
 
-        try (var conn = DriverManager.getConnection(CONNECTION_URL)) {
+        try (var conn = DriverManager.getConnection(connectionUrl)) {
             Statement statement = conn.createStatement();
             statement.execute(queues);
             logger.info("Filled Table");
@@ -225,7 +245,9 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
         } catch (SQLException exception) {
             var databaseException = new DatabaseException(
                     resourceBundle.getString("DatabaseFail"), exception);
-            logger.error(databaseException + resourceBundle.getString("cause"), databaseException.getCause());
+            logger.error(databaseException + resourceBundle.getString(
+                    "cause"), databaseException.getCause()
+            );
         }
     }
 
@@ -239,14 +261,16 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
                 );
                 """;
 
-        try (var conn = DriverManager.getConnection(CONNECTION_URL)) {
+        try (var conn = DriverManager.getConnection(connectionUrl)) {
             Statement statement = conn.createStatement();
             statement.execute(queues);
             logger.info("Table created");
         } catch (SQLException exception) {
             var databaseException = new DatabaseException(
                     resourceBundle.getString("DatabaseFail"), exception);
-            logger.error(databaseException + resourceBundle.getString("cause"), databaseException.getCause());
+            logger.error(databaseException + resourceBundle.getString(
+                    "cause"), databaseException.getCause()
+            );
         }
     }
 
@@ -255,18 +279,20 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
                 DROP TABLE Boards
                 """;
 
-        try (var conn = DriverManager.getConnection(CONNECTION_URL)) {
+        try (var conn = DriverManager.getConnection(connectionUrl)) {
             Statement statement = conn.createStatement();
             statement.execute(queues);
             logger.info("Table Dropped");
         } catch (SQLException exception) {
             var databaseException = new DatabaseException(
                     resourceBundle.getString("DatabaseFail"), exception);
-            logger.error(databaseException + resourceBundle.getString("cause"), databaseException.getCause());
+            logger.error(databaseException + resourceBundle.getString(
+                    "cause"), databaseException.getCause()
+            );
         }
     }
 
     private boolean indexOutOfRange(int index) {
-        return (index < 0 || index >= SAVED_BOARDS_COUNT);
+        return (index < 0 || index >= savedBoardsCount);
     }
 }
