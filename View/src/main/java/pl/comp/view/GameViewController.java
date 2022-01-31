@@ -169,8 +169,14 @@ public class GameViewController implements Initializable {
         }
 
         var activeIndex = getIntFromStringStart(activeField) - 1;
-        sudokuBoard = currJdbc.read(activeIndex);
-        originalSudokuBoard = origJdbc.read(activeIndex);
+        try {
+            sudokuBoard = currJdbc.read(activeIndex);
+            originalSudokuBoard = origJdbc.read(activeIndex);
+        } catch (DatabaseException exception) {
+            var e = new ViewException(
+                    resourceBundle.getString("viewException"), exception);
+            logger.error(e + resourceBundle.getString("cause"), e.getCause());
+        }
         this.setSudokuGrid(sudokuBoard);
 
         this.activeY = -1;

@@ -10,6 +10,7 @@ import java.util.ResourceBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.comp.exceptions.DatabaseException;
+import pl.comp.exceptions.NotInitializedException;
 import pl.comp.exceptions.OutOfDatabaseException;
 
 public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
@@ -34,7 +35,7 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
             throw new OutOfDatabaseException();
         }
         if (!initialized) {
-            throw new IllegalStateException();
+            throw new NotInitializedException();
         }
 
         var sudokuBoard = new SudokuBoard();
@@ -73,7 +74,7 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
             throw new OutOfDatabaseException();
         }
         if (!initialized) {
-            throw new IllegalStateException(); // TODO
+            throw new NotInitializedException();
         }
 
         String sudokuBoards = "UPDATE SudokuBoards SET name = ? WHERE id_board = ?;";
@@ -93,7 +94,8 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
             var pstmtSudokuValues = conn.prepareStatement(values);
             pstmtSudokuValues.setString(1, boardFields.toString());
             pstmtSudokuValues.setInt(2, index);
-            pstmtSudokuValues.setString(2, this.boardType);
+            pstmtSudokuValues.setString(3, this.boardType);
+            pstmtSudokuValues.executeUpdate();
 
             logger.info("Record modified.");
 
