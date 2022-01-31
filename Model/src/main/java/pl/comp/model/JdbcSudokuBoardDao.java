@@ -22,14 +22,10 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
     private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("bundle");
     private static boolean initialized = false;
 
-    private final String fieldName;
+    private final String boardType;
 
     public JdbcSudokuBoardDao(final BoardType boardType) {
-        switch (boardType) {
-            case CURRENT -> this.fieldName = "curr_value";
-            case ORIGINAL -> this.fieldName = "orig_value";
-            default -> throw new IllegalArgumentException(); // TODO
-        }
+        this.boardType = boardType.getBoardType();
     }
 
     @Override
@@ -43,20 +39,21 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
 
         var sudokuBoard = new SudokuBoard();
 
-        String query = "SELECT " + this.fieldName + " FROM SudokuValues WHERE coordinates = ? AND id_board = ?";
+        String query = "SELECT board_values FROM SudokuValues WHERE id_board = ? AND board_type = ?;";
 
         try (var conn = DriverManager.getConnection(connectionUrl)) {
             var preparedStatement = conn.prepareStatement(query);
-            for (int i = 0; i < sudokuSize; i++) {
-                for (int j = 0; j < sudokuSize; j++) {
-                    preparedStatement.setString(1, concat(i, j));
-                    preparedStatement.setInt(2, index);
+            preparedStatement.setInt(1, index);
+            preparedStatement.setString(2, this.boardType);
 
-                    ResultSet rs = preparedStatement.executeQuery();
-                    int value = rs.getInt(fieldName);
-                    sudokuBoard.set(i, j, value);
-                }
+            ResultSet rs = preparedStatement.executeQuery();
+            String boardFields = rs.getString("board_values");
+
+            for (int i = 0; i < 81; i++) {
+                sudokuBoard.set(i / 9, i % 9,
+                        Character.getNumericValue(boardFields.charAt(i)));
             }
+
             logger.info("SudokuBoard read.");
 
         } catch (SQLException exception) {
@@ -79,8 +76,8 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
             throw new IllegalStateException(); // TODO
         }
 
-        String sudokuBoards = "UPDATE SudokuBoards SET name = ? WHERE id_board = ?";
-        String values = "UPDATE SudokuValues SET " + this.fieldName + " = ? WHERE coordinates = ? AND id_board = ?";
+        String sudokuBoards = "UPDATE SudokuBoards SET name = ? WHERE id_board = ?;";
+        String values = "UPDATE SudokuValues SET board_values = ? WHERE id_board = ? AND board_type = ?;";
 
         try (var conn = DriverManager.getConnection(connectionUrl)) {
             var pstmtSudokuBoards = conn.prepareStatement(sudokuBoards);
@@ -88,15 +85,16 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
             pstmtSudokuBoards.setInt(2, index);
             pstmtSudokuBoards.executeUpdate();
 
-            var pstmtSudokuValues = conn.prepareStatement(values);
-            for (int i = 0; i < sudokuSize; i ++) {
-                for (int j = 0; j < sudokuSize; j++) {
-                    pstmtSudokuValues.setInt(1, obj.get(i, j));
-                    pstmtSudokuValues.setString(2, concat(i, j));
-                    pstmtSudokuValues.setInt(3, index);
-                    pstmtSudokuValues.executeUpdate();
-                }
+            var boardFields = new StringBuilder(81);
+            for (int i = 0; i < 81; i++) {
+                boardFields.append(obj.getField(i / 9, i % 9).getFieldValue());
             }
+
+            var pstmtSudokuValues = conn.prepareStatement(values);
+            pstmtSudokuValues.setString(1, boardFields.toString());
+            pstmtSudokuValues.setInt(2, index);
+            pstmtSudokuValues.setString(2, this.boardType);
+
             logger.info("Record modified.");
 
         } catch (SQLException exception) {
@@ -108,7 +106,6 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
         }
 
     }
-
 
     public static void initialize() {
         if (initialized) {
@@ -273,21 +270,24 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
     }
 
     private static void fillSudokuValuesTableWithDefaults() {
-        int totalSudokus = sudokuSize * sudokuSize;
+        String currentBoardType = BoardType.CURRENT.getBoardType();
+        String originalBoardType = BoardType.ORIGINAL.getBoardType();
+
         var sb = new StringBuilder("INSERT INTO SudokuValues VALUES\n");
-        for (int x = 0; x < savedBoardsCount; x++) {
-            for (int i = 0; i < totalSudokus; i++) {
-                sb.append("(").append(x).append(", ").append(concat(i % 9, i / 9)).append(", 0, 0)");
-                if (x < savedBoardsCount - 1 || i < totalSudokus - 1) {
-                    sb.append(",\n");
-                }
-                else {
-                    sb.append(";");
-                }
+
+        for (int i = 0; i < savedBoardsCount; i++) {
+            sb.append("(").append(i).append(", '").append(originalBoardType).append("', 0),\n");
+            sb.append("(").append(i).append(", '").append(currentBoardType).append("', 0)");
+            if (i < savedBoardsCount - 1) {
+                sb.append(",\n");
+            }
+            else {
+                sb.append(";");
             }
         }
 
         var queues = sb.toString();
+        System.out.println(queues);
 
         try (var conn = DriverManager.getConnection(connectionUrl)) {
             var valueStatement = conn.createStatement();
@@ -328,9 +328,8 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
         String values = """
                 CREATE TABLE SudokuValues (
                      id_board integer NOT NULL,
-                     coordinates text NOT NULL,
-                     orig_value integer NOT NULL,
-                     curr_value integer NOT NULL,
+                     board_type text NOT NULL,
+                     board_values text NOT NULL,
                      
                      CONSTRAINT board_FK FOREIGN KEY (id_board) REFERENCES SudokuBoards(id_board)
                 );
@@ -401,7 +400,17 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
     }
 
     public enum BoardType {
-        ORIGINAL,
-        CURRENT
+        ORIGINAL("original"),
+        CURRENT("current");
+
+        private final String boardType;
+
+        BoardType(String boardType) {
+            this.boardType = boardType;
+        }
+
+        public String getBoardType() {
+            return this.boardType;
+        }
     }
 }
