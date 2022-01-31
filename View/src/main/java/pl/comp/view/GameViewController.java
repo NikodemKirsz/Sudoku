@@ -189,12 +189,11 @@ public class GameViewController implements Initializable {
         list.clear();
         for (int i = 0; i < 5; i++) {
             int index = i + 1;
-            /*if (jdbc.isRecordEmpty(i)) {
+            if (JdbcSudokuBoardDao.isRecordEmpty(i)) {
                 list.add(index + " (empty)");
             } else {
                 list.add(String.valueOf(index));
-            }*/
-            list.add(String.valueOf(index));
+            }
         }
         saveChoice.setItems(list);
     }

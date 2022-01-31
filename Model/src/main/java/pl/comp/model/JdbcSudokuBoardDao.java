@@ -118,7 +118,7 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
         initialized = true;
     }
 
-    public boolean isRecordEmpty(int index) {
+    public static boolean isRecordEmpty(int index) {
         try {
             return getName(index).equals("empty");
         } catch (DatabaseException exception) {
@@ -127,7 +127,7 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
         return false;
     }
 
-    private String getName(int index) {
+    private static String getName(int index) {
         if (indexOutOfRange(index)) {
             throw new OutOfDatabaseException();
         }
