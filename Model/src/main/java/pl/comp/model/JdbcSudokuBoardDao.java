@@ -82,6 +82,8 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
         String values = "UPDATE SudokuValues SET board_values = ? "
                 + "WHERE id_board = ? AND board_type = ?;";
 
+        // addBatch()
+
         try (var conn = DriverManager.getConnection(connectionUrl)) {
             var pstmtSudokuBoards = conn.prepareStatement(sudokuBoards);
             pstmtSudokuBoards.setString(1, "SB(" + LocalDateTime.now() + ")");
@@ -98,6 +100,7 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
             pstmtSudokuValues.setInt(2, index);
             pstmtSudokuValues.setString(3, this.boardType);
             pstmtSudokuValues.executeUpdate();
+
 
             logger.info("Record modified.");
 
