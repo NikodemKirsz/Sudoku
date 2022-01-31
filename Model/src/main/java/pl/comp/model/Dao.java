@@ -9,8 +9,8 @@ package pl.comp.model;
 
 public interface Dao<T> {
 
-    T read();
+    T read(int index);
 
-    void write(T obj);
+    void write(T obj, int index);
 }
 

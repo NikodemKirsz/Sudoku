@@ -51,7 +51,7 @@ class FileSudokuBoardDaoTest {
     void writeSuccessful() {
         try(var fileSudokuBoardDao = new FileSudokuBoardDao(PATH_TO_SUCCESSFUL_FILE)) {
             SudokuBoard sudokuBoard = new SudokuBoard();
-            fileSudokuBoardDao.write(sudokuBoard);
+            fileSudokuBoardDao.write(sudokuBoard, 0);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -64,7 +64,7 @@ class FileSudokuBoardDaoTest {
     @Test
     void writeUnsuccessful() {
         try(var fileSudokuBoardDao = new FileSudokuBoardDao(PATH_TO_UNSUCCESSFUL_FILE)) {
-            fileSudokuBoardDao.write(null);
+            fileSudokuBoardDao.write(null, 0);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -74,7 +74,7 @@ class FileSudokuBoardDaoTest {
     void readSuccessful() {
         SudokuBoard readSudokuBoard = null;
         try(var fileSudokuBoardDao = new FileSudokuBoardDao(PATH_TO_SUCCESSFUL_FILE)) {
-            readSudokuBoard = fileSudokuBoardDao.read();
+            readSudokuBoard = fileSudokuBoardDao.read(0);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -84,7 +84,7 @@ class FileSudokuBoardDaoTest {
     @Test
     void readUnsuccessful() {
         try(var fileSudokuBoardDao = new FileSudokuBoardDao(PATH_TO_UNSUCCESSFUL_FILE)) {
-            fileSudokuBoardDao.read();
+            fileSudokuBoardDao.read(0);
         } catch (Exception e) {
             e.printStackTrace();
         }

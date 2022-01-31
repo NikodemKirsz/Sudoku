@@ -1,6 +1,5 @@
 package pl.comp.model;
 
-import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,63 +7,57 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.ResourceBundle;
-import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.comp.exceptions.DatabaseException;
-import pl.comp.exceptions.EmptyRecordException;
 import pl.comp.exceptions.OutOfDatabaseException;
-import pl.comp.exceptions.ProszeNieUzywacTejMetodyException;
 
 public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
 
-    final int savedBoardsCount = 5;
-    final String dbPath;
-    final String connectionUrl;
-
+    private static final int savedBoardsCount = 5;
+    private static final int sudokuSize = 9;
+    private static final String dbPath = FilesManager.DATABASE_PATH;
+    private static final String connectionUrl = "jdbc:sqlite:" + dbPath;
     private static final Logger logger = LoggerFactory.getLogger(JdbcSudokuBoardDao.class);
-    private static final ResourceBundle
-            resourceBundle = ResourceBundle.getBundle("bundle");
+    private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("bundle");
+    private static boolean initialized = false;
 
-    private boolean initialized = false;
+    private final String fieldName;
 
-    public JdbcSudokuBoardDao(final String filePath) {
-        this.dbPath = filePath;
-        connectionUrl = "jdbc:sqlite:" + dbPath;
+    public JdbcSudokuBoardDao(final BoardType boardType) {
+        switch (boardType) {
+            case CURRENT -> this.fieldName = "curr_value";
+            case ORIGINAL -> this.fieldName = "orig_value";
+            default -> throw new IllegalArgumentException(); // TODO
+        }
     }
 
     @Override
-    public SudokuBoard read() {
-        return null;
-    }
-
-    public Pair<SudokuBoard, SudokuBoard> readBoth(int index) {
-
-        if (this.isRecordEmpty(index)) {
-            throw new EmptyRecordException();
+    public SudokuBoard read(int index) {
+        if (indexOutOfRange(index)) {
+            throw new OutOfDatabaseException();
+        }
+        if (!initialized) {
+            throw new IllegalStateException();
         }
 
-        var board = new SudokuBoard();
-        var originalBoard = new SudokuBoard();
+        var sudokuBoard = new SudokuBoard();
 
-        String queues = "SELECT board, originalBoard FROM Boards WHERE id = "
-                + index + ";";
+        String query = "SELECT " + this.fieldName + " FROM SudokuValues WHERE coordinates = ? AND id_board = ?";
 
-        try (Connection conn = DriverManager.getConnection(connectionUrl)) {
-            Statement statement = conn.createStatement();
-            ResultSet rs = statement.executeQuery(queues);
+        try (var conn = DriverManager.getConnection(connectionUrl)) {
+            var preparedStatement = conn.prepareStatement(query);
+            for (int i = 0; i < sudokuSize; i++) {
+                for (int j = 0; j < sudokuSize; j++) {
+                    preparedStatement.setString(1, concat(i, j));
+                    preparedStatement.setInt(2, index);
 
-            String boardFields = rs.getString("board");
-            String originalBoardFields = rs.getString("originalBoard");
-
-            for (int i = 0; i < 81; i++) {
-                board.set(i / 9, i % 9,
-                        Character.getNumericValue(boardFields.charAt(i)));
-                originalBoard.set(i / 9, i % 9,
-                        Character.getNumericValue(originalBoardFields.charAt(i)));
+                    ResultSet rs = preparedStatement.executeQuery();
+                    int value = rs.getInt(fieldName);
+                    sudokuBoard.set(i, j, value);
+                }
             }
-
-            logger.info("SudokuBoards read.");
+            logger.info("SudokuBoard read.");
 
         } catch (SQLException exception) {
             var databaseException = new DatabaseException(
@@ -74,37 +67,36 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
             );
         }
 
-        return Pair.with(board, originalBoard);
+        return sudokuBoard;
     }
 
     @Override
-    public void write(SudokuBoard obj) {
-        throw new ProszeNieUzywacTejMetodyException("Ta metoda jest w tej klasie bezuzyteczna, "
-                + "ale tak nma kazaliu w zadaniu, a my posluszni studenci - robimy jak nam kaza");
-    }
-
-    public void updateBoard(int index, SudokuBoard modified, SudokuBoard original) {
+    public void write(SudokuBoard obj, int index) {
         if (indexOutOfRange(index)) {
             throw new OutOfDatabaseException();
         }
-        
-        String queues = "UPDATE Boards SET name = ?, board = ?, originalBoard = ? WHERE id = ?";
-
-        var boardFields = new StringBuilder(81);
-        var originalBoardFields = new StringBuilder(81);
-
-        for (int i = 0; i < 81; i++) {
-            boardFields.append(modified.getField(i / 9, i % 9).getFieldValue());
-            originalBoardFields.append(original.getField(i / 9, i % 9).getFieldValue());
+        if (!initialized) {
+            throw new IllegalStateException(); // TODO
         }
 
+        String sudokuBoards = "UPDATE SudokuBoards SET name = ? WHERE id_board = ?";
+        String values = "UPDATE SudokuValues SET " + this.fieldName + " = ? WHERE coordinates = ? AND id_board = ?";
+
         try (var conn = DriverManager.getConnection(connectionUrl)) {
-            PreparedStatement pstmt = conn.prepareStatement(queues);
-            pstmt.setString(1, "SB(" + LocalDateTime.now() + ")");
-            pstmt.setString(2, boardFields.toString());
-            pstmt.setString(3, originalBoardFields.toString());
-            pstmt.setInt(4, index);
-            pstmt.executeUpdate();
+            var pstmtSudokuBoards = conn.prepareStatement(sudokuBoards);
+            pstmtSudokuBoards.setString(1, "SB(" + LocalDateTime.now() + ")");
+            pstmtSudokuBoards.setInt(2, index);
+            pstmtSudokuBoards.executeUpdate();
+
+            var pstmtSudokuValues = conn.prepareStatement(values);
+            for (int i = 0; i < sudokuSize; i ++) {
+                for (int j = 0; j < sudokuSize; j++) {
+                    pstmtSudokuValues.setInt(1, obj.get(i, j));
+                    pstmtSudokuValues.setString(2, concat(i, j));
+                    pstmtSudokuValues.setInt(3, index);
+                    pstmtSudokuValues.executeUpdate();
+                }
+            }
             logger.info("Record modified.");
 
         } catch (SQLException exception) {
@@ -114,13 +106,16 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
                     "cause"), databaseException.getCause()
             );
         }
+
     }
 
-    public void initialize() {
+
+    public static void initialize() {
         if (initialized) {
             return;
         }
-        this.ensureTableValidity();
+        ensureSudokuBoardsTableValidity();
+        ensureSudokuValuesTableValidity();
         initialized = true;
     }
 
@@ -140,8 +135,8 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
 
         String queues = """ 
                             SELECT *
-                            FROM Boards
-                            WHERE id = ?;
+                            FROM SudokuBoards
+                            WHERE id_board = ?;
                         """;
 
         try (var conn = DriverManager.getConnection(connectionUrl)) {
@@ -161,36 +156,46 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
         return null;
     }
 
-    private void ensureTableValidity() {
+    private static void ensureSudokuValuesTableValidity() {
 
-        if (checkTableExists()) {
-            if (checkTableValidity()) {
+        if (!checkSudokuValuesTableExists()) {
+            logger.info("Table deos not exist!\n"
+                    + "Creating new table and filling with defaults");
+            createSudokuValuesTable();
+            fillSudokuValuesTableWithDefaults();
+        }
+    }
+
+    private static void ensureSudokuBoardsTableValidity() {
+
+        if (!checkSudokuBoardsTableExists()) {
+            logger.info("Table deos not exist!\n"
+                    + "Creating new table and filling with defaults");
+            createSudokuBoardsTable();
+            fillSudokuBoardsTableWithDefaults();
+        } else {
+            if (checkSudokuBoardsTableValidity()) {
                 logger.info("Table exists and is valid");
             } else {
                 logger.info("Table exists but is not valid!\n"
                         + "Creating new table and filling with defaults");
-                dropTable();
-                createTable();
-                fillTableWithDefaults();
+                dropSudokuBoardsTable();
+                createSudokuBoardsTable();
             }
-        } else {
-            logger.info("Table deos not exist!\n"
-                    + "Creating new table and filling with defaults");
-            createTable();
-            fillTableWithDefaults();
+            fillSudokuBoardsTableWithDefaults();
         }
     }
 
-    private boolean checkTableValidity() {
-        String queues = "SELECT * FROM Boards";
+    private static boolean checkSudokuBoardsTableValidity() {
+        String sudokuBoards = "SELECT * FROM SudokuBoards";
 
         try (var conn = DriverManager.getConnection(connectionUrl)) {
             Statement statement = conn.createStatement();
-            ResultSet rs = statement.executeQuery(queues);
+            ResultSet rs = statement.executeQuery(sudokuBoards);
 
             int count = 0;
             while (rs.next()) {
-                int index = rs.getInt("id");
+                int index = rs.getInt("id_board");
                 if (indexOutOfRange(index)) {
                     return false;
                 }
@@ -210,12 +215,12 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
         return true;
     }
 
-    private boolean checkTableExists() {
-        String queues = "SELECT * FROM Boards";
+    private static boolean checkSudokuBoardsTableExists() {
+        String sudokuBoards = "SELECT * FROM SudokuBoards;";
 
         try (var conn = DriverManager.getConnection(connectionUrl)) {
             Statement statement = conn.createStatement();
-            statement.executeQuery(queues);
+            statement.executeQuery(sudokuBoards);
         } catch (SQLException exception) {
             var databaseException = new DatabaseException(
                     resourceBundle.getString("DatabaseFail"), exception);
@@ -227,20 +232,67 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
         return true;
     }
 
-    private void fillTableWithDefaults() {
-        String queues = """
-                INSERT INTO Boards VALUES
-                    (0, "empty", "", ""),
-                    (1, "empty", "", ""),
-                    (2, "empty", "", ""),
-                    (3, "empty", "", ""),
-                    (4, "empty", "", "");
-                """;
+    private static boolean checkSudokuValuesTableExists() {
+        String values = "SELECT * FROM SudokuValues;";
 
         try (var conn = DriverManager.getConnection(connectionUrl)) {
             Statement statement = conn.createStatement();
-            statement.execute(queues);
-            logger.info("Filled Table");
+            statement.executeQuery(values);
+        } catch (SQLException exception) {
+            var databaseException = new DatabaseException(
+                    resourceBundle.getString("DatabaseFail"), exception);
+            logger.error(databaseException + resourceBundle.getString(
+                    "cause"), databaseException.getCause()
+            );
+            return false;
+        }
+        return true;
+    }
+
+    private static void fillSudokuBoardsTableWithDefaults() {
+        String sudokuBoards = """
+                INSERT or REPLACE INTO SudokuBoards VALUES
+                    (0, "empty"),
+                    (1, "empty"),
+                    (2, "empty"),
+                    (3, "empty"),
+                    (4, "empty");
+                """;
+
+        try (var conn = DriverManager.getConnection(connectionUrl)) {
+            Statement sbStatement = conn.createStatement();
+            sbStatement.execute(sudokuBoards);
+            logger.info("Filled SudokuBoards Table");
+        } catch (SQLException exception) {
+            var databaseException = new DatabaseException(
+                    resourceBundle.getString("DatabaseFail"), exception);
+            logger.error(databaseException + resourceBundle.getString(
+                    "cause"), databaseException.getCause()
+            );
+        }
+    }
+
+    private static void fillSudokuValuesTableWithDefaults() {
+        int totalSudokus = sudokuSize * sudokuSize;
+        var sb = new StringBuilder("INSERT INTO SudokuValues VALUES\n");
+        for (int x = 0; x < savedBoardsCount; x++) {
+            for (int i = 0; i < totalSudokus; i++) {
+                sb.append("(").append(x).append(", ").append(concat(i % 9, i / 9)).append(", 0, 0)");
+                if (x < savedBoardsCount - 1 || i < totalSudokus - 1) {
+                    sb.append(",\n");
+                }
+                else {
+                    sb.append(";");
+                }
+            }
+        }
+
+        var queues = sb.toString();
+
+        try (var conn = DriverManager.getConnection(connectionUrl)) {
+            var valueStatement = conn.createStatement();
+            valueStatement.execute(queues);
+            logger.info("Filled SudokuValues Table");
 
         } catch (SQLException exception) {
             var databaseException = new DatabaseException(
@@ -251,20 +303,18 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
         }
     }
 
-    private void createTable() {
-        String queues = """
-                CREATE TABLE Boards (
-                     id integer PRIMARY KEY,
-                     name text NOT NULL,
-                     board text,
-                     originalBoard text
+    private static void createSudokuBoardsTable() {
+        String sudokuBoards = """
+                CREATE TABLE SudokuBoards (
+                     id_board integer PRIMARY KEY,
+                     name text NOT NULL
                 );
                 """;
 
         try (var conn = DriverManager.getConnection(connectionUrl)) {
             Statement statement = conn.createStatement();
-            statement.execute(queues);
-            logger.info("Table created");
+            statement.execute(sudokuBoards);
+            logger.info("SudokuBoards table created");
         } catch (SQLException exception) {
             var databaseException = new DatabaseException(
                     resourceBundle.getString("DatabaseFail"), exception);
@@ -274,15 +324,22 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
         }
     }
 
-    private void dropTable() {
-        String queues = """
-                DROP TABLE Boards
+    private static void createSudokuValuesTable() {
+        String values = """
+                CREATE TABLE SudokuValues (
+                     id_board integer NOT NULL,
+                     coordinates text NOT NULL,
+                     orig_value integer NOT NULL,
+                     curr_value integer NOT NULL,
+                     
+                     CONSTRAINT board_FK FOREIGN KEY (id_board) REFERENCES SudokuBoards(id_board)
+                );
                 """;
 
         try (var conn = DriverManager.getConnection(connectionUrl)) {
             Statement statement = conn.createStatement();
-            statement.execute(queues);
-            logger.info("Table Dropped");
+            statement.execute(values);
+            logger.info("SudokuValues table created");
         } catch (SQLException exception) {
             var databaseException = new DatabaseException(
                     resourceBundle.getString("DatabaseFail"), exception);
@@ -292,7 +349,59 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
         }
     }
 
-    private boolean indexOutOfRange(int index) {
+    private static void dropSudokuValuesTable() {
+        String values = """
+                DROP TABLE SudokuValues
+                """;
+
+        try (var conn = DriverManager.getConnection(connectionUrl)) {
+            Statement statement = conn.createStatement();
+            statement.execute(values);
+            logger.info("SudokuValues table Dropped");
+        } catch (SQLException exception) {
+            var databaseException = new DatabaseException(
+                    resourceBundle.getString("DatabaseFail"), exception);
+            logger.error(databaseException + resourceBundle.getString(
+                    "cause"), databaseException.getCause()
+            );
+        }
+    }
+
+    private static void dropSudokuBoardsTable() {
+        String sudokuBoards =
+                """
+                DROP TABLE SudokuBoards
+                """;
+
+        try (var conn = DriverManager.getConnection(connectionUrl)) {
+            Statement statement = conn.createStatement();
+            statement.execute(sudokuBoards);
+            logger.info("SudokuBoard table Dropped");
+        } catch (SQLException exception) {
+            var databaseException = new DatabaseException(
+                    resourceBundle.getString("DatabaseFail"), exception);
+            logger.error(databaseException + resourceBundle.getString(
+                    "cause"), databaseException.getCause()
+            );
+        }
+    }
+
+    private static boolean indexOutOfRange(int index) {
         return (index < 0 || index >= savedBoardsCount);
+    }
+
+    private static String concat(int... ints) {
+        StringBuilder sb = new StringBuilder();
+
+        for (int val : ints) {
+            sb.append(val);
+        }
+
+        return sb.toString();
+    }
+
+    public enum BoardType {
+        ORIGINAL,
+        CURRENT
     }
 }
