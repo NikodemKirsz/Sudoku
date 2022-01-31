@@ -15,13 +15,14 @@ import pl.comp.exceptions.FailedFileOperationException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class FileSudokuBoardDaoTest {
-    final static String PATH_TO_DIRECTORY = "./testFiles/";
-    final static String PATH_TO_SUCCESSFUL_FILE = PATH_TO_DIRECTORY + "fileSuccessful";
-    final static String PATH_TO_UNSUCCESSFUL_FILE = PATH_TO_DIRECTORY + "fileUnsuccessful";
+    final static String PATH_TO_DIRECTORY = "testFiles";
+    final static String PATH_TO_SUCCESSFUL_FILE = Paths.get(PATH_TO_DIRECTORY, "fileSuccessful").toString();
+    final static String PATH_TO_UNSUCCESSFUL_FILE = Paths.get(PATH_TO_DIRECTORY, "fileUnsuccessful").toString();
     static File testDirectory;
 
     @BeforeAll
@@ -49,14 +50,15 @@ class FileSudokuBoardDaoTest {
 
     @Test
     void writeSuccessful() {
+        int index = 0;
         try(var fileSudokuBoardDao = new FileSudokuBoardDao(PATH_TO_SUCCESSFUL_FILE)) {
             SudokuBoard sudokuBoard = new SudokuBoard();
-            fileSudokuBoardDao.write(sudokuBoard, 0);
+            fileSudokuBoardDao.write(sudokuBoard, index);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        var f = new File(PATH_TO_SUCCESSFUL_FILE);
+        var f = new File(PATH_TO_SUCCESSFUL_FILE + index);
         assertTrue(f.exists());
         assertTrue(f.isFile());
     }
@@ -72,9 +74,10 @@ class FileSudokuBoardDaoTest {
 
     @Test
     void readSuccessful() {
+        int index = 0;
         SudokuBoard readSudokuBoard = null;
         try(var fileSudokuBoardDao = new FileSudokuBoardDao(PATH_TO_SUCCESSFUL_FILE)) {
-            readSudokuBoard = fileSudokuBoardDao.read(0);
+            readSudokuBoard = fileSudokuBoardDao.read(index);
         } catch (Exception e) {
             e.printStackTrace();
         }

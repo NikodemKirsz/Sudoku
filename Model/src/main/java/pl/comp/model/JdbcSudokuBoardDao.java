@@ -40,7 +40,8 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
 
         var sudokuBoard = new SudokuBoard();
 
-        String query = "SELECT board_values FROM SudokuValues WHERE id_board = ? AND board_type = ?;";
+        String query = "SELECT board_values FROM SudokuValues "
+                + "WHERE id_board = ? AND board_type = ?;";
 
         try (var conn = DriverManager.getConnection(connectionUrl)) {
             var preparedStatement = conn.prepareStatement(query);
@@ -78,7 +79,8 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
         }
 
         String sudokuBoards = "UPDATE SudokuBoards SET name = ? WHERE id_board = ?;";
-        String values = "UPDATE SudokuValues SET board_values = ? WHERE id_board = ? AND board_type = ?;";
+        String values = "UPDATE SudokuValues SET board_values = ? "
+                + "WHERE id_board = ? AND board_type = ?;";
 
         try (var conn = DriverManager.getConnection(connectionUrl)) {
             var pstmtSudokuBoards = conn.prepareStatement(sudokuBoards);
@@ -282,8 +284,7 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
             sb.append("(").append(i).append(", '").append(currentBoardType).append("', 0)");
             if (i < savedBoardsCount - 1) {
                 sb.append(",\n");
-            }
-            else {
+            } else {
                 sb.append(";");
             }
         }
