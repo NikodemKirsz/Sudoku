@@ -57,6 +57,7 @@ class JdbcSudokuBoardDaoTest {
         currJdbc.write(sudokuBoard2, 2);
 
         var readBoard2 = currJdbc.read(2).getBoard();
+        var readSudokuBoard2 = currJdbc.read(2);
         var savedBoard2 = sudokuBoard2.getBoard();
         for (var i = 0; i < 9; i++) {
             for (var j = 0; j < 9; j++) {
@@ -64,6 +65,13 @@ class JdbcSudokuBoardDaoTest {
                         savedBoard2[i][j].getFieldValue());
             }
         }
+
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                assertEquals(readSudokuBoard2.getField(i, j), sudokuBoard2.getField(i, j));
+            }
+        }
+        assertNotSame(readBoard2, savedBoard2);
 
 
         boolean isAllEqual = true;
