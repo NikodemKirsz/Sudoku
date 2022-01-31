@@ -16,8 +16,8 @@ public final class SudokuBoardDaoFactory {
         return new FileSudokuBoardDao(filePath);
     }
 
-    public static Dao<SudokuBoard> getDatabaseDao(final String filePath) {
-        return new JdbcSudokuBoardDao(filePath);
+    public static Dao<SudokuBoard> getDatabaseDao(final JdbcSudokuBoardDao.BoardType boardType) {
+        return new JdbcSudokuBoardDao(boardType);
     }
 }
 

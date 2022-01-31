@@ -3,14 +3,12 @@ package pl.comp.model;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import pl.comp.exceptions.EmptyRecordException;
 import pl.comp.exceptions.OutOfDatabaseException;
-import pl.comp.exceptions.ProszeNieUzywacTejMetodyException;
-
 import java.io.File;
 import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static pl.comp.model.JdbcSudokuBoardDao.BoardType;
 
 class JdbcSudokuBoardDaoTest {
     private final static String PATH_TO_DIRECTORY = "test_files";
@@ -18,7 +16,8 @@ class JdbcSudokuBoardDaoTest {
     private final static String DB_PATH = Paths.get(PATH_TO_DIRECTORY, DB_NAME).toString();
 
     private static File testDirectory;
-    private static JdbcSudokuBoardDao jdbc;
+    private static JdbcSudokuBoardDao origJdbc;
+    private static JdbcSudokuBoardDao currJdbc;
 
     @BeforeAll
     static void beforeAll(){
@@ -29,31 +28,40 @@ class JdbcSudokuBoardDaoTest {
         assertTrue(testDirectory.mkdir());
         System.out.println("Database Path = " + DB_PATH);
 
-        jdbc = (JdbcSudokuBoardDao) SudokuBoardDaoFactory.getDatabaseDao(DB_PATH);
-        jdbc.initialize();
+        JdbcSudokuBoardDao.initialize();
+        origJdbc = (JdbcSudokuBoardDao) SudokuBoardDaoFactory.getDatabaseDao(BoardType.ORIGINAL);
+        currJdbc = (JdbcSudokuBoardDao) SudokuBoardDaoFactory.getDatabaseDao(BoardType.CURRENT);
     }
 
     @Test
-    void writeTest() {
+    void writeAndReadTest() {
         var sudokuBoard = new SudokuBoard();
+        origJdbc.write(sudokuBoard, 2);
+
         sudokuBoard.solveGame();
-        jdbc.updateBoard(2, sudokuBoard, sudokuBoard);
-        var readBoard = jdbc.readBoth(2).getValue0();
+        currJdbc.write(sudokuBoard, 2);
+
+        var readBoard = currJdbc.read(2).getBoard();
+        var savedBoard = sudokuBoard.getBoard();
         for (var i = 0; i < 9; i++) {
             for (var j = 0; j < 9; j++) {
-                assertEquals(readBoard.getBoard()[i][j].getFieldValue(),
-                        sudokuBoard.getBoard()[i][j].getFieldValue());
+                assertEquals(readBoard[i][j].getFieldValue(),
+                        savedBoard[i][j].getFieldValue());
             }
         }
 
         var sudokuBoard2 = new SudokuBoard();
+        origJdbc.write(sudokuBoard2, 2);
+
         sudokuBoard2.solveGame();
-        jdbc.updateBoard(2, sudokuBoard2, sudokuBoard2);
-        var readBoard2 = jdbc.readBoth(2).getValue0();
+        currJdbc.write(sudokuBoard2, 2);
+
+        var readBoard2 = currJdbc.read(2).getBoard();
+        var savedBoard2 = sudokuBoard2.getBoard();
         for (var i = 0; i < 9; i++) {
             for (var j = 0; j < 9; j++) {
-                assertEquals(readBoard2.getBoard()[i][j].getFieldValue(),
-                        sudokuBoard2.getBoard()[i][j].getFieldValue());
+                assertEquals(readBoard2[i][j].getFieldValue(),
+                        savedBoard2[i][j].getFieldValue());
             }
         }
 
@@ -61,46 +69,27 @@ class JdbcSudokuBoardDaoTest {
         boolean isAllEqual = true;
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                isAllEqual &= readBoard2.getBoard()[i][j].getFieldValue()
-                        == sudokuBoard.getBoard()[i][j].getFieldValue();
+                isAllEqual &= readBoard2[i][j].getFieldValue()
+                        == readBoard[i][j].getFieldValue();
             }
         }
         assertFalse(isAllEqual);
     }
 
     @Test
-    void readTest() {
-        var boards = jdbc.readBoth(2);
-        assertNotNull(boards.getValue0());
-        assertNotNull(boards.getValue1());
-        assertNull(jdbc.read());
-        assertTrue(jdbc.isRecordEmpty(4));
-        assertFalse(jdbc.isRecordEmpty(2));
-    }
-
-    @Test
-    void updateBoardExceptionTest() {
-        assertThrows(OutOfDatabaseException.class, ()->jdbc.updateBoard(6,new SudokuBoard(), new SudokuBoard()));
-    }
-
-    @Test
-    void proszeNieUzywacTejMetodyExceptionTest() {
-        assertThrows(ProszeNieUzywacTejMetodyException.class, ()->jdbc.write(new SudokuBoard()));
-    }
-
-    @Test
-    void readBothException() {
-        assertThrows(EmptyRecordException.class, ()->jdbc.readBoth(1));
+    void saveBoardExceptionTest() {
+        assertThrows(OutOfDatabaseException.class, ()->origJdbc.write(new SudokuBoard(), 6));
+        assertThrows(OutOfDatabaseException.class, ()->currJdbc.write(new SudokuBoard(), 6));
     }
 
     @AfterAll
     static void afterAll() {
         assertTrue(deleteDirectory(testDirectory));
-        jdbc = null;
+        currJdbc = null;
+        origJdbc = null;
     }
 
-    static boolean deleteDirectory(File dir)
-    {
+    static boolean deleteDirectory(File dir) {
         boolean success = true;
         File[] allContents = dir.listFiles();
         assert allContents != null;

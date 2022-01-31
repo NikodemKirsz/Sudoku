@@ -44,7 +44,8 @@ public class GameViewController implements Initializable {
     private SudokuPlayer player;
     private SudokuBoard sudokuBoard;
     private SudokuBoard originalSudokuBoard;
-    private JdbcSudokuBoardDao jdbc;
+    private JdbcSudokuBoardDao origJdbc;
+    private JdbcSudokuBoardDao currJdbc;
     private Label[][] gridLabels;
 
     private int activeX;
@@ -80,10 +81,15 @@ public class GameViewController implements Initializable {
         readButton.setDisable(true);
         saveButton.setDisable(true);
 
-        jdbc = (JdbcSudokuBoardDao) SudokuBoardDaoFactory.getDatabaseDao(
-                FilesManager.DATABASE_PATH
+        JdbcSudokuBoardDao.initialize();
+
+        origJdbc = (JdbcSudokuBoardDao) SudokuBoardDaoFactory.getDatabaseDao(
+                JdbcSudokuBoardDao.BoardType.ORIGINAL
         );
-        jdbc.initialize();
+
+        currJdbc = (JdbcSudokuBoardDao) SudokuBoardDaoFactory.getDatabaseDao(
+                JdbcSudokuBoardDao.BoardType.CURRENT
+        );
 
         this.fillSavedChoiceBox();
     }
@@ -143,7 +149,8 @@ public class GameViewController implements Initializable {
     private void saveSudokuBoard() {
         var activeIndex = getIntFromStringStart(saveChoice.getValue()) - 1;
         try {
-            jdbc.updateBoard(activeIndex, sudokuBoard, originalSudokuBoard);
+            origJdbc.write(originalSudokuBoard, activeIndex);
+            currJdbc.write(sudokuBoard, activeIndex);
         } catch (DatabaseException exception) {
             var e = new ViewException(
                     resourceBundle.getString("viewException"), exception);
@@ -162,9 +169,14 @@ public class GameViewController implements Initializable {
         }
 
         var activeIndex = getIntFromStringStart(activeField) - 1;
-        var boards = jdbc.readBoth(activeIndex);
-        sudokuBoard = boards.getValue0();
-        originalSudokuBoard = boards.getValue1();
+        try {
+            sudokuBoard = currJdbc.read(activeIndex);
+            originalSudokuBoard = origJdbc.read(activeIndex);
+        } catch (DatabaseException exception) {
+            var e = new ViewException(
+                    resourceBundle.getString("viewException"), exception);
+            logger.error(e + resourceBundle.getString("cause"), e.getCause());
+        }
         this.setSudokuGrid(sudokuBoard);
 
         this.activeY = -1;
@@ -177,7 +189,7 @@ public class GameViewController implements Initializable {
         list.clear();
         for (int i = 0; i < 5; i++) {
             int index = i + 1;
-            if (jdbc.isRecordEmpty(i)) {
+            if (JdbcSudokuBoardDao.isRecordEmpty(i)) {
                 list.add(index + " (empty)");
             } else {
                 list.add(String.valueOf(index));

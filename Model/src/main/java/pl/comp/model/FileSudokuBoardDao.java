@@ -30,10 +30,11 @@ public class FileSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
         this.filePath = filePath;
     }
 
-    public SudokuBoard read() {
+    public SudokuBoard read(int index) {
         SudokuBoard sudokuBoard = null;
+        String currentPath = filePath + String.valueOf(index);
 
-        try (var fileInputStream = new FileInputStream(filePath);
+        try (var fileInputStream = new FileInputStream(currentPath);
              var objectInputStream = new ObjectInputStream(fileInputStream)) {
             sudokuBoard = (SudokuBoard) objectInputStream.readObject();
         } catch (ClassNotFoundException | IOException e) {
@@ -44,8 +45,10 @@ public class FileSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
         return sudokuBoard;
     }
 
-    public void write(SudokuBoard obj) {
-        try (var fileOutputStream = new FileOutputStream(filePath);
+    public void write(SudokuBoard obj, int index) {
+        String currentPath = filePath + String.valueOf(index);
+
+        try (var fileOutputStream = new FileOutputStream(currentPath);
              var objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
             objectOutputStream.writeObject(obj);
         } catch (IOException e) {
