@@ -24,7 +24,6 @@ public class MenuViewController implements Initializable, LocaleChangeListener {
 
     public static DifficultyLevel level;
     private RadioButton[] radioButtons;
-
     ObservableList<String> languages;
 
     @FXML private AnchorPane parentPane;
@@ -35,7 +34,6 @@ public class MenuViewController implements Initializable, LocaleChangeListener {
     @FXML private RadioButton hardButton;
     @FXML private ChoiceBox<String> languageChoice;
     @FXML private Label choiceLabel;
-
     @FXML private Label authorsLabel;
     @FXML private Label firstAuthor;
     @FXML private Label secondAuthor;
@@ -89,11 +87,13 @@ public class MenuViewController implements Initializable, LocaleChangeListener {
                 resourceBundle.getString("polish")
         );
         languageChoice.setItems(languages);
-        languageChoice.setValue(Objects.equals(String.valueOf(Locale.getDefault()), "pl_PL")
+        languageChoice.setValue(
+                Objects.equals(
+                        String.valueOf(Locale.getDefault()),
+                        "pl_PL")
                 ? resourceBundle.getString("polish")
                 : resourceBundle.getString("english"));
-        languageChoice
-                .getSelectionModel()
+        languageChoice.getSelectionModel()
                 .selectedIndexProperty()
                 .addListener(new ChangeListener<Number>() {
 
@@ -102,7 +102,6 @@ public class MenuViewController implements Initializable, LocaleChangeListener {
                     ObservableValue<? extends Number> observableValue,
                     Number number,
                     Number number2) {
-                // nie wiem czemu to działa na odwrót
                 if (Objects.equals(
                         languageChoice.getValue(),
                         resourceBundle.getString("english"))) {
@@ -130,6 +129,5 @@ public class MenuViewController implements Initializable, LocaleChangeListener {
         authorsLabel.setText(authorsResource.getString("title"));
         firstAuthor.setText(authorsResource.getString("first_author"));
         secondAuthor.setText(authorsResource.getString("second_author"));
-        // TODO: make choiceBox change it's language too
     }
 }

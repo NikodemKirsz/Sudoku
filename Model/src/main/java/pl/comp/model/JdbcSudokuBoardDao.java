@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +35,7 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
         if (indexOutOfRange(index)) {
             throw new OutOfDatabaseException();
         }
+
         if (!initialized) {
             throw new NotInitializedException();
         }
@@ -82,8 +84,6 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
         String values = "UPDATE SudokuValues SET board_values = ? "
                 + "WHERE id_board = ? AND board_type = ?;";
 
-        // addBatch()
-
         try (var conn = DriverManager.getConnection(connectionUrl)) {
             var pstmtSudokuBoards = conn.prepareStatement(sudokuBoards);
             pstmtSudokuBoards.setString(1, "SB(" + LocalDateTime.now() + ")");
@@ -118,6 +118,7 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
         if (initialized) {
             return;
         }
+
         ensureSudokuBoardsTableValidity();
         ensureSudokuValuesTableValidity();
         initialized = true;
@@ -125,7 +126,7 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
 
     public static boolean isRecordEmpty(int index) {
         try {
-            return getName(index).equals("empty");
+            return Objects.equals(getName(index), "empty");
         } catch (DatabaseException exception) {
             logger.error(exception.getLocalizedMessage());
         }
@@ -137,14 +138,14 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
             throw new OutOfDatabaseException();
         }
 
-        String queues = """ 
+        String query = """ 
                             SELECT *
                             FROM SudokuBoards
                             WHERE id_board = ?;
                         """;
 
         try (var conn = DriverManager.getConnection(connectionUrl)) {
-            PreparedStatement pstmt = conn.prepareStatement(queues);
+            PreparedStatement pstmt = conn.prepareStatement(query);
             pstmt.setInt(1, index);
             ResultSet rs = pstmt.executeQuery();
 
@@ -161,7 +162,6 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
     }
 
     private static void ensureSudokuValuesTableValidity() {
-
         if (!checkSudokuValuesTableExists()) {
             logger.info("Table deos not exist!\n"
                     + "Creating new table and filling with defaults");
@@ -171,12 +171,10 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
     }
 
     private static void ensureSudokuBoardsTableValidity() {
-
         if (!checkSudokuBoardsTableExists()) {
             logger.info("Table deos not exist!\n"
                     + "Creating new table and filling with defaults");
             createSudokuBoardsTable();
-            fillSudokuBoardsTableWithDefaults();
         } else {
             if (checkSudokuBoardsTableValidity()) {
                 logger.info("Table exists and is valid");
@@ -186,8 +184,9 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
                 dropSudokuBoardsTable();
                 createSudokuBoardsTable();
             }
-            fillSudokuBoardsTableWithDefaults();
         }
+
+        fillSudokuBoardsTableWithDefaults();
     }
 
     private static boolean checkSudokuBoardsTableValidity() {
@@ -233,6 +232,7 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
             );
             return false;
         }
+
         return true;
     }
 
@@ -250,6 +250,7 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
             );
             return false;
         }
+
         return true;
     }
 
@@ -292,12 +293,12 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard> {
             }
         }
 
-        var queues = sb.toString();
-        System.out.println(queues);
+        var query = sb.toString();
+        System.out.println(query);
 
         try (var conn = DriverManager.getConnection(connectionUrl)) {
             var valueStatement = conn.createStatement();
-            valueStatement.execute(queues);
+            valueStatement.execute(query);
             logger.info("Filled SudokuValues Table");
 
         } catch (SQLException exception) {

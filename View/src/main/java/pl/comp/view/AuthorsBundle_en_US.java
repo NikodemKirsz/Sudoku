@@ -7,8 +7,8 @@ public class AuthorsBundle_en_US extends ListResourceBundle {
     protected Object[][] getContents() {
         return new Object[][] {
                 {"title", "Authors"},
-                {"first_author", "Nikodem Kirsch"},
-                {"second_author", "Oscar Trela"}
+                {"first_author", "Nikodem Kirsz"},
+                {"second_author", "Oskar Trela"}
         };
     }
 }
